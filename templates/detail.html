@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<title>房间详情</title>
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css">
+	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+	<script src="../static/js/jquery.min.js"></script>
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+	<script src="../static/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../static/css/weui.min.css"/>
+	<link rel="stylesheet" href="../static/css/skippr.css"/>
+	<script src="../static/js/skippr.min.js"></script>
+	<style type="text/css">
+		#header {
+
+		}
+		body {
+		    font-family: "Hiragino Sans GB","华文细黑","STHeiti","微软雅黑","Microsoft YaHei",SimHei,"Helvetica Neue",Helvetica,Arial,sans-serif !important;
+		}
+		.aria-hidden {
+			right: 15px;
+			position: absolute;
+			cursor: pointer;
+			font-size: 2em;
+			line-height: 0.7;
+			font-style: normal;
+			font-weight: normal;
+			color: #cacccd;
+		}
+		#book p {
+			margin: 0;
+		}
+		#book label {
+			font-weight: normal;
+			margin-bottom: 0px;
+		}
+		#detail p {
+			margin: 0;
+			font-size: medium;
+		}
+		.room_list {
+			margin-bottom: 10px;
+		}
+		.room_list_img {
+			height: 270px;
+			width: 100%;
+		}
+		.room_list_img img {
+			height: 270px;
+			width: 100%;
+		}
+		.room_list_price {
+			position: relative;
+			bottom: 90px;
+			left: 0px;
+			z-index: 5;
+			width: 100px;
+			height: 55px;
+			background-color: rgba(60,63,64,0.9);
+			color: white;
+			padding: 7px 10px;
+			font-size: 25px;
+		}
+		.room_list_panel {
+			padding: 5px 7px;
+		}
+		.room_list_note span {
+			font-size: 14px;
+			line-height: 1.43;
+		    color: #565a5c;
+		}
+		.photo-modal {
+			background-color: #000;
+			background-color: rgba(0,0,0,0.85);
+			-webkit-transition: opacity 0.2s;
+			-moz-transition: opacity 0.2s;
+			-o-transition: opacity 0.2s;
+			transition: opacity 0.2s;
+			z-index: 10;
+			display: block;
+		}
+		.modal-cell {
+			height: 100%;
+			width: 100%;
+			vertical-align: middle;
+			padding: 50px 0px;
+		}
+		.modal-table {
+			height: 100%;
+			width: 100%;
+		}
+		.modal-close {
+			color: #fff;
+			font-size: 3.5em;
+			padding-bottom: 5px;
+			position: fixed;
+			right: 15px;
+			top: 15px;
+			z-index: 20;
+			padding: 8px;
+			margin-right: -8px;
+			margin-top: -16px;
+		}
+		.modal-content {
+			background-color: transparent;
+			width: 100%;
+			max-width: 100%;
+			-webkit-transition: max-height 0.5s;
+			-moz-transition: max-height 0.5s;
+			-o-transition: max-height 0.5s;
+			transition: max-height 0.5s;
+			height: 100%;
+			border-radius: 0;
+			overflow: auto;
+			position: relative;
+			z-index: 15;
+			margin-top: 50px;
+		}
+		#book {
+			z-index: 999;
+			position: absolute;
+			background: white;
+		}
+	</style>
+</head>
+<body>
+	<div id="book" style="display: none;">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header" style="text-align: center; vertical-align: middle; padding-top: 8px;">
+					<span style="font-size: 18px">预订</span>
+					<span class="aria-hidden" style="font-size: 3.2em" id="close_btn">×</span>
+				</div>
+			</div>
+		</nav>
+		<div class="weui_cells_title">用户信息</div>
+		<div class="weui_cells weui_cells_form">
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label">姓名</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<input class="weui_input" type="text" placeholder="请输入姓名"></div>
+			</div>
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label">手机号</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<input class="weui_input" type="text" placeholder="请输入手机号"></div>
+			</div>
+		</div>
+		<br>
+		<div class="weui_opr_area" style="margin-left: 10px; margin-right: 10px;">
+			<p class="weui_btn_area">
+				<a href="#" class="weui_btn weui_btn_primary">提交订单</a>
+			</p>
+		</div>
+		<br>
+	</div>
+	<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+					<span class="sr-only"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Logo</a>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="#">登录</a>
+					</li>
+					<li>
+						<a href="#">注册</a>
+					</li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container-fluid -->
+	</nav>
+	<div id="detail-container">
+		<div class="jumbotron" style="margin-bottom: 0px; padding: 0px 0px 3px 0px;">
+			<div class="room_list">
+				<div class="room_list_img">
+					<img src="../static/images/1.jpg">	
+					<div class="room_list_price"> <sup>￥</sup>
+						<span>120</span>
+					</div>
+				</div>
+				<div id="detail">
+					<p style="text-align: center; font-size: 20px;">徐家汇 美罗城 万体馆一居室</p>
+					<div class="weui_cells" style="margin: 0 10px;">
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p> <i class="glyphicon glyphicon-globe"></i>
+									网络
+								</p>
+							</div>
+							<div class="weui_cell_ft">WiFi</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p> <i class="glyphicon glyphicon-dashboard"></i>
+									淋浴
+								</p>
+							</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-film"></i>
+									有线电视
+								</p>
+							</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-asterisk"></i>
+									空调
+								</p>
+							</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-refresh"></i>
+									被单更换
+								</p>
+							</div>
+							<div class="weui_cell_ft">一次一换</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-blackboard"></i>
+									电视
+								</p>
+							</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-scale"></i>
+									饮水设备
+								</p>
+							</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-ice-lolly"></i>
+									牙具香皂
+								</p>
+							</div>
+							<div class="weui_cell_ft">一次性</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-tasks"></i>
+									毛巾浴巾
+								</p>
+							</div>
+							<div class="weui_cell_ft">一次性</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-user"></i>
+									拖鞋
+								</p>
+							</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-folder-close"></i>
+									手纸
+								</p>
+							</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-tint"></i>
+									沐浴露/洗发露
+								</p>
+							</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-hdd"></i>
+									电脑
+								</p>
+							</div>
+						</div>
+						<div class="weui_cell">
+							<div class="weui_cell_bd weui_cell_primary">
+								<p>
+									<i class="glyphicon glyphicon-fire"></i>
+									允许吸烟
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>	
+		<br>
+		<div id="photo-modal" class="modal photo-modal" style="">
+			<div id="container" style="height: 300px; width: 100%; position: absolute; margin-top: 125px;">
+				<div id="slide_skippr">
+					<div style="background-image: url(../static/images/1.jpg)"></div>
+					<div style="background-image: url(../static/images/2.jpg)"></div>
+					<div style="background-image: url(../static/images/1.jpg)"></div>
+					<div style="background-image: url(../static/images/2.jpg)"></div>
+					<div style="background-image: url(../static/images/1.jpg)"></div>
+				</div>
+			</div>
+			<div class="modal-table">
+				<div class="modal-cell">
+					<a href="#" class="modal-close" id="close_img_btn" data-behavior="modal-close">×</a>
+				</div>
+			</div>
+		</div>
+		<div id="loadingToast" class="weui_loading_toast" style="display: none;">
+			<div class="weui_mask_transparent"></div>
+			<div class="weui_toast">
+				<div class="weui_loading">
+					<div class="weui_loading_leaf weui_loading_leaf_0"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_1"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_2"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_3"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_4"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_5"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_6"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_7"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_8"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_9"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_10"></div>
+					<div class="weui_loading_leaf weui_loading_leaf_11"></div>
+				</div>
+				<p class="weui_toast_content">数据加载中</p>
+			</div>
+		</div>
+		<div class="weui_opr_area" style="position: fixed; bottom: 0px; width: 100%; z-index: 1">
+			<p class="weui_btn_area">
+				<a href="javascript:$('#loadingToast').show();window.location.href='{{ url_for('order_page') }}';" class="weui_btn weui_btn_primary" id="book_btn">立刻预订</a>
+			</p>
+		</div>
+	</div>
+</body>
+	<script type="text/javascript">
+		$(document).ready(function(){
+	        $("#slide_skippr").skippr({
+	            transition: 'slide',
+	            speed: 1000,
+	            easing: 'easeOutQuart',
+	            navType: 'bubble',
+	            childrenElementType: 'div',
+	            arrows: true,
+	            autoPlay: false,
+	            autoPlayDuration: 5000,
+	            keyboardOnAlways: true,
+	            hidePrevious: false
+	        });
+	        $("#photo-modal").hide();
+        }); 
+        $(".room_list_img").click(function(){
+        	$('#photo-modal').show();
+        });
+        $("#close_img_btn").click(function(){
+        	$('#photo-modal').hide();
+        });
+		// $("#close_btn").click(function(){
+		// 	$("#book").fadeOut();
+		// 	$("#detail-container").show();
+		// });
+		// $("#book_btn").click(function(){
+		// 	$("#book").fadeIn();
+		// 	$("#detail-container").hide();
+		// });
+	</script>
+</html>

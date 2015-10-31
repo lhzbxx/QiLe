@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<title>其乐 - 登录</title>
+	<link rel="stylesheet" href="../static/css/weui.min.css"/>
+	<script src="../static/js/jquery.min.js"></script>
+	<style type="text/css">
+		body {
+		    font-family: "Hiragino Sans GB","华文细黑","STHeiti","微软雅黑","Microsoft YaHei",SimHei,"Helvetica Neue",Helvetica,Arial,sans-serif !important;
+		    color: #888;
+		}
+		.hd {
+			padding: 2em 0;
+		}
+		.page_title {
+			text-align: center;
+			font-size: 34px;
+			color: #3CC51F;
+			font-weight: 400;
+			margin: 0 15%;
+		}
+		#login_switch {
+			padding: 0 20px;
+		}
+		.weui_input {
+			margin-left: 10px;
+		}
+		.login_tab {
+			width: 50%;
+			float: left;
+			text-align: center;
+			padding: 5px 0;
+		}
+		#login_switch .active {
+			border-bottom: 2px solid #04be02;
+		}
+		#vcode_counter {
+			margin: 9px 0;
+			height: 25px;
+			text-align: center;
+			color: black;
+			width: 110px;
+			font-size: 16px;
+			border-left: 1px solid #888;
+		}
+	</style>
+</head>
+<body>
+	<div class="page cell">
+		<div class="hd">
+			<h1 class="page_title">其乐</h1>
+		</div>
+		<div class="bd">
+			<div id="login_switch">
+				<div id="tab_switch_1" class="login_tab active">普通登录</div>
+				<div id="tab_switch_2" class="login_tab">快速注册</div>
+			</div>
+			<br>
+			<br>
+			<br>
+			<div id="tab1">
+				<div id="loadingToast" class="weui_loading_toast" style="display: none;">
+					<div class="weui_mask_transparent"></div>
+					<div class="weui_toast">
+						<div class="weui_loading">
+							<div class="weui_loading_leaf weui_loading_leaf_0"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_1"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_2"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_3"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_4"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_5"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_6"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_7"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_8"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_9"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_10"></div>
+							<div class="weui_loading_leaf weui_loading_leaf_11"></div>
+						</div>
+						<p class="weui_toast_content">登录中...</p>
+					</div>
+				</div>
+				<div class="weui_cells weui_cells_form">
+					<div class="weui_cell">
+						<div class="weui_cell_hd">
+							<label class="weui_label">用户名</label>
+						</div>
+						<div class="weui_cell_bd weui_cell_primary">
+							<input class="weui_input" type="text" placeholder=""></div>
+					</div>
+					<div class="weui_cell">
+						<div class="weui_cell_hd">
+							<label class="weui_label">密码</label>
+						</div>
+						<div class="weui_cell_bd weui_cell_primary">
+							<input class="weui_input" type="password" placeholder=""></div>
+					</div>
+				</div>
+				<br>
+				<br>
+				<div class="weui_btn_area">
+					<a class="weui_btn weui_btn_primary" id="login_btn">登录</a>
+				</div>
+			</div>
+			<div id="tab2" style="display: none;">
+				<div class="weui_cells weui_cells_form">
+					<div class="weui_cell">
+						<div class="weui_cell_hd">
+							<label class="weui_label">用户名</label>
+						</div>
+						<div class="weui_cell_bd weui_cell_primary">
+							<input class="weui_input" type="text" placeholder=""></div>
+					</div>
+					<div class="weui_cell">
+						<div class="weui_cell_hd">
+							<label class="weui_label">密码</label>
+						</div>
+						<div class="weui_cell_bd weui_cell_primary">
+							<input class="weui_input" type="password" placeholder=""></div>
+					</div>
+					<div class="weui_cell weui_vcode">
+						<div class="weui_cell_hd">
+							<label class="weui_label">验证码</label>
+						</div>
+						<div class="weui_cell_bd weui_cell_primary">
+							<input class="weui_input" type="text" placeholder=""></div>
+						<div class="weui_cell_ft weui_vimg_wrp">
+							<div id="vcode_counter" onclick="$('#dialog2').show();">获取短信</div></div>
+					</div>
+				</div>
+				<br>
+				<br>
+				<div class="weui_btn_area">
+					<a class="weui_btn weui_btn_primary" href="javascript:">注册</a>
+				</div>
+			</div>
+			<div class="weui_dialog_alert" id="dialog2" style="display: none;">
+				<div class="weui_mask"></div>
+				<div class="weui_dialog">
+					<div class="weui_dialog_hd"> <strong class="weui_dialog_title" style="color: black">已发送</strong>
+					</div>
+					<div class="weui_dialog_bd">验证码发送成功，请注意查收！</div>
+					<div class="weui_dialog_ft">
+						<a href="javascript: $('#dialog2').hide();" class="weui_btn_dialog primary">确定</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#tab_switch_1").click(function(){
+			$("#tab2").hide();
+			$("#tab1").show();
+			$("#tab_switch_2").removeClass("active");
+			$("#tab_switch_1").addClass("active");
+		});
+		$("#tab_switch_2").click(function(){
+			$("#tab1").hide();
+			$("#tab2").show();
+			$("#tab_switch_1").removeClass("active");
+			$("#tab_switch_2").addClass("active");
+		});
+		$("#login_btn").click(function(){
+			// 判断用户名和密码是否为空。
+			// 显示正在登录中...
+			$('#loadingToast').show();
+			// post操作，根据对应的状态码进行返回。
+			// 成功后返回到订单界面。
+			window.location.href="{{ url_for('order_page') }}";
+		});
+	});
+</script>
+</html>
