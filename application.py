@@ -84,9 +84,18 @@ def pay_page():
 def login_page():
 	session['user'] = "login"
 	return render_template("login.html")
-@app.route('/admin/api')
+@app.route('/admin')
 def admin_index_page():
 	return render_template("admin/1.html")
+@app.route('/admin/test')
+def admin_test_page():
+	return render_template("admin/1-test.html")
+@app.route('/admin/order_list')
+def admin_order_list_page():
+	return render_template("admin/2.1.html")
+@app.route('/admin/layout')
+def admin_layout_page():
+	return render_template("admin/admin_layout.html")
 #
 #
 #
@@ -113,6 +122,14 @@ def register():
 	return jsonify({"data": 101})
 	# 验证码错误。
 	return jsonify({"data": 102})
+@app.route('/sendVerifyCode-back')
+def sendVerifyCode():
+	params = urllib.urlencode({'@Uid': 'dingfanla', '@Key': '19c35d39ee379898d25e', '@smsMob': '13651608916', 'smsText': '8888'})
+	conn = httplib.HTTPConnection("http://utf8.sms.webchinese.cn")
+	conn.request("GET", "", params)
+	response = conn.getresponse()
+	print response
+	return jsonify({"data": 100})
 #
 #
 #
