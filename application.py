@@ -84,6 +84,9 @@ def pay_page():
 def login_page():
 	session['user'] = "login"
 	return render_template("login.html")
+@app.route('/admin/api')
+def admin_index_page():
+	return render_template("admin/1.html")
 #
 #
 #
