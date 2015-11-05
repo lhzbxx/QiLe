@@ -131,6 +131,7 @@
 		$("#order_btn").click(function(){
 			var t = Date.parse(new Date())/1000;
 			var u = Math.random().toString(36).substr(2);
+			var A="appid=gh_e49bbcb61f80&body=test&device_info=WEB&mch_id=1271526501&nonce_str="+u;
 			function onBridgeReady() {
 				WeixinJSBridge.invoke(
 					'getBrandWCPayRequest', {

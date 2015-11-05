@@ -188,7 +188,7 @@
 				'{{ url_for("login") }}',
 				{t1: t1, t2: t2},
 				function(result) {
-					if (result['data'] = 100) {
+					if (result['data'] == 100) {
 						// 显示正在登录中...
 						$('#loadingToast').show();
 						// 成功后返回到订单界面。
@@ -212,7 +212,7 @@
 				'{{ url_for("register") }}',
 				{t1: t1, t2: t2, t3: t3},
 				function(result) {
-					if (result['data'] = 100) {
+					if (result['data'] == 100) {
 						// 显示正在登录中...
 						$('#loadingToast').show();
 						// 成功后返回到订单界面。
@@ -227,7 +227,7 @@
 		});
 		$("#vcode_counter").click(function(){
 			var t1 = $("#register_username_input").val();
-			if (!/^1[3|4|5|8][0-9]\d{4,8}$/.test(t1)) {
+			if (!t1.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/)) {
 				$("#dialog1").show();
 				return;
 			}
