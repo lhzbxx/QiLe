@@ -14,6 +14,9 @@ import sqlite3
 import os
 import time
 import uuid
+import urllib
+import urllib2
+import random
 
 app = Flask(__name__)
 #
@@ -106,29 +109,45 @@ def admin_layout_page():
 # 后台函数
 # 
 #########
-@app.route('/login-back')
+@app.route('/login-back', methods=['POST'])
 def login():
-	# 登录成功。
-	return jsonify({"data": 100})
-	# 用户名不存在。
-	return jsonify({"data": 101})
-	# 密码错误。
-	return jsonify({"data": 102})
-@app.route('/register-back')
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+    user = query_db('select * from users where uses_name = ?', [t1], one=True)
+	if user is None:
+		# 用户名不存在。
+		return jsonify({"data": 101})
+	else:
+		if t2 != user['user_passwd']:
+			# 密码错误。
+			return jsonify({"data": 102})
+		else:
+			# 登录成功。
+			return jsonify({"data": 100})
+@app.route('/register-back', methods=['POST'])
 def register():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	t3 = request.form.get("t3")
+	if t3 != session['vcode']:
+		# 验证码错误。
+		return jsonify({"data": 102})
+	user = query_db('select * from users where user_name = ?', t1, one=True)
+	if user is not None:
+		# 用户名已存在。
+		return jsonify({"data": 101})
+	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [uuid.uuid5("QiLe", t1), t1, t2, t1, int(time.time())])
+	g.db.commit()
 	# 注册成功。
 	return jsonify({"data": 100})
-	# 用户名已存在。
-	return jsonify({"data": 101})
-	# 验证码错误。
-	return jsonify({"data": 102})
-@app.route('/sendVerifyCode-back')
+@app.route('/sendVerifyCode-back', methods=['POST'])
 def sendVerifyCode():
-	params = urllib.urlencode({'@Uid': 'dingfanla', '@Key': '19c35d39ee379898d25e', '@smsMob': '13651608916', 'smsText': '8888'})
-	conn = httplib.HTTPConnection("http://utf8.sms.webchinese.cn")
-	conn.request("GET", "", params)
-	response = conn.getresponse()
-	print response
+	vcode = random.randint(10000, 99999)
+	session['vcode'] = vcode
+	params = urllib.urlencode({'smsMob': request.form.get("t1"), 'Uid': 'dingfanla', 'Key': '19c35d39ee379898d25e', 'smsText': '验证码：' + str(vcode)})
+	url = 'http://utf8.sms.webchinese.cn/?' + params
+	req = urllib2.Request(url)
+	print urllib2.urlopen(req).read()
 	return jsonify({"data": 100})
 #
 #
