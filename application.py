@@ -113,7 +113,7 @@ def admin_layout_page():
 def login():
 	t1 = request.form.get("t1")
 	t2 = request.form.get("t2")
-    user = query_db('select * from users where uses_name = ?', [t1], one=True)
+	user = query_db('select * from users where user_name = ?', [t1], one=True)
 	if user is None:
 		# 用户名不存在。
 		return jsonify({"data": 101})
