@@ -139,6 +139,7 @@ def register():
 	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [uuid.uuid5("QiLe", t1), t1, t2, t1, int(time.time())])
 	g.db.commit()
 	# 注册成功。
+	session['user'] = 'login'
 	return jsonify({"data": 100})
 @app.route('/sendVerifyCode-back', methods=['POST'])
 def sendVerifyCode():

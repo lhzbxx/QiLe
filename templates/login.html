@@ -212,7 +212,16 @@
 				'{{ url_for("register") }}',
 				{t1: t1, t2: t2, t3: t3},
 				function(result) {
-					window.location.href="{{ url_for('order_page') }}";
+					if (result['data'] = 100) {
+						// 显示正在登录中...
+						$('#loadingToast').show();
+						// 成功后返回到订单界面。
+						window.location.href="{{ url_for('order_page') }}";
+					} else if (result['data'] == 101) {
+						alert("用户名已存在！");
+					} else {
+						alert("验证码错误！");
+					}
 				}
 			);
 		});
