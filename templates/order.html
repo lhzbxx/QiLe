@@ -130,7 +130,7 @@
 		});
 		$("#order_btn").click(function(){
 			var t = Date.parse(new Date())/1000;
-			var u = uuid.uuid5('QiLe', t);
+			var u = Math.random().toString(36).substr(2);
 			function onBridgeReady() {
 				WeixinJSBridge.invoke(
 					'getBrandWCPayRequest', {
