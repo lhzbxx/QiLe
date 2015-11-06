@@ -1,9 +1,25 @@
-{% extends "layout.html" %}
-{% block title %}房间详情{% endblock %}
-{% block header %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<title>房间详情</title>
+	<!-- 新 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css">
+	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+	<script src="../static/js/jquery.min.js"></script>
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+	<script src="../static/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../static/css/weui.min.css"/>
 	<link rel="stylesheet" href="../static/css/skippr.css"/>
 	<script src="../static/js/skippr.min.js"></script>
 	<style type="text/css">
+		#header {
+
+		}
+		body {
+		    font-family: "Hiragino Sans GB","华文细黑","STHeiti","微软雅黑","Microsoft YaHei",SimHei,"Helvetica Neue",Helvetica,Arial,sans-serif !important;
+		}
 		.aria-hidden {
 			right: 15px;
 			position: absolute;
@@ -108,12 +124,9 @@
 			position: absolute;
 			background: white;
 		}
-		#content_wrapper {
-			padding-bottom: 0px;
-		}
 	</style>
-{% endblock %}
-{% block content %}
+</head>
+<body>
 	<div id="book" style="display: none;">
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
@@ -148,6 +161,33 @@
 		</div>
 		<br>
 	</div>
+	<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+					<span class="sr-only"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Logo</a>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="#">登录</a>
+					</li>
+					<li>
+						<a href="#">注册</a>
+					</li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container-fluid -->
+	</nav>
 	<div id="detail-container">
 		<div class="jumbotron" style="margin-bottom: 0px; padding: 0px 0px 3px 0px;">
 			<div class="room_list">
@@ -159,7 +199,6 @@
 				</div>
 				<div id="detail">
 					<p style="text-align: center; font-size: 20px;">徐家汇 美罗城 万体馆一居室</p>
-					<p style="text-align: center; font-size: 16px;">徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室徐家汇 美罗城 万体馆一居室</p>
 					<div class="weui_cells" style="margin: 0 10px;">
 						<div class="weui_cell">
 							<div class="weui_cell_bd weui_cell_primary">
@@ -323,38 +362,37 @@
 			</p>
 		</div>
 	</div>
-{% endblock %}
-{% block script %}
-<script type="text/javascript">
-	$(document).ready(function(){
-		$("#loadingToast").hide();
-        $("#slide_skippr").skippr({
-            transition: 'slide',
-            speed: 1000,
-            easing: 'easeOutQuart',
-            navType: 'bubble',
-            childrenElementType: 'div',
-            arrows: true,
-            autoPlay: false,
-            autoPlayDuration: 5000,
-            keyboardOnAlways: true,
-            hidePrevious: false
+</body>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#loadingToast").hide();
+	        $("#slide_skippr").skippr({
+	            transition: 'slide',
+	            speed: 1000,
+	            easing: 'easeOutQuart',
+	            navType: 'bubble',
+	            childrenElementType: 'div',
+	            arrows: true,
+	            autoPlay: false,
+	            autoPlayDuration: 5000,
+	            keyboardOnAlways: true,
+	            hidePrevious: false
+	        });
+	        $("#photo-modal").hide();
+        }); 
+        $(".room_list_img").click(function(){
+        	$('#photo-modal').show();
         });
-        $("#photo-modal").hide();
-    }); 
-    $(".room_list_img").click(function(){
-    	$('#photo-modal').show();
-    });
-    $("#close_img_btn").click(function(){
-    	$('#photo-modal').hide();
-    });
-	// $("#close_btn").click(function(){
-	// 	$("#book").fadeOut();
-	// 	$("#detail-container").show();
-	// });
-	// $("#book_btn").click(function(){
-	// 	$("#book").fadeIn();
-	// 	$("#detail-container").hide();
-	// });
-</script>
-{% endblock %}
+        $("#close_img_btn").click(function(){
+        	$('#photo-modal').hide();
+        });
+		// $("#close_btn").click(function(){
+		// 	$("#book").fadeOut();
+		// 	$("#detail-container").show();
+		// });
+		// $("#book_btn").click(function(){
+		// 	$("#book").fadeIn();
+		// 	$("#detail-container").hide();
+		// });
+	</script>
+</html>

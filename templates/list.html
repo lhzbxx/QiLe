@@ -1,20 +1,12 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-	<title>房间列表</title>
-	<!-- 新 Bootstrap 核心 CSS 文件 -->
-	<link rel="stylesheet" href="../static/css/bootstrap.min.css">
-	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-	<script src="../static/js/jquery.min.js"></script>
-	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-	<script src="../static/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="../static/css/weui.min.css"/>
+{% extends "layout.html" %}
+{% block title %}房间列表{% endblock %}
+{% block header %}
+	<link rel="stylesheet" href="../static/css/skippr.css"/>
+	<script src="../static/js/skippr.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../static/css/daterangepicker.css"/>
+	<script type="text/javascript" src="../static/js/moment.min.js"></script>
+	<script type="text/javascript" src="../static/js/daterangepicker.js"></script>
 	<style type="text/css">
-		body {
-		    font-family: "Hiragino Sans GB","华文细黑","STHeiti","微软雅黑","Microsoft YaHei",SimHei,"Helvetica Neue",Helvetica,Arial,sans-serif !important;
-		}
 		.aria-hidden {
 			right: 15px;
 			position: absolute;
@@ -65,153 +57,11 @@
 		.room_list_note span {
 			font-size: 14px;
 			line-height: 1.43;
-		    color: #565a5c;
+			color: #565a5c;
 		}
 	</style>
-</head>
-<body>
-	<div id="filter" style="display: none;">
-		<nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<div class="navbar-header" style="text-align: center; vertical-align: middle; padding-top: 8px;">
-					<span style="font-size: 18px">搜索</span>
-					<span class="aria-hidden" style="font-size: 3.2em" id="close_btn">×</span>
-				</div>
-			</div>
-		</nav>
-		<div class="weui_cells_title">地点选择</div>
-		<div class="weui_cells weui_cells_form">
-			<div class="weui_cell">
-				<div class="weui_cell_hd">
-					<label class="weui_label">地点</label>
-				</div>
-				<div class="weui_cell_bd weui_cell_primary">
-					<input class="weui_input" type="text" placeholder="输入您的地点"></div>
-			</div>
-		</div>
-		<div class="weui_cells_title">时间选择</div>
-		<div class="weui_cells weui_cells_form">
-			<div class="weui_cell">
-				<div class="weui_cell_hd">
-					<label class="weui_label">时间</label>
-				</div>
-				<div class="weui_cell_bd weui_cell_primary">
-					<input class="weui_input" type="text" placeholder="选择您的时间" id="date_input"></div>
-			</div>
-		</div>
-		<div class="weui_cells_title">价格区间</div>
-		<div class="weui_cells weui_cells_radio">
-			<label class="weui_cell weui_check_label" for="x11">
-				<div class="weui_cell_bd weui_cell_primary">
-					<p>50元以下</p>
-				</div>
-				<div class="weui_cell_ft">
-					<input type="radio" class="weui_check" name="radio1" id="x11">		
-					<span class="weui_icon_checked"></span>
-				</div>
-			</label>
-			<label class="weui_cell weui_check_label" for="x12">
-				<div class="weui_cell_bd weui_cell_primary">
-					<p>50~100元</p>
-				</div>
-				<div class="weui_cell_ft">
-					<input type="radio" name="radio1" class="weui_check" id="x12">	
-					<span class="weui_icon_checked"></span>
-				</div>
-			</label>
-			<label class="weui_cell weui_check_label" for="x13">
-				<div class="weui_cell_bd weui_cell_primary">
-					<p>100~150元</p>
-				</div>
-				<div class="weui_cell_ft">
-					<input type="radio" name="radio1" class="weui_check" id="x13">
-					<span class="weui_icon_checked"></span>
-				</div>
-			</label>
-			<label class="weui_cell weui_check_label" for="x14">
-				<div class="weui_cell_bd weui_cell_primary">
-					<p>150元以上</p>
-				</div>
-				<div class="weui_cell_ft">
-					<input type="radio" name="radio1" class="weui_check" id="x14">
-					<span class="weui_icon_checked"></span>
-				</div>
-			</label>
-		</div>
-		<div class="weui_cells_title">房间类型</div>
-		<div class="weui_cells weui_cells_radio">
-			<label class="weui_cell weui_check_label" for="t11">
-				<div class="weui_cell_bd weui_cell_primary">
-					<p>标准间</p>
-				</div>
-				<div class="weui_cell_ft">
-					<input type="radio" class="weui_check" name="radio2" id="t11">		
-					<span class="weui_icon_checked"></span>
-				</div>
-			</label>
-			<label class="weui_cell weui_check_label" for="t12">
-				<div class="weui_cell_bd weui_cell_primary">
-					<p>大床</p>
-				</div>
-				<div class="weui_cell_ft">
-					<input type="radio" name="radio2" class="weui_check" id="t12">		
-					<span class="weui_icon_checked"></span>
-				</div>
-			</label>
-			<label class="weui_cell weui_check_label" for="t13">
-				<div class="weui_cell_bd weui_cell_primary">
-					<p>主题</p>
-				</div>
-				<div class="weui_cell_ft">
-					<input type="radio" name="radio2" class="weui_check" id="t13">		
-					<span class="weui_icon_checked"></span>
-				</div>
-			</label>
-			<label class="weui_cell weui_check_label" for="t14">
-				<div class="weui_cell_bd weui_cell_primary">
-					<p>钟点房</p>
-				</div>
-				<div class="weui_cell_ft">
-					<input type="radio" name="radio2" class="weui_check" id="t14">		
-					<span class="weui_icon_checked"></span>
-				</div>
-			</label>
-		</div>
-		<br>
-		<div class="weui_opr_area" style="margin-left: 10px; margin-right: 10px;">
-	        <p class="weui_btn_area">
-	            <a href="#" class="weui_btn weui_btn_primary">查询</a>
-	        </p>
-	    </div>
-	    <br>
-	</div>
-	<nav class="navbar navbar-default" style="margin-bottom: 0px;">
-		<div class="container-fluid">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-					<span class="sr-only"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">Logo</a>
-			</div>
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav">
-					<li>
-						<a href="#">登录</a>
-					</li>
-					<li>
-						<a href="#">注册</a>
-					</li>
-				</ul>
-			</div>
-			<!-- /.navbar-collapse -->
-		</div>
-		<!-- /.container-fluid -->
-	</nav>
+{% endblock %}
+{% block content %}
 	<div id="list-container">
 		<div id="filter_topbar">
 			<div class="btn-group btn-group-justified" role="group" aria-label="price_time_type">
@@ -345,7 +195,8 @@
 			</div>
 		</div>
 	</div>
-</body>
+{% endblock %}
+{% block script %}
 <script type="text/javascript">
 	$("#loadingToast").hide();
 	$("#close_btn").click(function(){
@@ -361,4 +212,4 @@
 		window.location.href="{{ url_for('detail_page') }}";
 	});
 </script>
-</html>
+{% endblock %}

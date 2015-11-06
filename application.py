@@ -61,13 +61,28 @@ def WW_upload():
 #########
 @app.route('/')
 def index_page():
-	return render_template("index.html")
+	s = signal()
+	return render_template("index.html", signal = s)
 @app.route('/search')
 def search_page():
-	return render_template("list.html")
+	s = signal()
+	return render_template("list.html", signal = s)
 @app.route('/detail')
 def detail_page():
-	return render_template("detail.html")
+	s = signal()
+	return render_template("detail.html", signal = s)
+@app.route('/coupon_list')
+def coupon_list_page():
+	s = signal()
+	return render_template("coupon_list.html", signal = s)
+@app.route('/order_list')
+def order_list_page():
+	s = signal()
+	return render_template("order_list.html", signal = s)
+@app.route('/user_setting')
+def user_setting_page():
+	s = signal()
+	return render_template("user_setting.html", signal = s)
 @app.route('/success')
 def success_page():
 	return render_template("success.html")
@@ -85,8 +100,8 @@ def pay_page():
 		return redirect(url_for('login_page'))
 @app.route('/login')
 def login_page():
-	session['user'] = "login"
 	return render_template("login.html")
+
 @app.route('/admin')
 def admin_index_page():
 	return render_template("admin/1.html")
@@ -123,13 +138,17 @@ def login():
 			return jsonify({"data": 102})
 		else:
 			# 登录成功。
+			session['user'] = user['uuid']
 			return jsonify({"data": 100})
+@app.route('/logout-back')
+def logout():
+	session.clear()
 @app.route('/register-back', methods=['POST'])
 def register():
 	t1 = request.form.get("t1")
 	t2 = request.form.get("t2")
 	t3 = request.form.get("t3")
-	if int(t3) != session['vcode']:
+	if session.get('vcode') or int(t3) != session['vcode']:
 		# 验证码错误。
 		return jsonify({"data": 102})
 	user = query_db('select * from users where user_name = ?', [t1], one=True)
@@ -182,7 +201,9 @@ def query_db(query, args=(), one=False):
 	cur = g.db.execute(query, args)
 	rv = [dict((cur.description[idx][0], value) for idx, value in enumerate(row)) for row in cur.fetchall()]
 	return (rv[0] if rv else None) if one else rv
-
+def signal():
+	signal.login = session.get('user')
+	return signal
 
 if __name__ == '__main__':
 	app.run(debug = True)

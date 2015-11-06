@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-	<title>其乐 - 支付</title>
+	<title>其乐 - 登录</title>
 	<link rel="stylesheet" href="../static/css/weui.min.css"/>
 	<script src="../static/js/jquery.min.js"></script>
 	<style type="text/css">
@@ -127,36 +127,6 @@
 			$("#tab2").show();
 			$("#tab_switch_1").removeClass("active");
 			$("#tab_switch_2").addClass("active");
-		});
-		$("#order_btn").click(function(){
-			var t = Date.parse(new Date())/1000;
-			var u = Math.random().toString(36).substr(2);
-			var A="appid=gh_e49bbcb61f80&body=test&device_info=WEB&mch_id=1271526501&nonce_str="+u;
-			function onBridgeReady() {
-				WeixinJSBridge.invoke(
-					'getBrandWCPayRequest', {
-					"appId"		: "gh_e49bbcb61f80",		//公众号名称，由商户传入     
-					"timeStamp"	: t,						//时间戳，自1970年以来的秒数     
-					"nonceStr"	: u,						//随机串     
-					"package" 	: "prepay_id="+u,     
-					"signType"	: "MD5",					//微信签名方式:     
-					"paySign" 	: "70EA570631E4BB79628FBCA90534C63FF7FADD89"	//微信签名 
-				},
-				function(res) {     
-					if(res.err_msg == "get_brand_wcpay_request:ok" ) {}
-					// 使用以上方式判断前端返回,微信团队郑重提示:res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。 
-				}
-			);}
-			if (typeof WeixinJSBridge == "undefined") {
-				if( document.addEventListener ) {
-					document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-				} else if (document.attachEvent) {
-					document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
-					document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-				}
-			} else {
-				onBridgeReady();
-			}
 		});
 	});
 </script>

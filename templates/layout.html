@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<title>其乐 - {% block title %}{% endblock %}</title>
+	<link rel="stylesheet" href="../static/css/weui.min.css"/>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css">
+	<script src="../static/js/jquery.min.js"></script>
+	<script src="../static/js/bootstrap.min.js"></script>
+	<style type="text/css">
+		body {
+			font-family: "Hiragino Sans GB","华文细黑","STHeiti","微软雅黑","Microsoft YaHei",SimHei,"Helvetica Neue",Helvetica,Arial,sans-serif !important;
+			margin: 0;
+			padding: 0;
+		}
+		#container_wrapper {
+			min-height: 100%;
+			position: relative;
+		}
+		#content_wrapper {
+			padding-bottom: 40px;
+		}
+		footer {
+			position: absolute;
+			left: 0px;
+			bottom: 0px;
+			height: 40px;
+			background-color: #F8F8F8;
+			width: 100%;
+			color: #777;
+			border-top: 1px solid #ddd;
+		}
+		footer nav a {
+			display: inline-block;
+			width: 45%;
+			margin-top: 7px;
+			text-align: center;
+			font-size: 14px;
+			color: #5e5e5e;
+		}
+	</style>
+	{% block header %}{% endblock %}
+</head>
+<body>
+	<div id="container_wrapper">
+		<div id="header_wrapper">
+			<nav class="navbar navbar-default" style="margin-bottom: 0px;">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+							<span class="sr-only"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="#">Logo</a>
+					</div>
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav">
+							{% if signal.login %}
+								<li>
+									<a href="{{ url_for('login_page') }}"><i class="glyphicon glyphicon-log-in"></i> 登录</a>
+								</li>
+								<li>
+									<a href="{{ url_for('login_page') }}"><i class="glyphicon glyphicon-user"></i> 注册</a>
+								</li>
+							{% else %}
+								<li>
+									<a href="{{ url_for('order_list_page') }}"><i class="glyphicon glyphicon-shopping-cart"></i> 订单中心</a>
+								</li>
+								<li>
+									<a href="{{ url_for('coupon_list_page') }}"><i class="glyphicon glyphicon-credit-card"></i> 我的优惠券</a>
+								</li>
+								<li>
+									<a href="{{ url_for('user_setting_page') }}"><i class="glyphicon glyphicon-cog"></i> 个人设置</a>
+								</li>
+								<li>
+									<a href="{{ url_for('logout') }}"><i class="glyphicon glyphicon-log-out"></i> 登出</a>
+								</li>
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+			</nav>
+		</div>
+		<div id="content_wrapper">{% block content %}{% endblock%}</div>
+		<div id="footer_wrapper">
+			<footer id="footer">
+				<nav>
+					<a><i class="glyphicon glyphicon-copyright-mark"></i> 其乐情侣旅店</a>
+					<a href="tel:13651608916">联系客服</a>
+				</nav>
+			</footer>
+		</div>
+	</div>
+</body>
+{% block script%}{% endblock %}
+</html>
