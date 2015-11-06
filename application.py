@@ -129,14 +129,14 @@ def register():
 	t1 = request.form.get("t1")
 	t2 = request.form.get("t2")
 	t3 = request.form.get("t3")
-	if t3 != session['vcode']:
+	if int(t3) != session['vcode']:
 		# 验证码错误。
 		return jsonify({"data": 102})
-	user = query_db('select * from users where user_name = ?', t1, one=True)
+	user = query_db('select * from users where user_name = ?', [t1], one=True)
 	if user is not None:
 		# 用户名已存在。
 		return jsonify({"data": 101})
-	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [uuid.uuid5("QiLe", t1), t1, t2, t1, int(time.time())])
+	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [str(uuid.uuid4()), t1, t2, t1, int(time.time())])
 	g.db.commit()
 	# 注册成功。
 	session['user'] = 'login'
@@ -149,6 +149,7 @@ def sendVerifyCode():
 	url = 'http://utf8.sms.webchinese.cn/?' + params
 	req = urllib2.Request(url)
 	print urllib2.urlopen(req).read()
+	print vcode
 	return jsonify({"data": 100})
 #
 #

@@ -1,8 +1,8 @@
 drop table if exists users;
 create table users (
     id integer primary key autoincrement,
-    uuid integer unique,
-    user_name text not null,
+    uuid text unique,
+    user_name integer not null,
     user_passwd text not null,
     phone_number integer not null,
     register_time integer not null,
@@ -12,7 +12,7 @@ create table users (
 drop table if exists merchants;
 create table merchants (
     id integer primary key autoincrement,
-    uuid integer unique,
+    uuid text unique,
     merchant_name text not null,
     merchant_passwd text not null,
     merchant_description text,
@@ -27,10 +27,10 @@ create table merchants (
 drop table if exists photoes;
 create table photoes (
     id integer primary key autoincrement,
-    uuid integer unique,
+    uuid text unique,
     url text,
-    user_uuid integer,
-    room_uuid integer,
+    user_uuid text,
+    room_uuid text,
     foreign key(user_uuid) references users(uuid),
     foreign key(room_uuid) references rooms(uuid)
 );
@@ -38,9 +38,9 @@ create table photoes (
 drop table if exists orders;
 create table orders (
     id integer primary key autoincrement,
-    uuid integer unique,
-    user_uuid integer not null,
-    room_uuid integer not null,
+    uuid text unique,
+    user_uuid text not null,
+    room_uuid text not null,
     deal_time integer not null,
     deal_state integer default 0,
     foreign key(user_uuid) references users(uuid),
@@ -50,8 +50,8 @@ create table orders (
 drop table if exists coupons;
 create table coupons (
     id integer primary key autoincrement,
-    uuid integer unique,
-    user_uuid integer not null,
+    uuid text unique,
+    user_uuid text not null,
     coupon_type integer not null,
     coupon_state integer default 0,
     foreign key(user_uuid) references users(uuid)
@@ -60,21 +60,21 @@ create table coupons (
 drop table if exists places;
 create table places (
     id integer primary key autoincrement,
-    uuid integer unique,
+    uuid text unique,
     place_name text not null
 );
 
 drop table if exists rooms;
 create table rooms (
     id integer primary key autoincrement,
-    uuid integer unique,
-    merchant_uuid integer not null,
+    uuid text unique,
+    merchant_uuid text not null,
     room_name text not null,
     room_price text not null,
     room_remark1 text,
     room_remark2 text,
     room_type integer default 0,
-    place_uuid integer not null,
+    place_uuid text not null,
     room_description text not null,
     room_coordinate integer,
     device_network integer default 0,
@@ -100,10 +100,10 @@ create table rooms (
 drop table if exists comments;
 create table comments (
     id integer primary key autoincrement,
-    uuid integer unique,
+    uuid text unique,
     star integer not null,
-    user_uuid integer not null,
-    room_uuid integer not null,
+    user_uuid text not null,
+    room_uuid text not null,
     content text,
     foreign key(user_uuid) references users(uuid),
     foreign key(room_uuid) references rooms(uuid)
@@ -112,8 +112,8 @@ create table comments (
 drop table if exists advice;
 create table advice (
     id integer primary key autoincrement,
-    uuid integer unique,
-    user_uuid integer not null,
+    uuid text unique,
+    user_uuid text not null,
     content text not null,
     advice_time integer not null,
     foreign key(user_uuid) references users(uuid)
