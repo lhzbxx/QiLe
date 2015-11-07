@@ -96,7 +96,7 @@ def success_page():
 # 下单页面
 @app.route('/order')
 def order_page():
-	return render_template("order_page.html")
+	return render_template("order.html")
 # 支付页面
 @app.route('/pay')
 def pay_page():
