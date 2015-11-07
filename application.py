@@ -100,7 +100,7 @@ def order_page():
 # 支付页面
 @app.route('/pay')
 def pay_page():
-	return redirect(url_for('pay_page'))
+	return render_template("pay.html")
 # 登录页面
 @app.route('/login')
 def login_page():
@@ -153,7 +153,7 @@ def login():
 # 登出
 @app.route('/logout-back', methods=['POST'])
 def logout():
-	session.clear()
+	session.pop('user', None)
 	return jsonify({"data": 100})
 # 检查是否登录
 @app.route('/check-back', methods=['POST'])
@@ -175,10 +175,11 @@ def register():
 	if user is not None:
 		# 用户名已存在。
 		return jsonify({"data": 101})
-	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [str(uuid.uuid4()), t1, t2, t1, int(time.time())])
+	uuid = str(uuid.uuid4())
+	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [uuid, t1, t2, t1, int(time.time())])
 	g.db.commit()
 	# 注册成功。
-	session['user'] = 'login'
+	session['user'] = uuid
 	return jsonify({"data": 100})
 @app.route('/sendVerifyCode-back', methods=['POST'])
 def sendVerifyCode():
@@ -225,6 +226,8 @@ def signal():
 	if session.get('user'):
 		# print session['user']
 		signal.login = session['user']
+	else:
+		signal.login = None
 	return signal
 
 if __name__ == '__main__':
