@@ -69,7 +69,7 @@
 									<a href="{{ url_for('user_setting_page') }}"><i class="glyphicon glyphicon-cog"></i> 个人设置</a>
 								</li>
 								<li>
-									<a href="{{ url_for('logout') }}"><i class="glyphicon glyphicon-log-out"></i> 登出</a>
+									<a href="javascript: $.post('{{ url_for('logout') }}');"><i class="glyphicon glyphicon-log-out"></i> 登出</a>
 								</li>
 							{% else %}
 								<li>

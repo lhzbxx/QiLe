@@ -151,7 +151,7 @@ def login():
 			session['user'] = user['uuid']
 			return jsonify({"data": 100})
 # 登出
-@app.route('/logout-back')
+@app.route('/logout-back', methods=['POST'])
 def logout():
 	session.clear()
 	return jsonify({"data": 100})
