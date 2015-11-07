@@ -96,11 +96,11 @@ def success_page():
 # 下单页面
 @app.route('/order')
 def order_page():
-	return redirect(url_for('order_page'))
+	return render_template("order_page.html")
 # 支付页面
 @app.route('/pay')
 def pay_page():
-	return redirect(url_for('login_page'))
+	return redirect(url_for('pay_page'))
 # 登录页面
 @app.route('/login')
 def login_page():
