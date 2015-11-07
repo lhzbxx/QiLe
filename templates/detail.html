@@ -319,7 +319,7 @@
 		</div>
 		<div class="weui_opr_area" style="position: fixed; bottom: 0px; width: 100%; z-index: 1">
 			<p class="weui_btn_area">
-				<a href="javascript:$('#loadingToast').show();window.location.href='{{ url_for('order_page') }}';" class="weui_btn weui_btn_primary" id="book_btn">立刻预订</a>
+				<a class="weui_btn weui_btn_primary" id="book_btn">立刻预订</a>
 			</p>
 		</div>
 	</div>
@@ -352,9 +352,13 @@
 	// 	$("#book").fadeOut();
 	// 	$("#detail-container").show();
 	// });
-	// $("#book_btn").click(function(){
-	// 	$("#book").fadeIn();
-	// 	$("#detail-container").hide();
-	// });
+	$("#book_btn").click(function(){
+		$('#loadingToast').show();
+		{% if signal.login %}
+			window.location.href="{{ url_for('order_page') }}";
+		{% else %}
+			window.location.href="{{ url_for('login_page', from=request.url) }}";
+		{% endif %}
+	});
 </script>
 {% endblock %}

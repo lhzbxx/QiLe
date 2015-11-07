@@ -192,7 +192,7 @@
 						// 显示正在登录中...
 						$('#loadingToast').show();
 						// 成功后返回到订单界面。
-						window.location.href="{{ url_for('order_page') }}";
+						window.location.href="{{ request.values['from'] }}";
 					} else if (result['data'] == '101') {
 						alert("用户名不存在！");
 					} else {
@@ -216,7 +216,7 @@
 						// 显示正在登录中...
 						$('#loadingToast').show();
 						// 成功后返回到订单界面。
-						window.location.href="{{ url_for('order_page') }}";
+						window.location.href="{{ request.values['from'] }}";
 					} else if (result['data'] == '101') {
 						alert("用户名已存在！");
 					} else if (result['data'] == '102') {

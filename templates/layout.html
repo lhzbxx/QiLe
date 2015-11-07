@@ -54,18 +54,11 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="#">Logo</a>
+						<a class="navbar-brand" href="{{ url_for('index_page') }}">Logo</a>
 					</div>
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="nav navbar-nav">
 							{% if signal.login %}
-								<li>
-									<a href="{{ url_for('login_page') }}"><i class="glyphicon glyphicon-log-in"></i> 登录</a>
-								</li>
-								<li>
-									<a href="{{ url_for('login_page') }}"><i class="glyphicon glyphicon-user"></i> 注册</a>
-								</li>
-							{% else %}
 								<li>
 									<a href="{{ url_for('order_list_page') }}"><i class="glyphicon glyphicon-shopping-cart"></i> 订单中心</a>
 								</li>
@@ -77,6 +70,13 @@
 								</li>
 								<li>
 									<a href="{{ url_for('logout') }}"><i class="glyphicon glyphicon-log-out"></i> 登出</a>
+								</li>
+							{% else %}
+								<li>
+									<a href="{{ url_for('login_page', from=request.url) }}"><i class="glyphicon glyphicon-log-in"></i> 登录</a>
+								</li>
+								<li>
+									<a href="{{ url_for('login_page') }}"><i class="glyphicon glyphicon-user"></i> 注册</a>
 								</li>
 							{% endif %}
 						</ul>

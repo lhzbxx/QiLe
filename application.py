@@ -59,49 +59,58 @@ def WW_upload():
 # 前端页面
 # 
 #########
+# 首页
 @app.route('/')
 def index_page():
 	s = signal()
 	return render_template("index.html", signal = s)
+# 搜索结果
 @app.route('/search')
 def search_page():
 	s = signal()
 	return render_template("list.html", signal = s)
+# 订单详情
 @app.route('/detail')
 def detail_page():
 	s = signal()
 	return render_template("detail.html", signal = s)
+# 优惠券列表
 @app.route('/coupon_list')
 def coupon_list_page():
 	s = signal()
 	return render_template("coupon_list.html", signal = s)
+# 订单中心
 @app.route('/order_list')
 def order_list_page():
 	s = signal()
 	return render_template("order_list.html", signal = s)
+# 个人设置
 @app.route('/user_setting')
 def user_setting_page():
 	s = signal()
 	return render_template("user_setting.html", signal = s)
+# 操作成功
 @app.route('/success')
 def success_page():
 	return render_template("success.html")
+# 下单页面
 @app.route('/order')
 def order_page():
-	if session.get('user'):
-		return render_template("order.html")
-	else:
-		return redirect(url_for('login_page'))
+	return redirect(url_for('order_page'))
+# 支付页面
 @app.route('/pay')
 def pay_page():
-	if session.get('user'):
-		return render_template("pay.html")
-	else:
-		return redirect(url_for('login_page'))
+	return redirect(url_for('login_page'))
+# 登录页面
 @app.route('/login')
 def login_page():
 	return render_template("login.html")
 
+#########
+#
+# 管理页面
+# 
+#########
 @app.route('/admin')
 def admin_index_page():
 	return render_template("admin/1.html")
@@ -124,6 +133,7 @@ def admin_layout_page():
 # 后台函数
 # 
 #########
+# 登录
 @app.route('/login-back', methods=['POST'])
 def login():
 	t1 = request.form.get("t1")
@@ -140,9 +150,19 @@ def login():
 			# 登录成功。
 			session['user'] = user['uuid']
 			return jsonify({"data": 100})
+# 登出
 @app.route('/logout-back')
 def logout():
 	session.clear()
+	return jsonify({"data": 100})
+# 检查是否登录
+@app.route('/check-back', methods=['POST'])
+def check():
+	if session.get('user'):
+		return jsonify({"data": 100})
+	else:
+		return jsonify({"data": 101})
+# 注册
 @app.route('/register-back', methods=['POST'])
 def register():
 	t1 = request.form.get("t1")
@@ -202,7 +222,9 @@ def query_db(query, args=(), one=False):
 	rv = [dict((cur.description[idx][0], value) for idx, value in enumerate(row)) for row in cur.fetchall()]
 	return (rv[0] if rv else None) if one else rv
 def signal():
-	signal.login = session.get('user')
+	if session.get('user'):
+		# print session['user']
+		signal.login = session['user']
 	return signal
 
 if __name__ == '__main__':
