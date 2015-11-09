@@ -96,11 +96,13 @@ def success_page():
 # 下单页面
 @app.route('/order')
 def order_page():
-	return render_template("order.html")
+	s = signal()
+	return render_template("order.html", signal = s)
 # 支付页面
 @app.route('/pay')
 def pay_page():
-	return render_template("pay.html")
+	s = signal()
+	return render_template("pay.html", signal = s)
 # 登录页面
 @app.route('/login')
 def login_page():
@@ -168,7 +170,7 @@ def register():
 	t1 = request.form.get("t1")
 	t2 = request.form.get("t2")
 	t3 = request.form.get("t3")
-	if session.get('vcode') or int(t3) != session['vcode']:
+	if not session.get('vcode') or int(t3) != session['vcode']:
 		# 验证码错误。
 		return jsonify({"data": 102})
 	user = query_db('select * from users where user_name = ?', [t1], one=True)
