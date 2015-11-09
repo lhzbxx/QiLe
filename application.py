@@ -177,8 +177,8 @@ def register():
 	if user is not None:
 		# 用户名已存在。
 		return jsonify({"data": 101})
-	uuid = str(uuid.uuid4())
-	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [uuid, t1, t2, t1, int(time.time())])
+	u = str(uuid.uuid4())
+	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [u, t1, t2, t1, int(time.time())])
 	g.db.commit()
 	# 注册成功。
 	session['user'] = uuid
