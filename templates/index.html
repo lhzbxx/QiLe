@@ -189,6 +189,10 @@
 		function(start, end, label) {
 			$("#showTime").text(start.format('YYYY-MM-DD') + ' 到 ' + end.format('YYYY-MM-DD'));
 		});
+		$('#date_range_pick').click(function(){ 
+			$('html, body').animate({scrollTop:400}, 300); 
+			return false; 
+		});
 	});
 </script>
 {% endblock %}
