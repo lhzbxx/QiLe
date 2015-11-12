@@ -84,6 +84,10 @@ def coupon_list_page():
 def order_list_page():
 	s = signal()
 	return render_template("order_list.html", signal = s)
+@app.route('/order_detail')
+def order_detail_page():
+	s = signal()
+	return render_template("order_detail.html", signal = s)
 # 个人设置
 @app.route('/user_setting')
 def user_setting_page():
@@ -107,6 +111,10 @@ def pay_page():
 @app.route('/login')
 def login_page():
 	return render_template("login.html")
+# 重置密码页面
+@app.route('/resetpwd')
+def resetpwd_page():
+	return render_template("resetpwd.html")
 
 #########
 #
@@ -183,6 +191,24 @@ def register():
 	# 注册成功。
 	session['user'] = uuid
 	return jsonify({"data": 100})
+# 修改密码
+@app.route('/resetpwd-back', methods=['POST'])
+def resetpwd():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	t3 = request.form.get("t3")
+	if not session.get('vcode') or int(t3) != session['vcode']:
+		# 验证码错误。
+		return jsonify({"data": 102})
+	user = query_db('select * from users where user_name = ?', [t1], one=True)
+	if user is None:
+		# 用户名不存在。
+		return jsonify({"data": 101})
+	g.db.execute('update users set user_passwd = ? where uuid = ?', [t2, user['uuid']])
+	g.db.commit()
+	# 修改成功。
+	return jsonify({"data": 100})
+# 发送验证码
 @app.route('/sendVerifyCode-back', methods=['POST'])
 def sendVerifyCode():
 	vcode = random.randint(10000, 99999)

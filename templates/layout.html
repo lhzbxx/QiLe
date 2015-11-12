@@ -65,9 +65,9 @@
 								<li>
 									<a href="{{ url_for('coupon_list_page') }}"><i class="glyphicon glyphicon-credit-card"></i> 我的优惠券</a>
 								</li>
-								<li>
+<!-- 								<li>
 									<a href="{{ url_for('user_setting_page') }}"><i class="glyphicon glyphicon-cog"></i> 个人设置</a>
-								</li>
+								</li> -->
 								<li>
 									<a href="javascript: $.post('{{ url_for('logout') }}', function(result) {if (result.data == '100') {window.location.href = '{{ url_for('index_page') }}' } });"><i class="glyphicon glyphicon-log-out"></i> 登出</a>
 								</li>

@@ -1,0 +1,177 @@
+{% extends "layout.html" %}
+{% block title %}订单详情{% endblock %}
+{% block header %}
+	<link rel="stylesheet" type="text/css" href="../static/css/daterangepicker.css"/>
+	<script type="text/javascript" src="../static/js/moment.min.js"></script>
+	<script type="text/javascript" src="../static/js/daterangepicker.js"></script>
+	<style type="text/css">
+		.aria-hidden {
+			right: 15px;
+			position: absolute;
+			cursor: pointer;
+			font-size: 2em;
+			line-height: 0.7;
+			font-style: normal;
+			font-weight: normal;
+			color: #cacccd;
+		}
+		#content_wrapper p {
+			margin: 0px;
+		}
+		#content_wrapper label {
+			font-weight: normal;
+		}
+		#bd {
+			display: inline-block;
+			background-color: #FBF9FE;
+		}
+		.filter {
+			background: white;
+			position: absolute;
+			z-index: 1005;
+		}
+		.filter p {
+			margin: 0;
+		}
+		.filter label {
+			font-weight: normal;
+			margin-bottom: 0px;
+		}
+		.weui_label {
+			width: 70px;
+		}
+		.stamp {width: 100%; height: 110px; padding: 0 10px; margin-bottom: 7px; position: relative; overflow: hidden; }
+		.stamp:before {content: ''; position: absolute; top: 0; bottom:0; left: 10px; right: 10px; z-index: -1;}
+		.stamp:after {content: ''; position: absolute; left: 10px; top: 10px; right: 10px; bottom: 10px; box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5); z-index: -2;}
+		.stamp i {position: absolute; left: 20%; top: 45px; height: 160px; width: 100%; background-color: rgba(255,255,255,.15); transform: rotate(-30deg);}
+		.stamp .par {float: left;padding: 16px 15px; width: 60%; border-right: 2px dashed rgba(255,255,255,.3); text-align: left;}
+		.stamp .par .title {color:#fff; font-size: 1.8em; }
+		.stamp .par .description {color:#fff; font-size: 1em; }
+		.stamp .copy span {font-size: 1.5em; color: #fff;}
+		.stamp .copy .sign {font-size: 0.5em;}
+		.stamp .copy {display: inline-block; padding: 11px 12px; width: 40%; vertical-align: text-bottom; font-size: 30px; color:rgb(255,255,255);}
+		.stamp .copy p {font-size: 16px; margin-top: 15px; }
+		.stamp01 {background: #F39B00; background: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 5px, #F39B00 5px);background-size: 15px 15px; background-position: 9px 3px;}
+		.stamp01:before{background-color:#F39B00;}
+		.stamp02{background: #D24161;background: radial-gradient(transparent 0, transparent 5px, #D24161 5px);background-size: 15px 15px;background-position: 9px 3px;}
+		.stamp02:before{background-color:#D24161;}
+		.stamp03{background: gray; background: radial-gradient(transparent 0, transparent 5px, gray 5px);background-size: 15px 15px;background-position: 9px 3px;}
+		.stamp03:before{background-color:gray;}
+		#coupon_list {
+			padding: 5px;
+		}
+		#coupon_list p {
+			margin: 0px;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+	<div id="bd">
+		<div class="weui_cells_title">房间信息</div>
+		<div class="weui_cells weui_cells_split">
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>名称</p>
+				</div>
+				<div class="weui_cell_ft">
+					徐家汇 美罗城 万体馆一居室
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">时间</div>
+		<div class="weui_cells weui_cells_split">
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>入住时间</p>
+				</div>
+				<div class="weui_cell_ft">
+					2015-11-08
+				</div>
+			</div>
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>离开时间</p>
+				</div>
+				<div class="weui_cell_ft">
+					2015-11-11
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">入住人</div>
+		<div class="weui_cells weui_cells_split">
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>XXX</p>
+				</div>
+				<div class="weui_cell_ft">
+					XXXXXXXXXXXXXXXXXXXXX
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">优惠券</div>
+		<div class="weui_cells weui_cells_split">
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>使用</p>
+				</div>
+				<div class="weui_cell_ft">
+					满150减20
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">预订人</div>
+		<div class="weui_cells weui_cells_form">
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>真实姓名</p>
+				</div>
+				<div class="weui_cell_ft">
+					XXXX
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">价格</div>
+		<div class="weui_cells weui_cells_split">
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>总价</p>
+				</div>
+				<div class="weui_cell_ft">
+					￥ 120
+				</div>
+			</div>
+		</div>
+		<div class="weui_opr_area" style="padding: 10px;">
+			<p class="weui_btn_area">
+				<a id="order_btn" href="{{ url_for('order_list_page') }}" class="weui_btn weui_btn_primary">返回</a>
+			</p>
+		</div>
+	</div>
+	<div id="loadingToast" class="weui_loading_toast" style="display: none;">
+		<div class="weui_mask_transparent"></div>
+		<div class="weui_toast">
+			<div class="weui_loading">
+				<div class="weui_loading_leaf weui_loading_leaf_0"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_1"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_2"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_3"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_4"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_5"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_6"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_7"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_8"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_9"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_10"></div>
+				<div class="weui_loading_leaf weui_loading_leaf_11"></div>
+			</div>
+			<p class="weui_toast_content" style="margin-top: 64%;">数据加载中</p>
+		</div>
+	</div>
+{% endblock %}
+{% block script %}
+	<script type="text/javascript">
+		$("#loadingToast").hide();
+		$(document).ready(function() {
+		});
+</script>
+{% endblock %}
