@@ -82,35 +82,35 @@
 					<label class="weui_label">真实姓名</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
-					<input class="weui_input" type="text" placeholder="姓名"></div>
+					<input id="liverNameInput" class="weui_input" type="text" placeholder="姓名"></div>
 			</div>
 			<div class="weui_cell weui_cell_select weui_select_after">
 				<div class="weui_cell_hd">
 					<label class="weui_label">证件类型</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
-                    <select class="weui_select" name="select2">
-                        <option value="1">身份证</option>
-                        <option value="2">军人证</option>
-                        <option value="3">护照</option>
-                    </select>
-                </div>
+					<select class="weui_select" name="select2">
+						<option value="1">身份证</option>
+						<option value="2">军人证</option>
+						<option value="3">护照</option>
+					</select>
+				</div>
 			</div>
 			<div class="weui_cell">
 				<div class="weui_cell_hd">
 					<label class="weui_label">证件号码</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
-					<input class="weui_input" type="text" placeholder="号码"></div>
+					<input id="liverNumberInput" class="weui_input" type="text" placeholder="号码"></div>
 			</div>
 		</div>
 		<br>
 		<div class="weui_opr_area" style="margin-left: 10px; margin-right: 10px;">
-	        <p class="weui_btn_area">
-	            <a href="#" class="weui_btn weui_btn_primary">添加</a>
-	        </p>
-	    </div>
-	    <br>
+			<p class="weui_btn_area">
+				<a href="#" class="weui_btn weui_btn_primary" id="addLiverBtn">添加</a>
+			</p>
+		</div>
+		<br>
 	</div>
 	<div class="filter" id="filter2" style="display: none;">
 		<nav class="navbar navbar-default" style="margin-bottom: 2px;">
@@ -180,71 +180,71 @@
 		</div>
 	</div>
 	<div id="bd">
-        <div class="weui_cells_title">房间信息</div>
-        <div class="weui_cells weui_cells_split">
-            <div class="weui_cell">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>名称</p>
-                </div>
-                <div class="weui_cell_ft">
-                    徐家汇 美罗城 万体馆一居室
-                </div>
-            </div>
-        </div>
-        <div class="weui_cells_title">时间</div>
-        <div class="weui_cells weui_cells_split">
-            <div class="weui_cell">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>入住时间</p>
-                </div>
-                <div class="weui_cell_ft">
-                    2015-11-08
-                </div>
-            </div>
-            <div class="weui_cell">
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>离开时间</p>
-                </div>
-                <div class="weui_cell_ft">
-                    2015-11-11
-                </div>
-            </div>
-        </div>
-        <div class="weui_cells_title">入住人</div>
-        <div class="weui_cells weui_cells_split">
-            <div class="weui_cell" style="padding: 0px;">
-                <div class="weui_cell_bd weui_cell_primary" style="text-align: center; font-size: 27px;">
-                    <p id="addLiver">+</p>
-                </div>
-            </div>
-        </div>
-        <div class="weui_cells_title">优惠券</div>
-        <div class="weui_cells weui_cells_split">
-            <div class="weui_cell" style="padding: 0px;">
-                <div class="weui_cell_bd weui_cell_primary" style="text-align: center; font-size: 27px;">
-                    <p id="addCounpon">+</p>
-                </div>
-            </div>
-        </div>
-        <div class="weui_cells_title">预订人</div>
-        <div class="weui_cells weui_cells_form">
-            <div class="weui_cell">
-                <div class="weui_cell_hd"><label class="weui_label" style="width: 70px;">真实姓名</label></div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <input class="weui_input" type="text" placeholder="姓名">
-                </div>
-            </div>
-        </div>
-        <div class="weui_cells_title">价格</div>
-        <div class="weui_cells weui_cells_split">
-        	<div class="weui_cell">
-	            <div class="weui_cell_bd weui_cell_primary">
-	                <p>总价</p>
-	            </div>
-	            <div class="weui_cell_ft">
-	                ￥ 120
-	            </div>
-	        </div>
+		<div class="weui_cells_title">房间信息</div>
+		<div class="weui_cells weui_cells_split">
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>名称</p>
+				</div>
+				<div class="weui_cell_ft">
+					徐家汇 美罗城 万体馆一居室
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">时间</div>
+		<div class="weui_cells weui_cells_split">
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>入住时间</p>
+				</div>
+				<div class="weui_cell_ft">
+					2015-11-08
+				</div>
+			</div>
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>离开时间</p>
+				</div>
+				<div class="weui_cell_ft">
+					2015-11-11
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">入住人</div>
+		<div class="weui_cells weui_cells_split">
+			<div id="liverCells" class="weui_cell" style="padding: 0px;">
+				<div class="weui_cell_bd weui_cell_primary" style="text-align: center; font-size: 27px;">
+					<p id="addLiver">+</p>
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">优惠券</div>
+		<div class="weui_cells weui_cells_split">
+			<div class="weui_cell" style="padding: 0px;">
+				<div class="weui_cell_bd weui_cell_primary" style="text-align: center; font-size: 27px;">
+					<p id="addCounpon">+</p>
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">预订人</div>
+		<div class="weui_cells weui_cells_form">
+			<div class="weui_cell">
+				<div class="weui_cell_hd"><label class="weui_label" style="width: 70px;">真实姓名</label></div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<input class="weui_input" type="text" placeholder="姓名">
+				</div>
+			</div>
+		</div>
+		<div class="weui_cells_title">价格</div>
+		<div class="weui_cells weui_cells_split">
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>总价</p>
+				</div>
+				<div class="weui_cell_ft">
+					￥ 120
+				</div>
+			</div>
 		</div>
 		<div class="weui_opr_area" style="position: fixed; left: 5%; bottom: 10px; width: 90%; z-index: 1">
 			<p class="weui_btn_area">
@@ -252,7 +252,7 @@
 			</p>
 		</div>
 		<br>
-    </div>
+	</div>
 	<div id="loadingToast" class="weui_loading_toast" style="display: none;">
 		<div class="weui_mask_transparent"></div>
 		<div class="weui_toast">
@@ -275,30 +275,89 @@
 	</div>
 {% endblock %}
 {% block script %}
-<script type="text/javascript">
-	$("#loadingToast").hide();
-	$(document).ready(function() {
-		$("#order_btn").click(function(){
-			// 验证表单。
-			$('#loadingToast').show();
-			window.location.href = "{{ url_for('pay_page') }}";
+	<script type="text/javascript">
+		$("#loadingToast").hide();
+		$(document).ready(function() {
+			function IdentityCodeValid(code) { 
+				var city={11:"北京",12:"天津",13:"河北",14:"山西",15:"内蒙古",21:"辽宁",22:"吉林",23:"黑龙江 ",31:"上海",32:"江苏",33:"浙江",34:"安徽",35:"福建",36:"江西",37:"山东",41:"河南",42:"湖北 ",43:"湖南",44:"广东",45:"广西",46:"海南",50:"重庆",51:"四川",52:"贵州",53:"云南",54:"西藏 ",61:"陕西",62:"甘肃",63:"青海",64:"宁夏",65:"新疆",71:"台湾",81:"香港",82:"澳门",91:"国外 "};
+				var tip = "";
+				var pass= true;
+				
+				if(!code || !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(code)){
+					tip = "身份证号格式错误";
+					pass = false;
+				}
+				
+			   else if(!city[code.substr(0,2)]){
+					tip = "地址编码错误";
+					pass = false;
+				}
+				else{
+					//18位身份证需要验证最后一位校验位
+					if(code.length == 18){
+						code = code.split('');
+						//∑(ai×Wi)(mod 11)
+						//加权因子
+						var factor = [ 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 ];
+						//校验位
+						var parity = [ 1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2 ];
+						var sum = 0;
+						var ai = 0;
+						var wi = 0;
+						for (var i = 0; i < 17; i++)
+						{
+							ai = code[i];
+							wi = factor[i];
+							sum += ai * wi;
+						}
+						var last = parity[sum % 11];
+						if(parity[sum % 11] != code[17]){
+							tip = "校验位错误";
+							pass =false;
+						}
+					}
+				}
+				// if(!pass)  alert(tip);
+				return pass;
+			}
+			$("#footer_wrapper").hide();
+			$("#order_btn").click(function(){
+				// 验证表单。
+				$('#loadingToast').show();
+				window.location.href = "{{ url_for('pay_page') }}";
+			});
+			$("#addLiver").click(function(){
+				$("#filter1").fadeIn();
+				$("#bd").hide();
+			});
+			$("#addCounpon").click(function(){
+				$("#filter2").fadeIn();
+				$("#bd").hide();
+			});
+			$("#close_btn1").click(function(){
+				$("#filter1").fadeOut();
+				$("#bd").show();
+			});
+			$("#close_btn2").click(function(){
+				$("#filter2").fadeOut();
+				$("#bd").show();
+			});
+			$("#addLiverBtn").click(function() {
+				var m = $("#liverNameInput").val();
+				var n = $("#liverNumberInput").val();
+				if (m == "" || n == "") {
+					alert("请填写所有信息！");
+				} else {
+					// 身份证号码验证。
+					if (IdentityCodeValid(n) == true) {
+						$("#liverCells").append('<div class="weui_cell"><div class="weui_cell_bd weui_cell_primary"><p>'+m+'</p></div><div class="weui_cell_ft">'+n+'</div></div>');
+						$("#filter1").fadeOut();
+						$("#bd").show();
+					} else {
+						alert("身份证号格式有误！");
+					}
+				}
+			});
 		});
-		$("#addLiver").click(function(){
-			$("#filter1").fadeIn();
-			$("#bd").hide();
-		});
-		$("#addCounpon").click(function(){
-			$("#filter2").fadeIn();
-			$("#bd").hide();
-		});
-		$("#close_btn1").click(function(){
-			$("#filter1").fadeOut();
-			$("#bd").show();
-		});
-		$("#close_btn2").click(function(){
-			$("#filter2").fadeOut();
-			$("#bd").show();
-		});
-	});
 </script>
 {% endblock %}

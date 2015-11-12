@@ -76,7 +76,7 @@
 			</span>
 			<span class="weui_cell" href="javascript:;">
 				<div class="weui_cell_bd weui_cell_primary">
-					<p id="date_range_pick">时间：<span>10/30/2015-10/31/2015</span></p>
+					<p id="date_range_pick">时间：<span id="showTime">10/30/2015-10/31/2015</span></p>
 				</div>
 				<div class="weui_cell_ft"></div>
 			</span>
@@ -112,7 +112,7 @@
 {% endblock %}
 {% block script %}
 <script type="text/javascript">
-	$(document).ready(function(){
+	$(document).ready(function() {
 		$("#loadingToast").hide();
         $("#slide_skippr").skippr({
             transition: 'slide',
@@ -158,7 +158,37 @@
 		//		$("#mask").fadeOut();
 		//		$("#date-picker").fadeOut();
 		// });
-		$('#date_range_pick').daterangepicker();
+		Date.prototype.DateAdd = function(strInterval, Number) {   
+			var dtTmp = this;  
+			switch (strInterval) {   
+				case 's' :return new Date(Date.parse(dtTmp) + (1000 * Number));  
+				case 'n' :return new Date(Date.parse(dtTmp) + (60000 * Number));  
+				case 'h' :return new Date(Date.parse(dtTmp) + (3600000 * Number));  
+				case 'd' :return new Date(Date.parse(dtTmp) + (86400000 * Number));  
+				case 'w' :return new Date(Date.parse(dtTmp) + ((86400000 * 7) * Number));  
+				case 'q' :return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number*3, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());  
+				case 'm' :return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());  
+				case 'y' :return new Date((dtTmp.getFullYear() + Number), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());  
+			}
+		}
+		var date = new Date();
+		var date1 = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
+		var date2 = date.DateAdd('d', 1);
+		date2 = date2.getFullYear() + '-' + (date2.getMonth()+1) + '-' + date2.getDate()
+		$("#showTime").text(date1 + ' 到 ' + date2);
+		$('#date_range_pick').daterangepicker({
+		    locale: {
+		      format: 'YYYY-MM-DD'
+		    },
+		    startDate: date1,
+		    endDate: date2,
+		    opens: 'center',
+		    drops: 'down',
+		    autoApply: true
+		}, 
+		function(start, end, label) {
+			$("#showTime").text(start.format('YYYY-MM-DD') + ' 到 ' + end.format('YYYY-MM-DD'));
+		});
 	});
 </script>
 {% endblock %}
