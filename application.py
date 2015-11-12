@@ -189,7 +189,7 @@ def register():
 	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [u, t1, t2, t1, int(time.time())])
 	g.db.commit()
 	# 注册成功。
-	session['user'] = uuid
+	session['user'] = u
 	return jsonify({"data": 100})
 # 修改密码
 @app.route('/resetpwd-back', methods=['POST'])

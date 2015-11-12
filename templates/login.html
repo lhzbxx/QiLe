@@ -210,7 +210,7 @@
 				return;
 			}
 			$.post(
-				'{{ url_for("resetpwd") }}',
+				'{{ url_for("register") }}',
 				{t1: t1, t2: t2, t3: t3},
 				function(result) {
 					if (result['data'] == '100') {
