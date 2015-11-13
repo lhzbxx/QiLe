@@ -130,6 +130,13 @@ def admin_test_page():
 @app.route('/admin/order_list')
 def admin_order_list_page():
 	return render_template("admin/2.1.html")
+@app.route('/admin/add_merchant')
+def admin_add_merchant_page():
+	return render_template("admin/3.2.html")
+@app.route('/admin/add_room')
+def admin_add_room_page():
+	merchants = query_db('select * from merchants')
+	return render_template("admin/3.4.html", merchants = merchants)
 @app.route('/admin/layout')
 def admin_layout_page():
 	return render_template("admin/admin_layout.html")
@@ -218,6 +225,41 @@ def sendVerifyCode():
 	req = urllib2.Request(url)
 	print urllib2.urlopen(req).read()
 	print vcode
+	return jsonify({"data": 100})
+# 添加商家
+@app.route('/addMerchant-back', methods=['POST'])
+def addMerchant():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	t3 = request.form.get("t3")
+	t4 = request.form.get("t4")
+	t5 = request.form.get("t5")
+	t6 = request.form.get("t6")
+	merchant = query_db('select * from merchants where merchant_username = ?', [t2], one=True)
+	if merchant is not None:
+		# 用户名已存在。
+		return jsonify({"data": 101})
+	u = str(uuid.uuid4())
+	g.db.execute('insert into merchants (uuid, merchant_name, merchant_username, merchant_password, merchant_remark, merchant_phone_number1, merchant_description, register_time) values (?, ?, ?, ?, ?, ?, ?, ?)', [u, t1, t2, t3, t4, t5, t6, int(time.time())])
+	g.db.commit()
+	# 添加成功。
+	return jsonify({"data": 100})
+# 添加房源
+@app.route('/addRoom-back', methods=['POST'])
+def addRoom():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	t3 = request.form.get("t3")
+	t4 = request.form.get("t4")
+	t5 = request.form.get("t5")
+	t6 = request.form.get("t6")
+	t7 = request.form.get("t7")
+	img = request.form.get("img")
+	print img
+	u = str(uuid.uuid4())
+	g.db.execute('insert into rooms (uuid, room_name, room_price, stock, room_type, merchant_uuid, room_description, room_address, register_time) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [u, t1, t2, t3, t4, t5, t6, t7, int(time.time())])
+	g.db.commit()
+	# 添加成功。
 	return jsonify({"data": 100})
 #
 #

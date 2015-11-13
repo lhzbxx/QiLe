@@ -14,14 +14,10 @@ create table merchants (
     id integer primary key autoincrement,
     uuid text unique,
     merchant_name text not null,
-    merchant_username text not null,
-    merchant_password text not null,
+    merchant_passwd text not null,
     merchant_description text,
     merchant_remark text,
-    merchant_phone_number1 integer not null,
-    merchant_phone_number2 integer,
-    merchant_address text,
-    merchant_img_url text,
+    phone_number integer not null,
     register_time integer not null,
     money_number integer default 0,
     check_time integer default 0,
@@ -33,7 +29,9 @@ create table photoes (
     id integer primary key autoincrement,
     uuid text unique,
     url text,
+    user_uuid text,
     room_uuid text,
+    foreign key(user_uuid) references users(uuid),
     foreign key(room_uuid) references rooms(uuid)
 );
 
@@ -76,11 +74,9 @@ create table rooms (
     room_remark1 text,
     room_remark2 text,
     room_type integer default 0,
-    place_uuid text,
+    place_uuid text not null,
     room_description text not null,
     room_coordinate integer,
-    room_address text,
-    register_time integer not null,
     device_network integer default 0,
     device_shower integer default 0,
     device_ct integer default 0,
@@ -97,7 +93,8 @@ create table rooms (
     device_smoke integer default 0,
     star_average integer default 0,
     stock integer default 0,
-    foreign key(merchant_uuid) references merchants(uuid)
+    foreign key(merchant_uuid) references merchants(uuid),
+    foreign key(place_uuid) references places(uuid)
 );
 
 drop table if exists comments;

@@ -1,0 +1,531 @@
+{% extends "admin/admin_layout.html" %}
+{% block content %}
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			<!-- BEGIN PAGE HEADER-->
+			<h3 class="page-title">
+			添加房源 <small>添加一个新的房源</small>
+			</h3>
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-home"></i>
+						<a href="index.html">商家管理</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">添加房源</a>
+					</li>
+				</ul>
+			</div>
+			<!-- END PAGE HEADER-->
+			<!-- BEGIN PAGE CONTENT-->
+			<div class="row">
+				<div class="col-md-12">
+					<form class="form-horizontal form-row-seperated" action="#">
+						<div class="portlet light">
+							<div class="portlet-title">
+								<div class="caption"> <i class="fa fa-shopping-cart"></i>
+									添加房源
+								</div>
+								<div class="actions btn-set">
+									<button id="resetBtn" class="btn default">
+										<i class="fa fa-reply"></i>
+										重写
+									</button>
+									<button id="saveBtn" class="btn green">
+										<i class="fa fa-check"></i>
+										保存
+									</button>
+								</div>
+							</div>
+							<div class="portlet-body">
+								<div class="tabbable">
+									<ul class="nav nav-tabs">
+										<li class="active">
+											<a href="#tab_general" data-toggle="tab">基本信息</a>
+										</li>
+										<li>
+											<a href="#tab_meta" data-toggle="tab">图片信息</a>
+										</li>
+										<li>
+											<a href="#tab_images" data-toggle="tab">其它</a>
+										</li>
+									</ul>
+									<div class="tab-content no-space">
+										<div class="tab-pane active" id="tab_general">
+											<div class="form-body">
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														名称：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<input id="room_name" type="text" class="form-control" name="product[name]" placeholder=""></div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														地址：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<input id="room_address" type="text" class="form-control" name="product[name]" placeholder=""></div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														价格：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<input id="room_price" type="text" class="form-control" name="product[name]" placeholder=""></div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														数量：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<input id="stock" type="text" class="form-control" name="product[name]" placeholder=""></div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														类型：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<select id="room_type" class="form-control input-medium">
+															<option value="1">标准间</option>
+															<option value="2">大床房</option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														商家：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<select id="merchant_uuid" class="form-control input-medium">
+															{% for merchant in merchants %}
+															<option value="{{ merchant.uuid }}">{{ merchant.merchant_name }}</option>
+															{% endfor %}}}
+														</select>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														描述：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<textarea id="room_description" class="form-control" name="product[description]"></textarea>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane" id="tab_meta">
+											<div class="form-body">
+										        <input style="display: none;" id="token" name="token" class="ipt" value="FCFQs6B-thjgt30-HEmCS9ZUCGQBxx2Zsg_WO1k5:IcElHHK5wEA4RB6NdsysNvgNGqA=:eyJzY29wZSI6InFpbGUiLCJkZWFkbGluZSI6MTQ0NzQxNTk5NX0=">
+										        <input id="file" name="file" class="ipt" type="file" />
+										        <br>
+										        <input id="btn_upload" type="button" value="提交">
+												<div id="progressbar"><div class="progress-label"></div></div>		
+											</div>
+										</div>
+										<div class="tab-pane" id="tab_images">
+										</div>
+										<div class="tab-pane" id="tab_reviews">
+											<div class="table-container">
+												<div id="datatable_reviews_wrapper" class="dataTables_wrapper dataTables_extended_wrapper no-footer">
+													<div class="row">
+														<div class="col-md-8 col-sm-12">
+															<div class="dataTables_paginate paging_bootstrap_extended" id="datatable_reviews_paginate">
+																<div class="pagination-panel">
+																	Page
+																	<a href="#" class="btn btn-sm default prev disabled" title="Prev">
+																		<i class="fa fa-angle-left"></i>
+																	</a>
+																	<input type="text" class="pagination-panel-input form-control input-mini input-inline input-sm" maxlenght="5" style="text-align:center; margin: 0 5px;">				
+																	<a href="#" class="btn btn-sm default next disabled" title="Next">
+																		<i class="fa fa-angle-right"></i>
+																	</a>
+																	of
+																	<span class="pagination-panel-total"></span>
+																</div>
+															</div>
+															<div class="dataTables_length" id="datatable_reviews_length">
+																<label>
+																	<span class="seperator">|</span>
+																	View
+																	<select name="datatable_reviews_length" aria-controls="datatable_reviews" class="form-control input-xsmall input-sm input-inline">
+																		<option value="10">10</option>
+																		<option value="20">20</option>
+																		<option value="50">50</option>
+																		<option value="100">100</option>
+																		<option value="150">150</option>
+																		<option value="-1">All</option>
+																	</select>
+																	records
+																</label>
+															</div>
+															<div class="dataTables_info" id="datatable_reviews_info" role="status" aria-live="polite"></div>
+														</div>
+														<div class="col-md-4 col-sm-12">
+															<div class="table-group-actions pull-right"></div>
+														</div>
+													</div>
+													<div class="table-scrollable">
+														<table class="table table-striped table-bordered table-hover dataTable no-footer" id="datatable_reviews" aria-describedby="datatable_reviews_info" role="grid">
+															<thead>
+																<tr role="row" class="heading">
+																	<th width="5%" class="sorting" tabindex="0" aria-controls="datatable_reviews" rowspan="1" colspan="1">Review&nbsp;#</th>
+																	<th width="10%" class="sorting" tabindex="0" aria-controls="datatable_reviews" rowspan="1" colspan="1">Review&nbsp;Date</th>
+																	<th width="10%" class="sorting" tabindex="0" aria-controls="datatable_reviews" rowspan="1" colspan="1">Customer</th>
+																	<th width="20%" class="sorting" tabindex="0" aria-controls="datatable_reviews" rowspan="1" colspan="1">Review&nbsp;Content</th>
+																	<th width="10%" class="sorting" tabindex="0" aria-controls="datatable_reviews" rowspan="1" colspan="1">Status</th>
+																	<th width="10%" class="sorting" tabindex="0" aria-controls="datatable_reviews" rowspan="1" colspan="1">Actions</th>
+																</tr>
+																<tr role="row" class="filter">
+																	<td rowspan="1" colspan="1">
+																		<input type="text" class="form-control form-filter input-sm" name="product_review_no"></td>
+																	<td rowspan="1" colspan="1">
+																		<div class="input-group date date-picker margin-bottom-5" data-date-format="dd/mm/yyyy">
+																			<input type="text" class="form-control form-filter input-sm" readonly="" name="product_review_date_from" placeholder="From">				
+																			<span class="input-group-btn">
+																				<button class="btn btn-sm default" type="button">
+																					<i class="fa fa-calendar"></i>
+																				</button>
+																			</span>
+																		</div>
+																		<div class="input-group date date-picker" data-date-format="dd/mm/yyyy">
+																			<input type="text" class="form-control form-filter input-sm" readonly="" name="product_review_date_to" placeholder="To">				
+																			<span class="input-group-btn">
+																				<button class="btn btn-sm default" type="button">
+																					<i class="fa fa-calendar"></i>
+																				</button>
+																			</span>
+																		</div>
+																	</td>
+																	<td rowspan="1" colspan="1">
+																		<input type="text" class="form-control form-filter input-sm" name="product_review_customer"></td>
+																	<td rowspan="1" colspan="1">
+																		<input type="text" class="form-control form-filter input-sm" name="product_review_content"></td>
+																	<td rowspan="1" colspan="1">
+																		<select name="product_review_status" class="form-control form-filter input-sm">
+																			<option value="">Select...</option>
+																			<option value="pending">Pending</option>
+																			<option value="approved">Approved</option>
+																			<option value="rejected">Rejected</option>
+																		</select>
+																	</td>
+																	<td rowspan="1" colspan="1">
+																		<div class="margin-bottom-5">
+																			<button class="btn btn-sm yellow filter-submit margin-bottom">
+																				<i class="fa fa-search"></i>
+																				Search
+																			</button>
+																		</div>
+																		<button class="btn btn-sm red filter-cancel">
+																			<i class="fa fa-times"></i>
+																			Reset
+																		</button>
+																	</td>
+																</tr>
+															</thead>
+															<tbody></tbody>
+														</table>
+													</div>
+													<div class="row">
+														<div class="col-md-8 col-sm-12">
+															<div class="dataTables_paginate paging_bootstrap_extended">
+																<div class="pagination-panel">
+																	Page
+																	<a href="#" class="btn btn-sm default prev disabled" title="Prev">
+																		<i class="fa fa-angle-left"></i>
+																	</a>
+																	<input type="text" class="pagination-panel-input form-control input-mini input-inline input-sm" maxlenght="5" style="text-align:center; margin: 0 5px;">				
+																	<a href="#" class="btn btn-sm default next disabled" title="Next">
+																		<i class="fa fa-angle-right"></i>
+																	</a>
+																	of
+																	<span class="pagination-panel-total"></span>
+																</div>
+															</div>
+															<div class="dataTables_length">
+																<label>
+																	<span class="seperator">|</span>
+																	View
+																	<select name="datatable_reviews_length" aria-controls="datatable_reviews" class="form-control input-xsmall input-sm input-inline">
+																		<option value="10">10</option>
+																		<option value="20">20</option>
+																		<option value="50">50</option>
+																		<option value="100">100</option>
+																		<option value="150">150</option>
+																		<option value="-1">All</option>
+																	</select>
+																	records
+																</label>
+															</div>
+															<div class="dataTables_info"></div>
+														</div>
+														<div class="col-md-4 col-sm-12"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane" id="tab_history">
+											<div class="table-container">
+												<div id="datatable_history_wrapper" class="dataTables_wrapper dataTables_extended_wrapper dataTables_extended_wrapper no-footer">
+													<div id="prefix_520777941997" class="Metronic-alerts alert alert-danger fade in">
+														<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+														<i class="fa-lg fa fa-warning"></i>
+														Could not complete request. Please check your internet connection
+													</div>
+													<div class="row">
+														<div class="col-md-8 col-sm-12">
+															<div class="dataTables_paginate paging_bootstrap_extended" id="datatable_history_paginate">
+																<div class="pagination-panel">
+																	Page
+																	<a href="#" class="btn btn-sm default prev disabled" title="Prev">
+																		<i class="fa fa-angle-left"></i>
+																	</a>
+																	<input type="text" class="pagination-panel-input form-control input-mini input-inline input-sm" maxlenght="5" style="text-align:center; margin: 0 5px;">				
+																	<a href="#" class="btn btn-sm default next disabled" title="Next">
+																		<i class="fa fa-angle-right"></i>
+																	</a>
+																	of
+																	<span class="pagination-panel-total"></span>
+																</div>
+															</div>
+															<div class="dataTables_length" id="datatable_history_length">
+																<label>
+																	<span class="seperator">|</span>
+																	View
+																	<select name="datatable_history_length" aria-controls="datatable_history" class="form-control input-xsmall input-sm input-inline">
+																		<option value="10">10</option>
+																		<option value="20">20</option>
+																		<option value="50">50</option>
+																		<option value="100">100</option>
+																		<option value="150">150</option>
+																		<option value="-1">All</option>
+																	</select>
+																	records
+																</label>
+															</div>
+															<div class="dataTables_info" id="datatable_history_info" role="status" aria-live="polite"></div>
+														</div>
+														<div class="col-md-4 col-sm-12">
+															<div class="table-group-actions pull-right"></div>
+														</div>
+													</div>
+													<div class="table-scrollable">
+														<table class="table table-striped table-bordered table-hover dataTable no-footer" id="datatable_history" aria-describedby="datatable_history_info" role="grid">
+															<thead>
+																<tr role="row" class="heading">
+																	<th width="25%" class="sorting" tabindex="0" aria-controls="datatable_history" rowspan="1" colspan="1">Datetime</th>
+																	<th width="55%" class="sorting" tabindex="0" aria-controls="datatable_history" rowspan="1" colspan="1">Description</th>
+																	<th width="10%" class="sorting" tabindex="0" aria-controls="datatable_history" rowspan="1" colspan="1">Notification</th>
+																	<th width="10%" class="sorting" tabindex="0" aria-controls="datatable_history" rowspan="1" colspan="1">Actions</th>
+																</tr>
+																<tr role="row" class="filter">
+																	<td rowspan="1" colspan="1">
+																		<div class="input-group date datetime-picker margin-bottom-5" data-date-format="dd/mm/yyyy hh:ii">
+																			<input type="text" class="form-control form-filter input-sm" readonly="" name="product_history_date_from" placeholder="From">				
+																			<span class="input-group-btn">
+																				<button class="btn btn-sm default date-set" type="button">
+																					<i class="fa fa-calendar"></i>
+																				</button>
+																			</span>
+																		</div>
+																		<div class="input-group date datetime-picker" data-date-format="dd/mm/yyyy hh:ii">
+																			<input type="text" class="form-control form-filter input-sm" readonly="" name="product_history_date_to" placeholder="To">				
+																			<span class="input-group-btn">
+																				<button class="btn btn-sm default date-set" type="button">
+																					<i class="fa fa-calendar"></i>
+																				</button>
+																			</span>
+																		</div>
+																	</td>
+																	<td rowspan="1" colspan="1">
+																		<input type="text" class="form-control form-filter input-sm" name="product_history_desc" placeholder="To"></td>
+																	<td rowspan="1" colspan="1">
+																		<select name="product_history_notification" class="form-control form-filter input-sm">
+																			<option value="">Select...</option>
+																			<option value="pending">Pending</option>
+																			<option value="notified">Notified</option>
+																			<option value="failed">Failed</option>
+																		</select>
+																	</td>
+																	<td rowspan="1" colspan="1">
+																		<div class="margin-bottom-5">
+																			<button class="btn btn-sm yellow filter-submit margin-bottom">
+																				<i class="fa fa-search"></i>
+																				Search
+																			</button>
+																		</div>
+																		<button class="btn btn-sm red filter-cancel">
+																			<i class="fa fa-times"></i>
+																			Reset
+																		</button>
+																	</td>
+																</tr>
+															</thead>
+															<tbody></tbody>
+														</table>
+													</div>
+													<div class="row">
+														<div class="col-md-8 col-sm-12">
+															<div class="dataTables_paginate paging_bootstrap_extended">
+																<div class="pagination-panel">
+																	Page
+																	<a href="#" class="btn btn-sm default prev disabled" title="Prev">
+																		<i class="fa fa-angle-left"></i>
+																	</a>
+																	<input type="text" class="pagination-panel-input form-control input-mini input-inline input-sm" maxlenght="5" style="text-align:center; margin: 0 5px;">				
+																	<a href="#" class="btn btn-sm default next disabled" title="Next">
+																		<i class="fa fa-angle-right"></i>
+																	</a>
+																	of
+																	<span class="pagination-panel-total"></span>
+																</div>
+															</div>
+															<div class="dataTables_length">
+																<label>
+																	<span class="seperator">|</span>
+																	View
+																	<select name="datatable_history_length" aria-controls="datatable_history" class="form-control input-xsmall input-sm input-inline">
+																		<option value="10">10</option>
+																		<option value="20">20</option>
+																		<option value="50">50</option>
+																		<option value="100">100</option>
+																		<option value="150">150</option>
+																		<option value="-1">All</option>
+																	</select>
+																	records
+																</label>
+															</div>
+															<div class="dataTables_info"></div>
+														</div>
+														<div class="col-md-4 col-sm-12"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- END PAGE CONTENT-->
+		</div>
+	</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+	$("#0_3_left_bar").addClass("active open");
+	$("#0_3_left_bar a:first").append('<span class="selected"></span>');
+	$("#0_3_left_bar a:first span").addClass("open");
+	$("#1_3_4_left_bar").addClass("active");
+	var img = [];
+	var prefix = "http://7xo1w8.com1.z0.glb.clouddn.com/";
+    var Qiniu_UploadUrl = "http://up.qiniu.com";
+    var progressbar = $("#progressbar"),
+        progressLabel = $(".progress-label");
+    progressbar.progressbar({
+        value: false,
+        change: function() {
+            progressLabel.text(progressbar.progressbar("value") + "%");
+        },
+        complete: function() {
+            progressLabel.text("Complete!");
+        }
+    });
+    $("#btn_upload").click(function() {
+        //普通上传
+        var Qiniu_upload = function(f, token, key) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', Qiniu_UploadUrl, true);
+            var formData, startDate;
+            formData = new FormData();
+            if (key !== null && key !== undefined) formData.append('key', key);
+            formData.append('token', token);
+            formData.append('file', f);
+            var taking;
+            xhr.upload.addEventListener("progress", function(evt) {
+                if (evt.lengthComputable) {
+                    var nowDate = new Date().getTime();
+                    taking = nowDate - startDate;
+                    var x = (evt.loaded) / 1024;
+                    var y = taking / 1000;
+                    var uploadSpeed = (x / y);
+                    var formatSpeed;
+                    if (uploadSpeed > 1024) {
+                        formatSpeed = (uploadSpeed / 1024).toFixed(2) + "Mb\/s";
+                    } else {
+                        formatSpeed = uploadSpeed.toFixed(2) + "Kb\/s";
+                    }
+                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                    progressbar.progressbar("value", percentComplete);
+                    // console && console.log(percentComplete, ",", formatSpeed);
+                }
+            }, false);
+
+            xhr.onreadystatechange = function(response) {
+                if (xhr.readyState == 4 && xhr.status == 200 && xhr.responseText != "") {
+                    var blkRet = JSON.parse(xhr.responseText);
+                    console && console.log(blkRet);
+                    img.push(blkRet['hash']);
+                    console.log(img);
+                    $("#dialog").html(xhr.responseText).dialog();
+                } else if (xhr.status != 200 && xhr.responseText) {
+
+                }
+            };
+            startDate = new Date().getTime();
+            $("#progressbar").show();
+            xhr.send(formData);
+        };
+        var token = $("#token").val();
+        if ($("#file")[0].files.length > 0 && token != "") {
+            Qiniu_upload($("#file")[0].files[0], token, $("#key").val());
+        } else {
+            console && console.log("form input error");
+        }
+    })
+	function reset() {
+		$("#room_name").val() = '';
+		$("#room_price").val() = '';
+		$("#stock").val() = '';
+		$("#room_type").val() = '';
+		$("#merchant_uuid").val() = '';
+		$("#room_description").val() = '';
+		$("#room_address").val() = '';
+	}
+	$("#saveBtn").click(function() {
+		var t1 = $("#room_name").val();
+		var t2 = $("#room_price").val();
+		var t3 = $("#stock").val();
+		var t4 = $("#room_type").val();
+		var t5 = $("#merchant_uuid").val();
+		var t6 = $("#room_description").val();
+		var t7 = $("#room_address").val();
+		$.post(
+			"{{ url_for('addRoom') }}", 
+			{t1: t1, t2: t2, t3: t3, t4: t4, t5: t5, t6: t6, t7: t7, img: img}, 
+			function(result) {
+				if (result['data'] == '100') {
+					alert('添加成功！');
+					reset();
+				} else {
+					alert('添加失败！');
+				}
+			}
+		);
+	});
+	$("#resetBtn").click(function() {
+		reset();
+	});
+</script>
+{% endblock %}
