@@ -158,9 +158,9 @@
 				</div>
 			</div> #}
 			{% for room in rooms %}
-			<div class="room_list" data-id="{{ room.room_uuid }}">
+			<div class="room_list" data-id="{{ room.uuid }}" onclick="$('#loadingToast').show(); window.location.href='{{ url_for('detail_page', id=room.uuid) }}'; ">
 				<div class="room_list_img">
-					<img src="../static/images/1.jpg">
+					<img src="http://7xo1w8.com1.z0.glb.clouddn.com/{{ room.room_img_url }}">
 					<div class="room_list_price">¥
 						<em>{{ room.room_price }}</em>/天
 					</div>
@@ -195,10 +195,6 @@
 	$("#order_btn").click(function(){
 		$("#filter").fadeIn();
 		$("#list-container").hide();
-	});
-	$(".room_list").click(function(){
-		$('#loadingToast').show();
-		window.location.href="{{ url_for('detail_page') }}";
 	});
 </script>
 {% endblock %}

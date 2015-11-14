@@ -84,12 +84,13 @@ def search_page():
 	s = signal()
 	rooms = query_db('select * from rooms')
 	return render_template("list.html", signal = s, rooms = rooms)
-# 订单详情
-@app.route('/detail')
-def detail_page():
+# 房源详情
+@app.route('/detail/<id>')
+def detail_page(id):
 	s = signal()
-	photoes = query_db('select * from photoes')
-	return render_template("detail.html", signal = s)
+	room = query_db('select * from rooms where uuid = ?', [id], one=True)
+	photoes = query_db('select * from photoes where room_uuid = ?', [id])
+	return render_template("detail.html", signal = s, room = room, photoes = photoes)
 # 优惠券列表
 @app.route('/coupon_list')
 def coupon_list_page():
@@ -285,6 +286,9 @@ def addRoom():
 	img = request.form.getlist('img[]')
 	# 生成房源的UUID
 	u = str(uuid.uuid4())
+	if not img:
+		# 缺少图片
+		return jsonify({"data": 102})
 	for i in img:
 		try:
 			uu = str(uuid.uuid4())
@@ -294,7 +298,7 @@ def addRoom():
 			# 插入数据失败
 			return jsonify({"data": 101})
 	try:
-		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [u, t1, t2, t3, t4, t5, t6, t7, int(time.time())])
+		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time, room_img_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [u, t1, t2, t3, t4, t5, t6, t7, int(time.time()), img[0]])
 		g.db.commit()
 	except Exception, e:
 		# 插入数据失败

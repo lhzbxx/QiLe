@@ -75,6 +75,7 @@ create table rooms (
     room_price text not null,
     room_remark1 text,
     room_remark2 text,
+    room_img_url text not null,
     room_type integer default 0,
     place_uuid text,
     room_description text not null,

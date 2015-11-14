@@ -249,8 +249,10 @@
 				if (result['data'] == '100') {
 					alert('添加成功！');
 					reset();
-				} else {
-					alert('添加失败！');
+				} else if (result['data'] == '101') {
+					alert('插入数据库失败！');
+				} else if (result['data'] == '102') {
+					alert('缺少图片！');
 				}
 			}
 		);
