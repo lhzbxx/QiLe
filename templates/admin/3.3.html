@@ -4,7 +4,7 @@
 		<div class="page-content">
 			<!-- BEGIN PAGE HEADER-->
 			<h3 class="page-title">
-			商家列表 <small>查看所有商家</small>
+			房源列表 <small>查看所有房源</small>
 			</h3>
 			<div class="page-bar">
 				<ul class="page-breadcrumb">
@@ -14,7 +14,7 @@
 						<i class="fa fa-angle-right"></i>
 					</li>
 					<li>
-						<a href="#">商家列表</a>
+						<a href="#">房源列表</a>
 					</li>
 				</ul>
 			</div>
@@ -24,7 +24,7 @@
 				<div class="col-md-12"><div class="portlet light">
 						<div class="portlet-title">
 							<div class="caption">
-								<i class="fa fa-shopping-cart"></i>商家列表
+								<i class="fa fa-shopping-cart"></i>房源列表
 							</div>
 							<div class="tools">
 								<a href="javascript:;" class="collapse" data-original-title="" title="">
@@ -46,16 +46,22 @@
 										<i class="fa fa-briefcase"></i> 名称
 									</th>
 									<th class="hidden-xs">
-										<i class="fa fa-question"></i> 描述
+										<i class="fa fa-question"></i> 价格
 									</th>
 									<th>
 										<i class="fa fa-bookmark"></i> 备注
 									</th>
 									<th>
-										<i class="fa fa-bookmark"></i> 联系方式
+										<i class="fa fa-bookmark"></i> 类型
+									</th>
+									<th>
+										<i class="fa fa-bookmark"></i> 商家
 									</th>
 									<th>
 										<i class="fa fa-bookmark"></i> 地址
+									</th>
+									<th>
+										<i class="fa fa-bookmark"></i> 状态
 									</th>
 									<th>
 										<i class="fa fa-bookmark"></i> 操作
@@ -63,23 +69,29 @@
 								</tr>
 								</thead>
 								<tbody>
-								{% for merchant in merchants %}
+								{% for room in rooms %}
 								<tr>
 									<td>
 										<a href="javascript:;">
-										{{ merchant.merchant_name }} </a>
+										{{ room.room_name }} </a>
 									</td>
 									<td class="hidden-xs">
-										{{ merchant.merchant_description }}
+										{{ room.room_price }}
 									</td>
 									<td>
-										{{ merchant.merchant_remark }}
+										{{ room.room_remark1 }}
 									</td>
 									<td>
-										{{ merchant.merchant_phone_number1 }}
+										{{ room.room_type }}
 									</td>
 									<td>
-										{{ merchant.merchant_address }}
+										{{ room.merchant_uuid }}
+									</td>
+									<td>
+										{{ room.room_address }}
+									</td>
+									<td>
+										<input type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="开" data-off-color="danger" data-off-text="关">
 									</td>
 									<td>
 										<a href="javascript:;" class="btn default btn-xs green-stripe">
@@ -103,6 +115,6 @@
 	$("#0_3_left_bar").addClass("active open");
 	$("#0_3_left_bar a:first").append('<span class="selected"></span>');
 	$("#0_3_left_bar a:first span").addClass("open");
-	$("#1_3_1_left_bar").addClass("active");
+	$("#1_3_3_left_bar").addClass("active");
 </script>
 {% endblock %}

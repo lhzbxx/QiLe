@@ -17,8 +17,22 @@ import uuid
 import urllib
 import urllib2
 import random
+from qiniu import Auth
 
+#########
+#
+# 初始化
+# 
+#########
 app = Flask(__name__)
+app.config.update(dict(
+	DATABASE=os.path.join(app.root_path, 'db/main.db'),
+	DEBUG=True,
+	# 生成秘钥
+	SECRET_KEY=os.urandom(24),
+	USERNAME='admin',
+	PASSWORD='default'
+))
 #
 #
 #
@@ -68,11 +82,13 @@ def index_page():
 @app.route('/search')
 def search_page():
 	s = signal()
-	return render_template("list.html", signal = s)
+	rooms = query_db('select * from rooms')
+	return render_template("list.html", signal = s, rooms = rooms)
 # 订单详情
 @app.route('/detail')
 def detail_page():
 	s = signal()
+	photoes = query_db('select * from photoes')
 	return render_template("detail.html", signal = s)
 # 优惠券列表
 @app.route('/coupon_list')
@@ -129,14 +145,26 @@ def admin_test_page():
 	return render_template("admin/1-test.html")
 @app.route('/admin/order_list')
 def admin_order_list_page():
-	return render_template("admin/2.1.html")
+	orders = query_db('select * from orders')
+	return render_template("admin/2.1.html", orders = orders)
+@app.route('/admin/merchant_list')
+def admin_merchant_list_page():
+	merchants = query_db('select * from merchants')
+	return render_template("admin/3.1.html", merchants = merchants)
 @app.route('/admin/add_merchant')
 def admin_add_merchant_page():
 	return render_template("admin/3.2.html")
+@app.route('/admin/room_list')
+def admin_room_list_page():
+	rooms = query_db('select * from rooms')
+	return render_template("admin/3.3.html", rooms = rooms)
 @app.route('/admin/add_room')
 def admin_add_room_page():
+	q = Auth('FCFQs6B-thjgt30-HEmCS9ZUCGQBxx2Zsg_WO1k5', 'Z8LCTm4gxo_dfX7HT0EhFnXmsFTGwZ8MyCFXmSXF')
+	# 上传策略仅指定空间名和上传后的文件名，其他参数仅为默认值
+	auth = q.upload_token('qile')
 	merchants = query_db('select * from merchants')
-	return render_template("admin/3.4.html", merchants = merchants)
+	return render_template("admin/3.4.html", merchants = merchants, auth = auth)
 @app.route('/admin/layout')
 def admin_layout_page():
 	return render_template("admin/admin_layout.html")
@@ -254,11 +282,23 @@ def addRoom():
 	t5 = request.form.get("t5")
 	t6 = request.form.get("t6")
 	t7 = request.form.get("t7")
-	img = request.form.get("img")
-	print img
+	img = request.form.getlist('img[]')
+	# 生成房源的UUID
 	u = str(uuid.uuid4())
-	g.db.execute('insert into rooms (uuid, room_name, room_price, stock, room_type, merchant_uuid, room_description, room_address, register_time) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [u, t1, t2, t3, t4, t5, t6, t7, int(time.time())])
-	g.db.commit()
+	for i in img:
+		try:
+			uu = str(uuid.uuid4())
+			g.db.execute('insert into photoes (uuid, url, room_uuid) values (?, ?, ?)', [uu, i, u])
+			g.db.commit()
+		except Exception, e:
+			# 插入数据失败
+			return jsonify({"data": 101})
+	try:
+		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [u, t1, t2, t3, t4, t5, t6, t7, int(time.time())])
+		g.db.commit()
+	except Exception, e:
+		# 插入数据失败
+		return jsonify({"data": 101})
 	# 添加成功。
 	return jsonify({"data": 100})
 #
@@ -271,14 +311,6 @@ def addRoom():
 # 基础组件&函数
 # 
 #########
-app.config.update(dict(
-	DATABASE=os.path.join(app.root_path, 'db/main.db'),
-	DEBUG=True,
-	# 生成秘钥
-	SECRET_KEY=os.urandom(24),
-	USERNAME='admin',
-	PASSWORD='default'
-))
 def connect_db():
 	return sqlite3.connect(app.config['DATABASE'])
 @app.before_request

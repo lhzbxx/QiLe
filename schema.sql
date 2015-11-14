@@ -96,7 +96,7 @@ create table rooms (
     device_pc integer default 0,
     device_smoke integer default 0,
     star_average integer default 0,
-    stock integer default 0,
+    stock text default '75153362648762663292463379097258784876021841565066235862633311089030688803667470190838367948312598497021919231',
     foreign key(merchant_uuid) references merchants(uuid)
 );
 

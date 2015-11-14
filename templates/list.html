@@ -60,9 +60,6 @@
 		.room_list_panel {
 			padding: 5px 7px;
 		}
-		.room_list_note {
-			display: none;
-		}
 		.room_list_note span {
 			font-size: 14px;
 			line-height: 1.43;
@@ -140,7 +137,7 @@
 					<p class="weui_toast_content">数据加载中</p>
 				</div>
 			</div>
-			<div class="room_list">
+{# 			<div class="room_list">
 				<div class="room_list_img">
 					<img src="../static/images/1.jpg">
 					<div class="room_list_price">¥
@@ -159,48 +156,32 @@
 						条评价
 					</div>
 				</div>
-			</div>
-			<div class="room_list">
+			</div> #}
+			{% for room in rooms %}
+			<div class="room_list" data-id="{{ room.room_uuid }}">
 				<div class="room_list_img">
-					<img src="../static/images/2.jpg">
+					<img src="../static/images/1.jpg">
 					<div class="room_list_price">¥
-						<em>265</em>/天
+						<em>{{ room.room_price }}</em>/天
 					</div>
 				</div>
 				<div class="room_list_panel">
-					<span>无敌江景房</span>
+					<span>{{ room.room_name }}</span>
 					<br>	
 					<div class="room_list_note">
-						<span>独立房间</span>
-						·
-						<span>4.7</span> <i class="glyphicon glyphicon-star"></i>
-						·
-						<span>28</span>
-						条评价
+						<span>
+						{% if room.room_type == 1 %}
+						标准间
+						{% elif room.room_type == 2 %}
+						大床房
+						{% else %}
+						错误！！！
+						{% endif %}
+						</span>
 					</div>
 				</div>
 			</div>
-			<div class="room_list" onclick="javascript:';">
-				<div class="room_list_img">
-					<img src="../static/images/2.jpg">
-					<div class="room_list_price">¥
-						<em>265</em>/天
-					</div>
-				</div>
-				<div class="room_list_panel">
-					<span>无敌江景房</span>
-					<br>	
-					<div class="room_list_note">
-						<span>独立房间</span>
-						·
-						<span>4.7</span>
-						<i class="glyphicon glyphicon-star"></i>
-						·
-						<span>28</span>
-						条评价
-					</div>
-				</div>
-			</div>
+			{% endfor %}
 		</div>
 	</div>
 {% endblock %}
