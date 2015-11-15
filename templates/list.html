@@ -65,6 +65,16 @@
 			line-height: 1.43;
 			color: #565a5c;
 		}
+		span:hover::before,
+		span:hover~span::before {
+			content:'★';
+			color:gold;
+			position:absolute;
+		} 
+		.star {
+			unicode-bidi:bidi-overrride;
+			direction:rtl;
+		}
 	</style>
 {% endblock %}
 {% block content %}
@@ -178,6 +188,9 @@
 						错误！！！
 						{% endif %}
 						</span>
+{# 						<div class="star">
+							<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+						</div> #}
 					</div>
 				</div>
 			</div>
