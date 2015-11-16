@@ -239,10 +239,10 @@ def register():
 	g.db.commit()
 	# 注册成功。
 	send_coupon(u'新人券', t1, 100, 40, int(time.time())+2592000, u'上海地区', 2)
-	send_coupon(u'红包券', t1, 100, 40, int(time.time())+604800, u'上海地区', 1)
-	send_coupon(u'红包券', t1, 100, 40, int(time.time())+604800, u'上海地区', 1)
-	send_coupon(u'红包券', t1, 100, 40, int(time.time())+604800, u'上海地区', 1)
-	send_coupon(u'红包券', t1, 100, 40, int(time.time())+604800, u'上海地区', 1)
+	send_coupon(u'红包券', t1, 100, 10, int(time.time())+604800, u'上海地区', 1)
+	send_coupon(u'红包券', t1, 100, 10, int(time.time())+604800, u'上海地区', 1)
+	send_coupon(u'红包券', t1, 100, 10, int(time.time())+604800, u'上海地区', 1)
+	send_coupon(u'红包券', t1, 100, 10, int(time.time())+604800, u'上海地区', 1)
 	# 成功后送优惠券
 	session['user'] = u
 	return jsonify({"data": 100})
