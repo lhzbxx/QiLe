@@ -29,18 +29,40 @@
 {% endblock %}
 {% block content %}
 	<div id="coupon_list">
-		<div class="stamp stamp01">
-			<div class="par">
-				<p class="title">优惠券</p>
-				<p class="description">上海地区</p>
-				<p class="description">有效期至 2015-06-26 </p>
+		{% for coupon in coupons %}
+			{% if coupon.coupon_state == 0 or coupon.limit_time < current %}
+			<div class="stamp stamp03">
+			{% else %}
+				{% if coupon.coupon_color == 1 %}
+				<div class="stamp stamp01 active_coupon">
+				{% elif coupon.coupon_color == 2 %}
+				<div class="stamp stamp02 active_coupon">
+				{% else %}
+				<div class="stamp stamp02 active_coupon">
+				{% endif %}
+			{% endif %}
+				<div class="par">
+					<p class="title">{{ coupon.coupon_name }}</p>
+					<p class="description">{{ coupon.coupon_remark }}</p>
+					<p class="description">
+					{% if coupon.limit_time > current %}
+					有效期至 {{ coupon.limit_time }}
+					{% else %}
+					已过期
+					{% endif %}
+					</p>
+				</div>
+				<div class="copy">
+					<span><span class="sign">￥</span>50</span>
+					{% if coupon.coupon_limit == 0 %}
+					<p></p>
+					{% else %}
+					<p>满{{ coupon.coupon_limit }}元可用</p>
+					{% endif %}
+				</div> <i></i>
 			</div>
-			<div class="copy">
-				<span><span class="sign">￥</span>50</span>
-				<p>满100元可用</p>
-			</div> <i></i>
-		</div>
-		<div class="stamp stamp02">
+		{% endfor %}
+<!-- 		<div class="stamp stamp01">
 			<div class="par">
 				<p class="title">优惠券</p>
 				<p class="description">上海地区</p>
@@ -72,18 +94,7 @@
 				<span><span class="sign">￥</span>50</span>
 				<p>满100元可用</p>
 			</div> <i></i>
-		</div>
-		<div class="stamp stamp03">
-			<div class="par">
-				<p class="title">优惠券</p>
-				<p class="description">上海地区</p>
-				<p class="description">有效期至 2015-06-26 </p>
-			</div>
-			<div class="copy">
-				<span><span class="sign">￥</span>50</span>
-				<p>满100元可用</p>
-			</div> <i></i>
-		</div>
+		</div> -->
 	</div>
 {% endblock %}
 {% block script %}

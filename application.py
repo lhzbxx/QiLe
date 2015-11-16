@@ -95,7 +95,11 @@ def detail_page(id):
 @app.route('/coupon_list')
 def coupon_list_page():
 	s = signal()
-	return render_template("coupon_list.html", signal = s)
+	user = query_db('select * from users where uuid = ?', [s.login], one=True)
+	coupons = query_db('select * from coupons where phone_number = ?', [user['phone_number']])
+	for coupon in coupons:
+		coupon['limit_time'] = time.strftime("%Y-%m-%d", time.localtime(coupon['limit_time'])) 
+	return render_template("coupon_list.html", signal = s, coupons = coupons, current = int(time.time()))
 # 订单中心
 @app.route('/order_list')
 def order_list_page():
@@ -115,10 +119,16 @@ def user_setting_page():
 def success_page():
 	return render_template("success.html")
 # 下单页面
-@app.route('/order')
-def order_page():
+@app.route('/order/<id>')
+def order_page(id):
 	s = signal()
-	return render_template("order.html", signal = s)
+	user = query_db('select * from users where uuid = ?', [s.login], one=True)
+	room = query_db('select * from rooms where uuid = ?', [id], one=True)
+	checkins = query_db('select * from user_checkin where user_uuid = ?', [s.login])
+	coupons = query_db('select * from coupons where phone_number = ?', [user['phone_number']])
+	for coupon in coupons:
+		coupon['limit_time'] = time.strftime("%Y-%m-%d", time.localtime(coupon['limit_time'])) 
+	return render_template("order.html", signal = s, room = room, user = user, checkins = checkins, coupons = coupons, current = int(time.time()))
 # 支付页面
 @app.route('/pay')
 def pay_page():
@@ -132,6 +142,9 @@ def login_page():
 @app.route('/resetpwd')
 def resetpwd_page():
 	return render_template("resetpwd.html")
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 #########
 #
@@ -225,6 +238,12 @@ def register():
 	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [u, t1, t2, t1, int(time.time())])
 	g.db.commit()
 	# 注册成功。
+	send_coupon(u'新人券', t1, 100, 40, int(time.time())+2592000, u'上海地区', 2)
+	send_coupon(u'红包券', t1, 100, 40, int(time.time())+604800, u'上海地区', 1)
+	send_coupon(u'红包券', t1, 100, 40, int(time.time())+604800, u'上海地区', 1)
+	send_coupon(u'红包券', t1, 100, 40, int(time.time())+604800, u'上海地区', 1)
+	send_coupon(u'红包券', t1, 100, 40, int(time.time())+604800, u'上海地区', 1)
+	# 成功后送优惠券
 	session['user'] = u
 	return jsonify({"data": 100})
 # 修改密码
@@ -305,6 +324,30 @@ def addRoom():
 		return jsonify({"data": 101})
 	# 添加成功。
 	return jsonify({"data": 100})
+# 更新真实姓名
+@app.route('/add_true_name-back', methods=['POST'])
+def add_true_name():
+	t1 = request.form.get("t1")
+	g.db.execute('update users set true_name = ? where uuid = ?', [t1, session['user']])
+	g.db.commit()
+	return jsonify({"data": 100})
+# 添加入住人
+@app.route('/add_checkin-back', methods=['POST'])
+def add_checkin():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	t3 = request.form.get("t3")
+	uu = str(uuid.uuid4())
+	g.db.execute('insert into user_checkin (uuid, user_uuid, name, type, identify) values (?, ?, ?, ?, ?)', [uu, session['user'], t1, t2, t3])
+	g.db.commit()
+	return jsonify({"data": 100, 'uuid': uu})
+# 移除入住人
+@app.route('/remove_checkin-back', methods=['POST'])
+def remove_checkin():
+	t1 = request.form.get("t1")
+	g.db.execute('delete from user_checkin where uuid = ?', [t1])
+	g.db.commit()
+	return jsonify({"data": 100})
 #
 #
 #
@@ -335,6 +378,17 @@ def signal():
 	else:
 		signal.login = None
 	return signal
+# 发放优惠券
+# 参数分别是：名称，手机号，限额，折扣，截止时间，备注（例如地区）和颜色。
+def send_coupon(name, phone_number, limit, discount, date, remark, color=1):
+	uu = str(uuid.uuid4())
+	g.db.execute('insert into coupons (uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+		[uu, name, phone_number, limit, discount, int(time.time()), date, remark, color])
+	g.db.commit()
+# 使用优惠券
+def use_coupon(uuid):
+	g.db.execute('update coupons set coupon_state = 1 where uuid = ?', [uuid])
+	g.db.commit()
 
 if __name__ == '__main__':
 	app.run(debug = True)

@@ -6,7 +6,19 @@ create table users (
     user_passwd text not null,
     phone_number integer not null,
     register_time integer not null,
+    true_name text,
     history_order_num integer default 0
+);
+
+drop table if exists user_checkin;
+create table user_checkin (
+    id integer primary key autoincrement,
+    uuid text unique,
+    user_uuid text,
+    name text not null,
+    type integer not null,
+    identify text not null,
+    foreign key(user_uuid) references users(uuid)
 );
 
 drop table if exists merchants;
@@ -53,10 +65,15 @@ drop table if exists coupons;
 create table coupons (
     id integer primary key autoincrement,
     uuid text unique,
-    user_uuid text not null,
-    coupon_type integer not null,
-    coupon_state integer default 0,
-    foreign key(user_uuid) references users(uuid)
+    coupon_name text not null,
+    phone_number integer not null,
+    coupon_discount integer not null,
+    coupon_limit integer not null,
+    create_time integer not null,
+    limit_time integer not null,
+    coupon_state integer default 1,
+    coupon_remark text,
+    coupon_color integer not null
 );
 
 drop table if exists places;

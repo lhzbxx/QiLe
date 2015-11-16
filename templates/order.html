@@ -63,6 +63,12 @@
 		#coupon_list p {
 			margin: 0px;
 		}
+		.remove_checkin_btn {
+			font-weight: bold;
+			margin-right: 5px;
+			border: 1px solid gray;
+			border-radius: 1pc;
+		}
 	</style>
 {% endblock %}
 {% block content %}
@@ -89,7 +95,7 @@
 					<label class="weui_label">证件类型</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
-					<select class="weui_select" name="select2">
+					<select id="liverTypeInput" class="weui_select" name="select2">
 						<option value="1">身份证</option>
 						<option value="2">军人证</option>
 						<option value="3">护照</option>
@@ -122,61 +128,39 @@
 			</div>
 		</nav>
 		<div id="coupon_list">
-			<div class="stamp stamp01">
-				<div class="par">
-					<p class="title">优惠券</p>
-					<p class="description">上海地区</p>
-					<p class="description">有效期至 2015-06-26 </p>
-				</div>
-				<div class="copy">
-					<span><span class="sign">￥</span>50</span>
-					<p>满100元可用</p>
-				</div> <i></i>
-			</div>
-			<div class="stamp stamp02">
-				<div class="par">
-					<p class="title">优惠券</p>
-					<p class="description">上海地区</p>
-					<p class="description">有效期至 2015-06-26 </p>
-				</div>
-				<div class="copy">
-					<span><span class="sign">￥</span>50</span>
-					<p>满100元可用</p>
-				</div> <i></i>
-			</div>
-			<div class="stamp stamp02">
-				<div class="par">
-					<p class="title">优惠券</p>
-					<p class="description">上海地区</p>
-					<p class="description">有效期至 2015-06-26 </p>
-				</div>
-				<div class="copy">
-					<span><span class="sign">￥</span>50</span>
-					<p>满100元可用</p>
-				</div> <i></i>
-			</div>
+		{% for coupon in coupons %}
+			{% if coupon.coupon_state == 0 or coupon.limit_time < current %}
 			<div class="stamp stamp03">
+			{% else %}
+				{% if coupon.coupon_color == 1 %}
+				<div class="stamp stamp01 active_coupon">
+				{% elif coupon.coupon_color == 2 %}
+				<div class="stamp stamp02 active_coupon">
+				{% else %}
+				<div class="stamp stamp02 active_coupon">
+				{% endif %}
+			{% endif %}
 				<div class="par">
-					<p class="title">优惠券</p>
-					<p class="description">上海地区</p>
-					<p class="description">有效期至 2015-06-26 </p>
+					<p class="title">{{ coupon.coupon_name }}</p>
+					<p class="description">{{ coupon.coupon_remark }}</p>
+					<p class="description">
+					{% if coupon.limit_time > current %}
+					有效期至 {{ coupon.limit_time }}
+					{% else %}
+					已过期
+					{% endif %}
+					</p>
 				</div>
 				<div class="copy">
 					<span><span class="sign">￥</span>50</span>
-					<p>满100元可用</p>
+					{% if coupon.coupon_limit == 0 %}
+					<p></p>
+					{% else %}
+					<p>满{{ coupon.coupon_limit }}元可用</p>
+					{% endif %}
 				</div> <i></i>
 			</div>
-			<div class="stamp stamp03">
-				<div class="par">
-					<p class="title">优惠券</p>
-					<p class="description">上海地区</p>
-					<p class="description">有效期至 2015-06-26 </p>
-				</div>
-				<div class="copy">
-					<span><span class="sign">￥</span>50</span>
-					<p>满100元可用</p>
-				</div> <i></i>
-			</div>
+		{% endfor %}
 		</div>
 	</div>
 	<div id="bd">
@@ -187,7 +171,7 @@
 					<p>名称</p>
 				</div>
 				<div class="weui_cell_ft">
-					徐家汇 美罗城 万体馆一居室
+					{{ room.room_name }}
 				</div>
 			</div>
 		</div>
@@ -216,6 +200,16 @@
 				<div class="weui_cell_bd weui_cell_primary" style="text-align: center; font-size: 27px;">
 					<p id="addLiver">+</p>
 				</div>
+				{% for checkin in checkins %}
+				<div class="weui_cell">
+					<div class="weui_cell_bd weui_cell_primary">
+						<p><span class="remove_checkin_btn" data-uuid="{{ checkin.uuid }}">&nbsp;×&nbsp;</span> {{ checkin.name }}</p>
+					</div>
+					<div class="weui_cell_ft">
+						{{ checkin.identify }}
+					</div>
+				</div>
+				{% endfor %}
 			</div>
 		</div>
 		<div class="weui_cells_title">优惠券</div>
@@ -231,7 +225,11 @@
 			<div class="weui_cell">
 				<div class="weui_cell_hd"><label class="weui_label" style="width: 70px;">真实姓名</label></div>
 				<div class="weui_cell_bd weui_cell_primary">
-					<input class="weui_input" type="text" placeholder="姓名">
+					{% if user.true_name %}
+					<input id="true_name_input" class="weui_input" type="text" placeholder="姓名" value="{{ user.true_name }}">
+					{% else %}
+					<input id="true_name_input" class="weui_input" type="text" placeholder="姓名">
+					{% endif %}
 				</div>
 			</div>
 		</div>
@@ -242,7 +240,7 @@
 					<p>总价</p>
 				</div>
 				<div class="weui_cell_ft">
-					￥ 120
+					￥ {{ room.room_price }}
 				</div>
 			</div>
 		</div>
@@ -324,7 +322,14 @@
 			$("#order_btn").click(function(){
 				// 验证表单。
 				$('#loadingToast').show();
-				window.location.href = "{{ url_for('pay_page') }}";
+				var t1 = $("#true_name_input").val();
+				$.post(
+					"{{ url_for('add_true_name') }}", 
+					{t1: t1}, 
+					function(result) {
+						window.location.href = "{{ url_for('pay_page') }}";
+					}
+				);
 			});
 			$("#addLiver").click(function(){
 				$("#filter1").fadeIn();
@@ -344,13 +349,23 @@
 			});
 			$("#addLiverBtn").click(function() {
 				var m = $("#liverNameInput").val();
+				var t = $("#liverTypeInput").val();
 				var n = $("#liverNumberInput").val();
 				if (m == "" || n == "") {
 					alert("请填写所有信息！");
 				} else {
 					// 身份证号码验证。
 					if (IdentityCodeValid(n) == true) {
-						$("#liverCells").append('<div class="weui_cell"><div class="weui_cell_bd weui_cell_primary"><p>'+m+'</p></div><div class="weui_cell_ft">'+n+'</div></div>');
+						$.post(
+							"{{ url_for('add_checkin') }}", 
+							{t1: m, t2: t, t3: n}, 
+							function(result) {
+								$("#liverCells").append('<div class="weui_cell"><div class="weui_cell_bd weui_cell_primary"><p><span class="remove_checkin_btn" data-uuid="' + result['uuid'] + '">&nbsp;×&nbsp;</span> '+m+'</p></div><div class="weui_cell_ft">'+n+'</div></div>');
+								$("#liverNameInput").val() = '';
+								$("#liverTypeInput").val() = '';
+								$("#liverNumberInput").val() = '';
+							}
+						);
 						$("#filter1").fadeOut();
 						$("#bd").show();
 					} else {
@@ -360,6 +375,15 @@
 			});
 			$("#addCounponBtn").click(function() {
 
+			});
+			$(".weui_cells").delegate(".remove_checkin_btn", "click", function() {
+				var t = $(this);
+				$.post("{{ url_for('remove_checkin') }}",
+					{t1: t.data('uuid')},
+					function(result) {
+						t.parents(".weui_cell:first").remove();
+					}
+				);
 			});
 		});
 </script>
