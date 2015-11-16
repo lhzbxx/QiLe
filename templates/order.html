@@ -66,8 +66,6 @@
 		.remove_checkin_btn {
 			font-weight: bold;
 			margin-right: 5px;
-			border: 1px solid gray;
-			border-radius: 1pc;
 		}
 	</style>
 {% endblock %}
@@ -203,7 +201,7 @@
 				{% for checkin in checkins %}
 				<div class="weui_cell">
 					<div class="weui_cell_bd weui_cell_primary">
-						<p><span class="remove_checkin_btn" data-uuid="{{ checkin.uuid }}">&nbsp;×&nbsp;</span> {{ checkin.name }}</p>
+						<p><span class="remove_checkin_btn" data-uuid="{{ checkin.uuid }}"><i class="glyphicon glyphicon-minus"></i></span> {{ checkin.name }}</p>
 					</div>
 					<div class="weui_cell_ft">
 						{{ checkin.identify }}
@@ -360,7 +358,7 @@
 							"{{ url_for('add_checkin') }}", 
 							{t1: m, t2: t, t3: n}, 
 							function(result) {
-								$("#liverCells").append('<div class="weui_cell"><div class="weui_cell_bd weui_cell_primary"><p><span class="remove_checkin_btn" data-uuid="' + result['uuid'] + '">&nbsp;×&nbsp;</span> '+m+'</p></div><div class="weui_cell_ft">'+n+'</div></div>');
+								$("#liverCells").append('<div class="weui_cell"><div class="weui_cell_bd weui_cell_primary"><p><span class="remove_checkin_btn" data-uuid="' + result['uuid'] + '"><i class="glyphicon glyphicon-minus"></i></span> '+m+'</p></div><div class="weui_cell_ft">'+n+'</div></div>');
 								$("#liverNameInput").val() = '';
 								$("#liverTypeInput").val() = '';
 								$("#liverNumberInput").val() = '';
