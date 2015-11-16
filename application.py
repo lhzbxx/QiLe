@@ -365,7 +365,7 @@ def distribute_coupon():
 	p = query_db('select * from coupons where phone_number = ? and coupon_name = ?', [t1, u'新人券'], one=True)
 	if p is None:
 		a = session['coupon']
-		send_coupon(u'新人券', t1, a['limit'], a['discount'], int(time.time())+a['date'], u'上海地区', 1)
+		send_coupon(u'新人券', t1, a['limit'], a['discount'], int(time.time())+int(a['date']), u'上海地区', 1)
 		return jsonify({"data": 100})
 	else:
 		return jsonify({"data": 101})
