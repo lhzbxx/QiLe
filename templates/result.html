@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+	<title>其乐 - 操作结果</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/weui.min.css') }}"/>
+	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+	<style type="text/css">
+		body {
+		    font-family: "Hiragino Sans GB","华文细黑","STHeiti","微软雅黑","Microsoft YaHei",SimHei,"Helvetica Neue",Helvetica,Arial,sans-serif !important;
+		    color: #888;
+		}
+		.hd {
+			padding: 2em 0;
+		}
+		.page_title {
+			text-align: center;
+			font-size: 34px;
+			color: #3CC51F;
+			font-weight: 400;
+			margin: 0 15%;
+		}
+		#login_switch {
+			padding: 0 20px;
+		}
+		.weui_input {
+			margin-left: 10px;
+		}
+		.login_tab {
+			width: 50%;
+			float: left;
+			text-align: center;
+			padding: 5px 0;
+		}
+		#login_switch .active {
+			border-bottom: 2px solid #04be02;
+		}
+		#vcode_counter {
+			margin: 9px 0;
+			height: 25px;
+			text-align: center;
+			color: black;
+			width: 110px;
+			font-size: 16px;
+			border-left: 1px solid #888;
+		}
+	</style>
+</head>
+<body>
+	<div class="page cell">
+		<div class="hd">
+			<h1 class="page_title">其乐</h1>
+		</div>
+		<div class="bd">
+			<div class="weui_msg" style="padding-top: 25px;">
+				<div class="weui_icon_area"> 
+					{% if sign == 1 %}
+					<i class="weui_icon_success weui_icon_msg"></i>
+					{% else %}
+					<i class="weui_icon_warn weui_icon_msg"></i>
+					{% endif %}
+				</div>
+				<div class="weui_text_area">
+					<h2 class="weui_msg_title">{{ title }}</h2>
+					<p class="weui_msg_desc">{{ content }}</p>
+				</div>
+				<div class="weui_opr_area">
+					<p class="weui_btn_area">
+						<a href="javascript:window.location.href='{{ url_for('index_page') }}';" class="weui_btn weui_btn_primary">确认</a>
+<!-- 						<a href="javascript:window.location.href='{{ url_for('index_page') }}';" class="weui_btn weui_btn_default">返回主页</a> -->
+					</p>
+				</div>
+<!-- 				<div class="weui_extra_area">
+					<a href="">查看详情</a>
+				</div> -->
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#loadingToast").hide();
+	});
+</script>
+</html>

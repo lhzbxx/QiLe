@@ -118,6 +118,10 @@ def user_setting_page():
 @app.route('/success')
 def success_page():
 	return render_template("success.html")
+# 结果页面
+@app.route('/result/<sign>/<title>/<content>')
+def result_page(sign, title, content):
+	return render_template("result.html", sign = sign, title = title, content = content)
 # 下单页面
 @app.route('/order/<id>')
 def order_page(id):
@@ -138,6 +142,12 @@ def pay_page():
 @app.route('/login')
 def login_page():
 	return render_template("login.html")
+# 发放优惠券页面
+@app.route('/distribute_coupon/<limit>/<discount>/<date>')
+def distribute_coupon_shanghai_ver1_page(limit, discount, date):
+	new_user_coupon = {'limit': limit, 'discount': discount, 'date': date}
+	session['coupon'] = new_user_coupon
+	return render_template("distribute_coupon.html")
 # 重置密码页面
 @app.route('/resetpwd')
 def resetpwd_page():
@@ -348,6 +358,17 @@ def remove_checkin():
 	g.db.execute('delete from user_checkin where uuid = ?', [t1])
 	g.db.commit()
 	return jsonify({"data": 100})
+# 发放优惠券
+@app.route('/distribute_coupon-back', methods=['POST'])
+def distribute_coupon():
+	t1 = request.form.get("t1")
+	p = query_db('select * from coupons where phone_number = ? and coupon_name = ?', [t1, u'新人券'], one=True)
+	if p is None:
+		a = session['coupon']
+		send_coupon(u'新人券', t1, a['limit'], a['discount'], int(time.time())+a['date'], u'上海地区', 1)
+		return jsonify({"data": 100})
+	else:
+		return jsonify({"data": 101})
 #
 #
 #

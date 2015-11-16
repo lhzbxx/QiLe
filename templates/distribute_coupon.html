@@ -3,9 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-	<title>其乐 - 404</title>
-	<link rel="stylesheet" href="../static/css/weui.min.css"/>
-	<script src="../static/js/jquery.min.js"></script>
+	<title>其乐 - 优惠券</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/weui.min.css') }}"/>
+	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 	<style type="text/css">
 		body {
 		    font-family: "Hiragino Sans GB","华文细黑","STHeiti","微软雅黑","Microsoft YaHei",SimHei,"Helvetica Neue",Helvetica,Arial,sans-serif !important;
@@ -50,7 +50,7 @@
 		</div>
 		<div class="bd">
 			<div id="tab">
-				出错啦~
+				领取优惠券
 			</div>
 			<br>
 			<br>
@@ -75,8 +75,19 @@
 						<p class="weui_toast_content">正在跳转...</p>
 					</div>
 				</div>
+				<div class="weui_cells weui_cells_form">
+					<div class="weui_cell">
+						<div class="weui_cell_hd">
+							<label class="weui_label">手机号</label>
+						</div>
+						<div class="weui_cell_bd weui_cell_primary">
+							<input id="register_username_input" class="weui_input" type="text" placeholder=""></div>
+					</div>
+				</div>
+				<br>
+				<br>
 				<div class="weui_btn_area">
-					<a class="weui_btn weui_btn_primary" id="register_btn">返回首页</a>
+					<a class="weui_btn weui_btn_primary" id="register_btn">领取</a>
 				</div>
 			</div>
 		</div>
@@ -87,8 +98,20 @@
 		$("#loadingToast").hide();
 		$("#register_btn").click(function(){
 			$("#loadingToast").show();
-			window.location.href="{{ url_for('index_page') }}";
-			$("#loadingToast").hide();
+			var t1 = $("#register_username_input").val();
+			$.post(
+				'{{ url_for("distribute_coupon") }}',
+				{t1: t1},
+				function(result) {
+					if (result['data'] == '100') {
+						// 成功后返回结果页面。
+						window.location.href="{{ url_for('.result_page', sign=1, title='领取成功', content='红包已经塞入您的账户！') }}";
+					} else if (result['data'] == '101') {
+						window.location.href="{{ url_for('.result_page', sign=0, title='领取失败', content='抱歉，您已经领取过了~') }}";
+					}
+					$("#loadingToast").hide();
+				}
+			);
 		});
 	});
 </script>
