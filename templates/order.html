@@ -29,6 +29,7 @@
 			background: white;
 			position: absolute;
 			z-index: 1005;
+			width: 100%;
 		}
 		.filter p {
 			margin: 0;
@@ -326,6 +327,7 @@
 					{t1: t1}, 
 					function(result) {
 						window.location.href = "{{ url_for('pay_page') }}";
+						$("#loadingToast").hide();
 					}
 				);
 			});

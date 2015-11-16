@@ -142,13 +142,13 @@
 			if (t1 == "" || t2 == "" || t3 == "") {
 				return;
 			}
+			// 显示正在登录中...
+			$('#loadingToast').show();
 			$.post(
 				'{{ url_for("resetpwd") }}',
 				{t1: t1, t2: t2, t3: t3},
 				function(result) {
 					if (result['data'] == '100') {
-						// 显示正在登录中...
-						$('#loadingToast').show();
 						// 成功后返回到订单界面。
 						window.location.href="{{ request.values['from'] }}";
 					} else if (result['data'] == '101') {
@@ -156,6 +156,7 @@
 					} else if (result['data'] == '102') {
 						alert("验证码错误！");
 					}
+					$('#loadingToast').show();
 				}
 			);
 		});

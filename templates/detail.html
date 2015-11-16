@@ -387,6 +387,7 @@
 		{% else %}
 			window.location.href="{{ url_for('login_page', from=request.url) }}";
 		{% endif %}
+		$("#loadingToast").hide();
 	});
 </script>
 {% endblock %}

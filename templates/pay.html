@@ -111,7 +111,7 @@
 			<br>
 			<div class="weui_btn_area">
 				<a class="weui_btn weui_btn_primary" id="order_btn">立即支付</a>
-				<a class="weui_btn weui_btn_warn" id="cancel_btn" href="javascript:$('#loadingToast').show();window.location.href='{{ url_for('index_page') }}';">取消订单</a>
+				<a class="weui_btn weui_btn_warn" id="cancel_btn" href="javascript:$('#loadingToast').show();window.location.href='{{ url_for('index_page') }}';$('#loadingToast').show();">取消订单</a>
 			</div>
 		</div>
 	</div>

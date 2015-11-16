@@ -142,6 +142,7 @@
 		$(".viewDetailBtn").click(function() {
 			$("#loadingToast").show();
 			window.location.href = "{{ url_for('order_detail_page') }}";
+			$('#loadingToast').show();
 		});
 		$(".commentBtn").click(function() {
 			alert("暂未开放，敬请期待！");
