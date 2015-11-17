@@ -4,6 +4,22 @@
 		#showPic img {
 			float: left;
 			width: 200px;
+			margin: 10px 0;
+		}
+		.delete_photo_btn {
+			font-size: 20px;
+			font-weight: normal;
+			left: -10px;
+			top: -5px;
+			color: white;
+			position: relative;
+			border-radius: 10px;
+			background: grey;
+			font-style: normal;
+			cursor: pointer;
+		}
+		.pic_list {
+			float: left;
 		}
 	</style>
 	<div class="page-content-wrapper">
@@ -67,7 +83,7 @@
 														<span class="required">*</span>
 													</label>
 													<div class="col-md-8">
-														<input id="room_name" type="text" class="form-control" name="product[name]" placeholder=""></div>
+														<input id="room_name" type="text" class="form-control" placeholder=""></div>
 												</div>
 												<div class="form-group">
 													<label class="col-md-2 control-label">
@@ -75,7 +91,7 @@
 														<span class="required">*</span>
 													</label>
 													<div class="col-md-8">
-														<input id="room_address" type="text" class="form-control" name="product[name]" placeholder=""></div>
+														<input id="room_address" type="text" class="form-control" placeholder=""></div>
 												</div>
 												<div class="form-group">
 													<label class="col-md-2 control-label">
@@ -83,7 +99,7 @@
 														<span class="required">*</span>
 													</label>
 													<div class="col-md-8">
-														<input id="room_price" type="text" class="form-control" name="product[name]" placeholder=""></div>
+														<input id="room_price" type="text" class="form-control" placeholder=""></div>
 												</div>
 												<div class="form-group">
 													<label class="col-md-2 control-label">
@@ -91,7 +107,7 @@
 														<span class="required">*</span>
 													</label>
 													<div class="col-md-8">
-														<input id="room_remark1" type="text" class="form-control" name="product[name]" placeholder=""></div>
+														<input id="room_remark1" type="text" class="form-control" placeholder=""></div>
 												</div>
 												<div class="form-group">
 													<label class="col-md-2 control-label">
@@ -207,8 +223,7 @@
                     var blkRet = JSON.parse(xhr.responseText);
                     console && console.log(blkRet);
                     img.push(blkRet['hash']);
-                    $("#showPic").append("<img src='http://7xo1w8.com1.z0.glb.clouddn.com/" +  blkRet['hash'] + "' data-hash = '" + blkRet['hash'] + "' />");
-                    console.log(img);
+                    $("#showPic").append("<div class='pic_list'><i class='delete_photo_btn' data-hash='" + blkRet['hash'] + "'>×</i><img src='http://7xo1w8.com1.z0.glb.clouddn.com/" +  blkRet['hash'] + "' data-hash = '" + blkRet['hash'] + "' /></div>");
                     $("#dialog").html(xhr.responseText).dialog();
                 } else if (xhr.status != 200 && xhr.responseText) {
 
@@ -226,13 +241,13 @@
         }
     })
 	function reset() {
-		$("#room_name").val() = '';
-		$("#room_price").val() = '';
-		$("#room_remark1").val() = '';
-		$("#room_type").val() = '';
-		$("#merchant_uuid").val() = '';
-		$("#room_description").val() = '';
-		$("#room_address").val() = '';
+		$("#room_name").val('');
+		$("#room_price").val('');
+		$("#room_remark1").val('');
+		$("#room_type").val('');
+		$("#merchant_uuid").val('');
+		$("#room_description").val('');
+		$("#room_address").val('');
 	}
 	$("#saveBtn").click(function() {
 		var t1 = $("#room_name").val();
@@ -259,6 +274,14 @@
 	});
 	$("#resetBtn").click(function() {
 		reset();
+	});
+	$(document).ready(function() {
+		$("#showPic").delegate("i.delete_photo_btn", "click", function(){
+			var t = $(this);
+			var i = img.indexOf(t.data('hash'));
+			img.splice(i, 1);
+			t.parent().remove();
+		});
 	});
 </script>
 {% endblock %}

@@ -1,0 +1,139 @@
+{% extends "admin/admin_layout.html" %}
+{% block content %}
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			<!-- BEGIN PAGE HEADER-->
+			<h3 class="page-title">
+			优惠券管理 <small>管理优惠券</small>
+			</h3>
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-home"></i>
+						<a href="index.html">活动管理</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">优惠券管理</a>
+					</li>
+				</ul>
+			</div>
+			<!-- END PAGE HEADER-->
+			<!-- BEGIN PAGE CONTENT-->
+			<div class="row">
+				<div class="col-md-12">
+					<div class="portlet light">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-shopping-cart"></i>优惠券管理
+							</div>
+							<div class="tools">
+								<a href="javascript:;" class="collapse" data-original-title="" title="">
+								</a>
+								<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title="">
+								</a>
+								<a href="javascript:;" class="reload" data-original-title="" title="">
+								</a>
+								<a href="javascript:;" class="remove" data-original-title="" title="">
+								</a>
+							</div>
+						</div>
+						<div class="portlet-body">
+							<div class="table-scrollable">
+								<table class="table table-striped table-bordered table-advance table-hover">
+								<thead>
+								<tr>
+									<th>
+										<i class="fa fa-briefcase"></i> 名称
+									</th>
+									<th>
+										<i class="fa fa-bookmark"></i> 备注
+									</th>
+									<th>
+										<i class="fa fa-bookmark"></i> 折扣
+									</th>
+									<th>
+										<i class="fa fa-bookmark"></i> 限额
+									</th>
+									<th>
+										<i class="fa fa-bookmark"></i> 限时
+									</th>
+									<th>
+										<i class="fa fa-bookmark"></i> 操作
+									</th>
+								</tr>
+								</thead>
+								<tbody>
+								{% for ct in coupon_template %}
+								<tr>
+									<td>
+										{{ ct.coupon_name }}
+									</td>
+									<td>
+										{{ ct.coupon_remark }}
+									</td>
+									<td>
+										{{ ct.coupon_discount }}
+									</td>
+									<td>
+										{{ ct.coupon_limit }}
+									</td>
+									<td>
+										{{ ct.limit_time }}
+									</td>
+									<td>
+										<a href="{{ url_for('admin_modify_merchant_page', id=merchant.uuid) }}" class="btn default btn-xs green-stripe">
+										修改 </a>
+									</td>
+								</tr>
+								{% endfor %}
+								</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END PAGE CONTENT-->
+		</div>
+	</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+	$("#0_4_left_bar").addClass("active open");
+	$("#0_4_left_bar a:first").append('<span class="selected"></span>');
+	$("#0_4_left_bar a:first span").addClass("open");
+	$("#1_4_3_left_bar").addClass("active");
+	function reset() {
+		$("#merchant_name").val() = '';
+		$("#merchant_username").val() = '';
+		$("#merchant_password").val() = '';
+		$("#merchant_remark").val() = '';
+		$("#merchant_phone_number1").val() = '';
+		$("#merchant_description").val() = '';
+	}
+	$("#saveBtn").click(function() {
+		var t1 = $("#merchant_name").val();
+		var t2 = $("#merchant_username").val();
+		var t3 = $("#merchant_password").val();
+		var t4 = $("#merchant_remark").val();
+		var t5 = $("#merchant_phone_number1").val();
+		var t6 = $("#merchant_description").val();
+		$.post(
+			"{{ url_for('addMerchant') }}", 
+			{t1: t1, t2: t2, t3: t3, t4: t4, t5: t5, t6: t6}, 
+			function(result) {
+				if (result['data'] == '100') {
+					alert('添加成功！');
+					reset();
+				} else {
+					alert('添加失败！');
+				}
+			}
+		);
+	});
+	$("#resetBtn").click(function() {
+		reset();
+	});
+</script>
+{% endblock %}

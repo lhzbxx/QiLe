@@ -4,13 +4,29 @@
 		#showPic img {
 			float: left;
 			width: 200px;
+			margin: 10px 0;
+		}
+		.delete_photo_btn {
+			font-size: 20px;
+			font-weight: normal;
+			left: -10px;
+			top: -5px;
+			color: white;
+			position: relative;
+			border-radius: 10px;
+			background: grey;
+			font-style: normal;
+			cursor: pointer;
+		}
+		.pic_list {
+			float: left;
 		}
 	</style>
 	<div class="page-content-wrapper">
 		<div class="page-content">
 			<!-- BEGIN PAGE HEADER-->
 			<h3 class="page-title">
-			添加房源 <small>添加一个新的房源</small>
+			修改房源 <small>修改一个新的房源</small>
 			</h3>
 			<div class="page-bar">
 				<ul class="page-breadcrumb">
@@ -20,7 +36,7 @@
 						<i class="fa fa-angle-right"></i>
 					</li>
 					<li>
-						<a href="#">添加房源</a>
+						<a href="#">修改房源</a>
 					</li>
 				</ul>
 			</div>
@@ -32,7 +48,7 @@
 						<div class="portlet light">
 							<div class="portlet-title">
 								<div class="caption"> <i class="fa fa-shopping-cart"></i>
-									添加房源
+									修改房源
 								</div>
 								<div class="actions btn-set">
 									<button id="resetBtn" class="btn default">
@@ -138,7 +154,10 @@
 												<div id="progressbar"><div class="progress-label"></div></div>
 												<div id="showPic">
 													{% for photo in photoes %}
-													<img src="http://7xo1w8.com1.z0.glb.clouddn.com/{{ photo.url }}">
+													<div class="pic_list">
+														<i class="delete_photo_btn" data-hash="{{ photo.url }}">×</i>
+														<img src="http://7xo1w8.com1.z0.glb.clouddn.com/{{ photo.url }}">
+													</div>
 													{% endfor %}
 												</div>
 											</div>
@@ -163,6 +182,9 @@
 	$("#0_3_left_bar a:first span").addClass("open");
 	$("#1_3_4_left_bar").addClass("active");
 	var img = [];
+	{% for photo in photoes %}
+	img.push('{{ photo.url }}');
+	{% endfor %}
 	var prefix = "http://7xo1w8.com1.z0.glb.clouddn.com/";
     var Qiniu_UploadUrl = "http://up.qiniu.com";
     var progressbar = $("#progressbar"),
@@ -211,8 +233,19 @@
                     var blkRet = JSON.parse(xhr.responseText);
                     console && console.log(blkRet);
                     img.push(blkRet['hash']);
-                    $("#showPic").append("<img src='http://7xo1w8.com1.z0.glb.clouddn.com/" +  blkRet['hash'] + "' data-hash = '" + blkRet['hash'] + "' />");
-                    console.log(img);
+                    $("#showPic").append("<div class='pic_list'><i class='delete_photo_btn' data-hash='" + blkRet['hash'] + "'>×</i><img src='http://7xo1w8.com1.z0.glb.clouddn.com/" +  blkRet['hash'] + "' data-hash = '" + blkRet['hash'] + "' /></div>");
+					$.post(
+						"{{ url_for('addPhoto') }}", 
+						{t1: '{{ room.uuid }}', img: blkRet['hash']}, 
+						function(result) {
+							if (result['data'] == '100') {
+								alert('添加成功！');
+								reset();
+							} else if (result['data'] == '101') {
+								alert('插入数据库失败！');
+							}
+						}
+					);
                     $("#dialog").html(xhr.responseText).dialog();
                 } else if (xhr.status != 200 && xhr.responseText) {
 
@@ -230,13 +263,13 @@
         }
     })
 	function reset() {
-		$("#room_name").val() = '';
-		$("#room_price").val() = '';
-		$("#room_remark1").val() = '';
-		$("#room_type").val() = '';
-		$("#merchant_uuid").val() = '';
-		$("#room_description").val() = '';
-		$("#room_address").val() = '';
+		$("#room_name").val('');
+		$("#room_price").val('');
+		$("#room_remark1").val('');
+		$("#room_type").val('');
+		$("#merchant_uuid").val('');
+		$("#room_description").val('');
+		$("#room_address").val('');
 	}
 	$("#saveBtn").click(function() {
 		var t1 = $("#room_name").val();
@@ -247,19 +280,35 @@
 		var t6 = $("#room_description").val();
 		var t7 = $("#room_address").val();
 		$.post(
-			"{{ url_for('addRoom') }}", 
-			{t1: t1, t2: t2, t3: t3, t4: t4, t5: t5, t6: t6, t7: t7, img: img}, 
+			"{{ url_for('modifyRoom') }}", 
+			{t1: t1, t2: t2, t3: t3, t4: t4, t5: t5, t6: t6, t7: t7}, 
 			function(result) {
 				if (result['data'] == '100') {
-					alert('添加成功！');
+					alert('修改成功！');
 					reset();
 				} else if (result['data'] == '101') {
 					alert('插入数据库失败！');
-				} else if (result['data'] == '102') {
-					alert('缺少图片！');
 				}
 			}
 		);
+	});
+	$(document).ready(function() {
+		$("#showPic").delegate(".delete_photo_btn", "click", function(){
+			var t = $(this);
+			$.post(
+				"{{ url_for('deletePhoto') }}", 
+				{t1: '{{ room.uuid }}', img: t.data('hash')}, 
+				function(result) {
+					if (result['data'] == '100') {
+						var i = img.indexOf(t.data('hash'));
+						img.splice(i, 1);
+						t.parent().remove();
+					} else if (result['data'] == '101') {
+						alert('删除失败！');
+					}
+				}
+			);
+		});
 	});
 	$("#resetBtn").click(function() {
 		reset();

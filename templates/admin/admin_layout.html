@@ -363,22 +363,28 @@ License: You must have a valid license purchased only from themeforest(the above
 						<span class="arrow"></span>
 					</a>
 					<ul class="sub-menu">
-						<li>
+						<li id="1_4_1_left_bar">
 							<a href="layout_horizontal_sidebar_menu.html">
 								<i class="icon-home"></i>
 								活动列表
 							</a>
 						</li>
-						<li>
+						<li id="1_4_2_left_bar">
 							<a href="index_horizontal_menu.html">
 								<i class="icon-tag"></i>
 								添加活动
 							</a>
 						</li>
-						<li>
-							<a href="ui_confirmations.html">
+						<li id="1_4_3_left_bar">
+							<a href="{{ url_for('admin_coupon_template_list_page') }}">
 								<i class="icon-present"></i>
 								优惠券管理
+							</a>
+						</li>
+						<li id="1_4_4_left_bar">
+							<a href="{{ url_for('admin_coupon_template_list_page') }}">
+								<i class="icon-present"></i>
+								添加优惠券
 							</a>
 						</li>
 					</ul>

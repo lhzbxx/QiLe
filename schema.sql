@@ -78,6 +78,18 @@ create table coupons (
     coupon_color integer not null
 );
 
+drop table if exists coupon_template;
+create table coupon_template (
+    id integer primary key autoincrement,
+    uuid text unique,
+    coupon_name text not null,
+    coupon_discount integer not null,
+    coupon_limit integer not null,
+    limit_time integer not null,
+    coupon_remark text,
+    coupon_color integer not null
+);
+
 drop table if exists places;
 create table places (
     id integer primary key autoincrement,

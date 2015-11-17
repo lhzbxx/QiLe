@@ -217,6 +217,11 @@ def admin_modify_room_page(id):
 @app.route('/admin/layout')
 def admin_layout_page():
 	return render_template("admin/admin_layout.html")
+# 优惠券模板列表
+@app.route('/admin/coupon_template_list')
+def admin_coupon_template_list_page():
+	coupon_template = query_db('select * from coupon_template')
+	return render_template("admin/4.3.html", coupon_template = coupon_template)
 #
 #
 #
@@ -352,12 +357,30 @@ def addRoom():
 			# 插入数据失败
 			return jsonify({"data": 101})
 	try:
-		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time, room_img_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [u, t1, t2, t3, t4, t5, t6, t7, int(time.time()), img[0]])
+		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time, room_img_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+			[u, t1, t2, t3, t4, t5, t6, t7, int(time.time()), img[0]])
 		g.db.commit()
 	except Exception, e:
 		# 插入数据失败
 		return jsonify({"data": 101})
 	# 添加成功。
+	return jsonify({"data": 100})
+# 添加照片
+@app.route('/addPhoto-back', methods=['POST'])
+def addPhoto():
+	t1 = request.form.get("t1")
+	img = request.form.get('img')
+	uu = str(uuid.uuid4())
+	g.db.execute('insert into photoes (uuid, url, room_uuid) values (?, ?, ?)', [uu, img, t1])
+	g.db.commit()
+	return jsonify({"data": 100})
+# 删除照片
+@app.route('/deletePhoto-back', methods=['POST'])
+def deletePhoto():
+	t1 = request.form.get("t1")
+	img = request.form.get('img')
+	g.db.execute('delete from photoes where room_uuid = ? and url = ?', [t1, img])
+	g.db.commit()
 	return jsonify({"data": 100})
 # 修改商家
 @app.route('/modifyMerchant-back', methods=['POST'])
@@ -387,22 +410,13 @@ def modifyRoom():
 	t5 = request.form.get("t5")
 	t6 = request.form.get("t6")
 	t7 = request.form.get("t7")
-	img = request.form.getlist('img[]')
-	# 生成房源的UUID
-	u = str(uuid.uuid4())
+	img = request.form.get('img')
 	if not img:
 		# 缺少图片
 		return jsonify({"data": 102})
-	for i in img:
-		try:
-			uu = str(uuid.uuid4())
-			g.db.execute('insert into photoes (uuid, url, room_uuid) values (?, ?, ?)', [uu, i, u])
-			g.db.commit()
-		except Exception, e:
-			# 插入数据失败
-			return jsonify({"data": 101})
 	try:
-		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time, room_img_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [u, t1, t2, t3, t4, t5, t6, t7, int(time.time()), img[0]])
+		g.db.execute('update rooms set room_name = ?, room_price = ?, room_remark1 = ?, room_type = ?, merchant_uuid = ?, room_description = ?, room_address = ?, room_img_url = ?) values (?, ?, ?, ?, ?, ?, ?, ?)', 
+			[t1, t2, t3, t4, t5, t6, t7, img[0]])
 		g.db.commit()
 	except Exception, e:
 		# 插入数据失败
