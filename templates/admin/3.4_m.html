@@ -1,0 +1,268 @@
+{% extends "admin/admin_layout.html" %}
+{% block content %}
+	<style type="text/css">
+		#showPic img {
+			float: left;
+			width: 200px;
+		}
+	</style>
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			<!-- BEGIN PAGE HEADER-->
+			<h3 class="page-title">
+			添加房源 <small>添加一个新的房源</small>
+			</h3>
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-home"></i>
+						<a href="index.html">商家管理</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">添加房源</a>
+					</li>
+				</ul>
+			</div>
+			<!-- END PAGE HEADER-->
+			<!-- BEGIN PAGE CONTENT-->
+			<div class="row">
+				<div class="col-md-12">
+					<form class="form-horizontal form-row-seperated" action="#">
+						<div class="portlet light">
+							<div class="portlet-title">
+								<div class="caption"> <i class="fa fa-shopping-cart"></i>
+									添加房源
+								</div>
+								<div class="actions btn-set">
+									<button id="resetBtn" class="btn default">
+										<i class="fa fa-reply"></i>
+										重写
+									</button>
+									<button id="saveBtn" class="btn green">
+										<i class="fa fa-check"></i>
+										保存
+									</button>
+								</div>
+							</div>
+							<div class="portlet-body">
+								<div class="tabbable">
+									<ul class="nav nav-tabs">
+										<li class="active">
+											<a href="#tab_general" data-toggle="tab">基本信息</a>
+										</li>
+										<li>
+											<a href="#tab_meta" data-toggle="tab">图片信息</a>
+										</li>
+										<li>
+											<a href="#tab_images" data-toggle="tab">其它</a>
+										</li>
+									</ul>
+									<div class="tab-content no-space">
+										<div class="tab-pane active" id="tab_general">
+											<div class="form-body">
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														名称：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<input id="room_name" type="text" class="form-control" placeholder="" value="{{ room.room_name }}"></div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														地址：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<input id="room_address" type="text" class="form-control" placeholder="" value="{{ room.room_address }}"></div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														价格：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<input id="room_price" type="text" class="form-control" placeholder="" value="{{ room.room_price }}"></div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														备注：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<input id="room_remark1" type="text" class="form-control" value="{{ room.room_remark1 }}" placeholder=""></div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														类型：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<select id="room_type" class="form-control input-medium" value="{{ room.room_type }}">
+															<option value="1">标准间</option>
+															<option value="2">大床房</option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														商家：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<select id="merchant_uuid" class="form-control input-medium" value="{{ room.merchant_uuid }}">
+															{% for merchant in merchants %}
+															<option value="{{ merchant.uuid }}">{{ merchant.merchant_name }}</option>
+															{% endfor %}}}
+														</select>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-md-2 control-label">
+														描述：
+														<span class="required">*</span>
+													</label>
+													<div class="col-md-8">
+														<textarea id="room_description" class="form-control">{{ room.room_description }}</textarea>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane" id="tab_meta">
+											<div class="form-body">
+										        <input style="display: none;" id="token" name="token" class="ipt" value="{{ auth }}">
+										        <input id="file" name="file" class="ipt" type="file" />
+										        <br>
+										        <input id="btn_upload" type="button" value="提交">
+												<div id="progressbar"><div class="progress-label"></div></div>
+												<div id="showPic">
+													{% for photo in photoes %}
+													<img src="http://7xo1w8.com1.z0.glb.clouddn.com/{{ photo.url }}">
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane" id="tab_images">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- END PAGE CONTENT-->
+		</div>
+	</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+	$("#0_3_left_bar").addClass("active open");
+	$("#0_3_left_bar a:first").append('<span class="selected"></span>');
+	$("#0_3_left_bar a:first span").addClass("open");
+	$("#1_3_4_left_bar").addClass("active");
+	var img = [];
+	var prefix = "http://7xo1w8.com1.z0.glb.clouddn.com/";
+    var Qiniu_UploadUrl = "http://up.qiniu.com";
+    var progressbar = $("#progressbar"),
+        progressLabel = $(".progress-label");
+    progressbar.progressbar({
+        value: false,
+        change: function() {
+            progressLabel.text(progressbar.progressbar("value") + "%");
+        },
+        complete: function() {
+            progressLabel.text("Complete!");
+        }
+    });
+    $("#btn_upload").click(function() {
+        //普通上传
+        var Qiniu_upload = function(f, token, key) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', Qiniu_UploadUrl, true);
+            var formData, startDate;
+            formData = new FormData();
+            if (key !== null && key !== undefined) formData.append('key', key);
+            formData.append('token', token);
+            formData.append('file', f);
+            var taking;
+            xhr.upload.addEventListener("progress", function(evt) {
+                if (evt.lengthComputable) {
+                    var nowDate = new Date().getTime();
+                    taking = nowDate - startDate;
+                    var x = (evt.loaded) / 1024;
+                    var y = taking / 1000;
+                    var uploadSpeed = (x / y);
+                    var formatSpeed;
+                    if (uploadSpeed > 1024) {
+                        formatSpeed = (uploadSpeed / 1024).toFixed(2) + "Mb\/s";
+                    } else {
+                        formatSpeed = uploadSpeed.toFixed(2) + "Kb\/s";
+                    }
+                    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                    progressbar.progressbar("value", percentComplete);
+                    // console && console.log(percentComplete, ",", formatSpeed);
+                }
+            }, false);
+
+            xhr.onreadystatechange = function(response) {
+                if (xhr.readyState == 4 && xhr.status == 200 && xhr.responseText != "") {
+                    var blkRet = JSON.parse(xhr.responseText);
+                    console && console.log(blkRet);
+                    img.push(blkRet['hash']);
+                    $("#showPic").append("<img src='http://7xo1w8.com1.z0.glb.clouddn.com/" +  blkRet['hash'] + "' data-hash = '" + blkRet['hash'] + "' />");
+                    console.log(img);
+                    $("#dialog").html(xhr.responseText).dialog();
+                } else if (xhr.status != 200 && xhr.responseText) {
+
+                }
+            };
+            startDate = new Date().getTime();
+            $("#progressbar").show();
+            xhr.send(formData);
+        };
+        var token = $("#token").val();
+        if ($("#file")[0].files.length > 0 && token != "") {
+            Qiniu_upload($("#file")[0].files[0], token, $("#key").val());
+        } else {
+            console && console.log("form input error");
+        }
+    })
+	function reset() {
+		$("#room_name").val() = '';
+		$("#room_price").val() = '';
+		$("#room_remark1").val() = '';
+		$("#room_type").val() = '';
+		$("#merchant_uuid").val() = '';
+		$("#room_description").val() = '';
+		$("#room_address").val() = '';
+	}
+	$("#saveBtn").click(function() {
+		var t1 = $("#room_name").val();
+		var t2 = $("#room_price").val();
+		var t3 = $("#room_remark1").val();
+		var t4 = $("#room_type").val();
+		var t5 = $("#merchant_uuid").val();
+		var t6 = $("#room_description").val();
+		var t7 = $("#room_address").val();
+		$.post(
+			"{{ url_for('addRoom') }}", 
+			{t1: t1, t2: t2, t3: t3, t4: t4, t5: t5, t6: t6, t7: t7, img: img}, 
+			function(result) {
+				if (result['data'] == '100') {
+					alert('添加成功！');
+					reset();
+				} else if (result['data'] == '101') {
+					alert('插入数据库失败！');
+				} else if (result['data'] == '102') {
+					alert('缺少图片！');
+				}
+			}
+		);
+	});
+	$("#resetBtn").click(function() {
+		reset();
+	});
+</script>
+{% endblock %}

@@ -57,6 +57,8 @@ create table orders (
     room_uuid text not null,
     deal_time integer not null,
     deal_state integer default 0,
+    deal_price integer not null,
+    deal_cost integer not null,
     foreign key(user_uuid) references users(uuid),
     foreign key(room_uuid) references rooms(uuid)
 );
@@ -89,7 +91,11 @@ create table rooms (
     uuid text unique,
     merchant_uuid text not null,
     room_name text not null,
-    room_price text not null,
+    room_price integer not null,
+    room_cost integer not null,
+    room_activity_state default 0,
+    room_activity_price integer,
+    room_activity_cost integer, 
     room_remark1 text,
     room_remark2 text,
     room_img_url text not null,

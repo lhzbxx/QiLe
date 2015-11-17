@@ -1,0 +1,141 @@
+{% extends "admin/admin_layout.html" %}
+{% block content %}
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			<!-- BEGIN PAGE HEADER-->
+			<h3 class="page-title">
+			修改商家 <small>修改一个商家</small>
+			</h3>
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-home"></i>
+						<a href="index.html">商家管理</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">修改商家</a>
+					</li>
+				</ul>
+			</div>
+			<!-- END PAGE HEADER-->
+			<!-- BEGIN PAGE CONTENT-->
+			<div class="row">
+				<div class="col-md-12">
+					<form class="form-horizontal form-row-seperated" action="#">
+						<div class="portlet light">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="fa fa-shopping-cart"></i>
+									修改商家
+								</div>
+								<div class="actions btn-set">
+									<button class="btn default">
+										<i class="fa fa-reply"></i>
+										重置
+									</button>
+									<button id="saveBtn" class="btn green">
+										<i class="fa fa-check"></i>
+										保存
+									</button>
+								</div>
+							</div>
+							<div class="portlet-body">
+								<div class="form-body">
+									<div class="form-group">
+										<label class="col-md-2 control-label">
+											名称:
+											<span class="required">*</span>
+										</label>
+										<div class="col-md-8">
+											<input id="merchant_name" type="text" class="form-control" name="product[name]" placeholder="" value="{{ merchant.merchant_name }}"></div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">
+											联系方式:
+											<span class="required">*</span>
+										</label>
+										<div class="col-md-8">
+											<input id="merchant_phone_number1" type="text" class="form-control" name="product[name]" placeholder="" value="{{ merchant.merchant_phone_number1 }}"></div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">
+											描述:
+										</label>
+										<div class="col-md-8">
+											<textarea id="merchant_description" class="form-control" name="product[description]">{{ merchant.merchant_description }}</textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">
+											备注:
+										</label>
+										<div class="col-md-8">
+											<textarea id="merchant_remark" class="form-control" name="product[short_description]">{{ merchant.merchant_remark }}</textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">
+											用户名:
+											<span class="required">*</span>
+										</label>
+										<div class="col-md-8">
+											<input id="merchant_username" type="text" class="form-control" name="product[name]" placeholder="" value="{{ merchant.merchant_username }}"></div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">
+											密码:
+											<span class="required">*</span>
+										</label>
+										<div class="col-md-8">
+											<input id="merchant_password" type="password" class="form-control" name="product[name]" placeholder="" value="{{ merchant.merchant_password }}"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- END PAGE CONTENT-->
+		</div>
+	</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+	$("#0_3_left_bar").addClass("active open");
+	$("#0_3_left_bar a:first").append('<span class="selected"></span>');
+	$("#0_3_left_bar a:first span").addClass("open");
+	$("#1_3_2_left_bar").addClass("active");
+	function reset() {
+		$("#merchant_name").val() = '';
+		$("#merchant_username").val() = '';
+		$("#merchant_password").val() = '';
+		$("#merchant_remark").val() = '';
+		$("#merchant_phone_number1").val() = '';
+		$("#merchant_description").val() = '';
+	}
+	$("#saveBtn").click(function() {
+		var t1 = $("#merchant_name").val();
+		var t2 = $("#merchant_username").val();
+		var t3 = $("#merchant_password").val();
+		var t4 = $("#merchant_remark").val();
+		var t5 = $("#merchant_phone_number1").val();
+		var t6 = $("#merchant_description").val();
+		$.post(
+			"{{ url_for('modifyMerchant') }}", 
+			{t1: t1, t2: t2, t3: t3, t4: t4, t5: t5, t6: t6, t7: '{{ merchant.uuid }}'}, 
+			function(result) {
+				if (result['data'] == '100') {
+					alert('修改成功！');
+					reset();
+				} else {
+					alert('修改失败！');
+				}
+			}
+		);
+	});
+	$("#resetBtn").click(function() {
+		reset();
+	});
+</script>
+{% endblock %}

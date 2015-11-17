@@ -94,7 +94,7 @@
 										<input type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="开" data-off-color="danger" data-off-text="关">
 									</td>
 									<td>
-										<a href="javascript:;" class="btn default btn-xs green-stripe">
+										<a href="{{ url_for('admin_modify_room_page', id=room.uuid) }}" class="btn default btn-xs green-stripe">
 										修改 </a>
 									</td>
 								</tr>

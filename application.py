@@ -161,27 +161,40 @@ def page_not_found(e):
 # 管理页面
 # 
 #########
+# 首页
 @app.route('/admin')
 def admin_index_page():
 	return render_template("admin/1.html")
 @app.route('/admin/test')
 def admin_test_page():
 	return render_template("admin/1-test.html")
+# 订单列表
 @app.route('/admin/order_list')
 def admin_order_list_page():
 	orders = query_db('select * from orders')
 	return render_template("admin/2.1.html", orders = orders)
+# 商家列表
 @app.route('/admin/merchant_list')
 def admin_merchant_list_page():
 	merchants = query_db('select * from merchants')
 	return render_template("admin/3.1.html", merchants = merchants)
+# 添加商家
 @app.route('/admin/add_merchant')
 def admin_add_merchant_page():
 	return render_template("admin/3.2.html")
+# 修改商家
+@app.route('/admin/modify_merchant/<id>')
+def admin_modify_merchant_page(id):
+	if len(id) != 36:
+		return redirect(url_for('admin_add_merchant_page'))
+	merchant = query_db('select * from merchants where uuid = ?', [id], one=True)
+	return render_template("admin/3.2_m.html", merchant = merchant)
+# 房源列表
 @app.route('/admin/room_list')
 def admin_room_list_page():
 	rooms = query_db('select * from rooms')
 	return render_template("admin/3.3.html", rooms = rooms)
+# 添加房源
 @app.route('/admin/add_room')
 def admin_add_room_page():
 	q = Auth('FCFQs6B-thjgt30-HEmCS9ZUCGQBxx2Zsg_WO1k5', 'Z8LCTm4gxo_dfX7HT0EhFnXmsFTGwZ8MyCFXmSXF')
@@ -189,6 +202,18 @@ def admin_add_room_page():
 	auth = q.upload_token('qile')
 	merchants = query_db('select * from merchants')
 	return render_template("admin/3.4.html", merchants = merchants, auth = auth)
+# 修改房源
+@app.route('/admin/modify_room/<id>')
+def admin_modify_room_page(id):
+	if len(id) != 36:
+		return redirect(url_for('admin_add_room_page'))
+	q = Auth('FCFQs6B-thjgt30-HEmCS9ZUCGQBxx2Zsg_WO1k5', 'Z8LCTm4gxo_dfX7HT0EhFnXmsFTGwZ8MyCFXmSXF')
+	# 上传策略仅指定空间名和上传后的文件名，其他参数仅为默认值
+	auth = q.upload_token('qile')
+	merchants = query_db('select * from merchants')
+	room = query_db('select * from rooms where uuid = ?', [id], one=True)
+	photoes = query_db('select * from photoes where room_uuid = ?', [id])
+	return render_template("admin/3.4_m.html", merchants = merchants, auth = auth, room = room, photoes = photoes)
 @app.route('/admin/layout')
 def admin_layout_page():
 	return render_template("admin/admin_layout.html")
@@ -333,6 +358,56 @@ def addRoom():
 		# 插入数据失败
 		return jsonify({"data": 101})
 	# 添加成功。
+	return jsonify({"data": 100})
+# 修改商家
+@app.route('/modifyMerchant-back', methods=['POST'])
+def modifyMerchant():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	t3 = request.form.get("t3")
+	t4 = request.form.get("t4")
+	t5 = request.form.get("t5")
+	t6 = request.form.get("t6")
+	t7 = request.form.get('t7')
+	merchant = query_db('select * from merchants where merchant_username = ?', [t2], one=True)
+	if merchant is None:
+		# 商家不存在。
+		return jsonify({"data": 101})
+	g.db.execute('update merchants set merchant_name = ?, merchant_username = ?, merchant_password = ?, merchant_remark = ?, merchant_phone_number1 = ?, merchant_description = ? where uuid = ?', [t1, t2, t3, t4, t5, t6, t7])
+	g.db.commit()
+	# 修改成功。
+	return jsonify({"data": 100})
+# 修改房源
+@app.route('/modifyRoom-back', methods=['POST'])
+def modifyRoom():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	t3 = request.form.get("t3")
+	t4 = request.form.get("t4")
+	t5 = request.form.get("t5")
+	t6 = request.form.get("t6")
+	t7 = request.form.get("t7")
+	img = request.form.getlist('img[]')
+	# 生成房源的UUID
+	u = str(uuid.uuid4())
+	if not img:
+		# 缺少图片
+		return jsonify({"data": 102})
+	for i in img:
+		try:
+			uu = str(uuid.uuid4())
+			g.db.execute('insert into photoes (uuid, url, room_uuid) values (?, ?, ?)', [uu, i, u])
+			g.db.commit()
+		except Exception, e:
+			# 插入数据失败
+			return jsonify({"data": 101})
+	try:
+		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time, room_img_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [u, t1, t2, t3, t4, t5, t6, t7, int(time.time()), img[0]])
+		g.db.commit()
+	except Exception, e:
+		# 插入数据失败
+		return jsonify({"data": 101})
+	# 修改成功。
 	return jsonify({"data": 100})
 # 更新真实姓名
 @app.route('/add_true_name-back', methods=['POST'])
