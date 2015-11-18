@@ -83,7 +83,7 @@
 		</div>
 		<div style="padding-bottom: 10px;">
 			<p class="weui_btn_area">
-				<a href="javascript:$('#loadingToast').show();window.location.href='{{ url_for('search_page') }}';$('#loadingToast').hide();" class="weui_btn weui_btn_primary" id="order_btn">预订房间</a>
+				<a href="" class="weui_btn weui_btn_primary" id="order_btn">预订房间</a>
 			</p>
 		</div>
 		<div id="loadingToast" class="weui_loading_toast" style="display: none;">
@@ -186,13 +186,30 @@
 		    drops: 'down',
 		    autoApply: true
 		}, 
-		function(start, end, label) {
-			$("#showTime").text(start.format('YYYY-MM-DD') + ' 到 ' + end.format('YYYY-MM-DD'));
+			function(start, end, label) {
+				$("#showTime").text(start.format('YYYY-MM-DD') + ' 到 ' + end.format('YYYY-MM-DD'));
+				date1 = start;
+				date2 = end;
 		});
 		$('#date_range_pick').click(function(){ 
 			$('html, body').animate({scrollTop:400}, 300); 
 			return false; 
 		});
+		$("#order_btn").click(function(){
+			$('#loadingToast').show();
+			$.post(
+				'{{ url_for("search") }}',
+				{t1: date1, t2: date2},
+				function(result) {
+					if (result['data'] == '100') {
+						window.location.href="{{ url_for('search_page') }}";
+					} else {
+						alert("未知错误！");
+					}
+					$("#loadingToast").hide();
+				}
+			);
+		})
 	});
 </script>
 {% endblock %}

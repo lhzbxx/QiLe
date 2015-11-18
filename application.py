@@ -17,6 +17,7 @@ import uuid
 import urllib
 import urllib2
 import random
+from datetime import date, timedelta
 from qiniu import Auth
 
 #########
@@ -81,9 +82,20 @@ def index_page():
 # 搜索结果
 @app.route('/search')
 def search_page():
-	s = signal()
-	rooms = query_db('select * from rooms')
-	return render_template("list.html", signal = s, rooms = rooms)
+	if session.get('t'):
+		print session['t']
+		s = signal()
+		rooms = query_db('select * from rooms where room_switch = ?', [1])
+		for j in range(len(rooms)-1, -1, -1):
+			# 366位的库存信息
+			p = int(rooms[j]['stock'])
+			for i in range(session['t'][0]-1, session['t'][1]):
+				if 1<<i & p == 0:
+					del rooms[j]
+					break
+		return render_template("list.html", signal = s, rooms = rooms)
+	else:
+		return redirect(url_for('index_page'))
 # 房源详情
 @app.route('/detail/<id>')
 def detail_page(id):
@@ -105,6 +117,7 @@ def coupon_list_page():
 def order_list_page():
 	s = signal()
 	return render_template("order_list.html", signal = s)
+# 下单详细
 @app.route('/order_detail')
 def order_detail_page():
 	s = signal()
@@ -126,18 +139,39 @@ def result_page(sign, title, content):
 @app.route('/order/<id>')
 def order_page(id):
 	s = signal()
+	if not s.login:
+		return redirect(url_for('index_page'))
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
 	room = query_db('select * from rooms where uuid = ?', [id], one=True)
 	checkins = query_db('select * from user_checkin where user_uuid = ?', [s.login])
 	coupons = query_db('select * from coupons where phone_number = ?', [user['phone_number']])
 	for coupon in coupons:
-		coupon['limit_time'] = time.strftime("%Y-%m-%d", time.localtime(coupon['limit_time'])) 
-	return render_template("order.html", signal = s, room = room, user = user, checkins = checkins, coupons = coupons, current = int(time.time()))
+		coupon['limit_time'] = time.strftime("%Y-%m-%d", time.localtime(coupon['limit_time']))
+	t = []
+	if session.get('t'):
+		p1 = session['t'][2].split('-')
+		t1 = date(int(p1[0]), int(p1[1]), int(p1[2])).strftime("%Y-%m-%d")
+		p2 = session['t'][3].split('-')
+		t2 = date(int(p2[0]), int(p2[1]), int(p2[2])).strftime("%Y-%m-%d")
+		t = [t1, t2]
+	else:
+		# 临时的方案，这里还是需要改的，就是说如果直接进入了房源详情的页面。这里的时间先选择成今明两天。
+		today = date.today().strftime('%Y-%m-%d')
+		tomorrow = (date.today()+timedelta(days=1)).strftime('%Y-%m-%d')
+		t = [today, tomorrow]
+		t1 = date.today().strftime('%j')
+		t2 = t1 + 1
+		session['t'] = [t1, t2, today, tomorrow]
+	return render_template("order.html", signal = s, room = room, user = user, checkins = checkins, coupons = coupons, current = int(time.time()), t = t)
 # 支付页面
-@app.route('/pay')
-def pay_page():
+@app.route('/pay/<id>')
+def pay_page(id):
 	s = signal()
-	return render_template("pay.html", signal = s)
+	# 如果没有登录，则返回首页。
+	if not s.login:
+		return redirect(url_for('index_page'))
+	order = query_db('select * from orders where uuid = ?', [id], one=True)
+	return render_template("pay.html", signal = s, order = order)
 # 登录页面
 @app.route('/login')
 def login_page():
@@ -522,6 +556,80 @@ def distribute_coupon_abandon():
 		return jsonify({"data": 100})
 	else:
 		return jsonify({"data": 101})
+# 搜索房源的参数处理
+@app.route('/search-back', methods=['POST'])
+def search():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	p = t1.split('-')
+	t3 = int(date(int(p[0]), int(p[1]), int(p[2])).strftime('%j'))
+	p = t2.split('-')
+	t4 = int(date(int(p[0]), int(p[1]), int(p[2])).strftime('%j'))
+	t = [t3, t4, t1, t2]
+	session['t'] = t
+	return jsonify({"data": 100})
+# 支付的参数处理
+@app.route('/pay-back', methods=['POST'])
+def pay():
+	if not s.login:
+		# 未登录
+		return jsonify({"data": 101})
+	room = request.form.get("room")
+	coupon = request.form.get("coupon")
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	true_name = request.form.get("true_name")
+	# 检查优惠券是否可用。
+	discount = 0
+	limit = 0
+	if coupon != '':
+		coupon = query_db('select * from coupons where uuid = ?', [coupon])
+		if coupon['coupon_state'] != 1 and coupon['limit_time'] < int(time.time()):
+			# 如果优惠券已经不可用，或者已经超过期限。
+			pass
+		else:
+			discount = coupon['coupon_discount']
+			limit = coupon['coupon_discount']
+	room = query_db('select * from rooms where uuid = ?', [room])
+	if room is None:
+		return redirect(url_for('index_page'))
+	price = 0
+	if room['room_price'] > limit:
+		price = room['room_price'] - discount
+		if price < 0:
+			price = 0
+	else:
+		price = room['room_price']
+	# 检查房间是否可用。
+	# 未完成！！！
+	if True == False:
+		# 房源已不可用。
+		return jsonify({"data": 102})
+	u = str(uuid.uuid4())
+	p = query_db('select * from user_checkin where user_uuid = ?', [s.login])
+	liver = jsonify(p)
+	try:
+		g.db.execute('insert into orders (uuid, user_uuid, room_uuid, date1, date2, deal_time, deal_price, deal_cost, liver_info, coupon_uuid, true_name) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+		 [u, s.login, room['uuid'], t1, t2, int(time.time()), price, room['room_cost'], liver, coupon, true_name])
+		g.db.commit()
+	except Exception, e:
+		print e
+		raise e
+	# 插入订单
+	return jsonify({"data": 100, "id": u})
+# 房源的开关
+@app.route('/change_room_state-back', methods=['POST'])
+def change_room_state():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	if t2 == '0':
+		g.db.execute('update rooms set room_switch = ? where uuid = ?', [1, t1])
+		g.db.commit()
+		return jsonify({"data": 100})
+	if t2 == '1':
+		g.db.execute('update rooms set room_switch = ? where uuid = ?', [0, t1])
+		g.db.commit()
+		return jsonify({"data": 100})
 def signal():
 	if session.get('user'):
 		# print session['user']

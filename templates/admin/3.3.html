@@ -91,7 +91,11 @@
 										{{ room.room_address }}
 									</td>
 									<td>
-										<input type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="开" data-off-color="danger" data-off-text="关">
+										{% if room.room_switch == 1 %}
+										<input data-uuid="{{ room.uuid }}" data-state="1" type="checkbox" class="room_switch" checked data-size="small" data-on-color="success" data-on-text="开" data-off-color="danger" data-off-text="关">
+										{% else %}
+										<input data-uuid="{{ room.uuid }}" data-state="0" type="checkbox" class="room_switch" data-size="small" data-on-color="success" data-on-text="开" data-off-color="danger" data-off-text="关">
+										{% endif %}
 									</td>
 									<td>
 										<a href="{{ url_for('admin_modify_room_page', id=room.uuid) }}" class="btn default btn-xs green-stripe">
@@ -116,5 +120,24 @@
 	$("#0_3_left_bar a:first").append('<span class="selected"></span>');
 	$("#0_3_left_bar a:first span").addClass("open");
 	$("#1_3_3_left_bar").addClass("active");
+	$(".room_switch").click(function(){
+		var t = $(this);
+		$.post(
+			'{{ url_for("change_room_state") }}',
+			{t1: t.data('uuid'), t2: t.data('state')},
+			function(result) {
+				if (result['data'] == '100') {
+					if (t.data('state') == '0') {
+						t.data('state', '1');
+					} else {
+						t.data('state', '0');
+					}
+					alert("修改状态成功！")
+				} else {
+					alert("未知错误！");
+				}
+			}
+		);
+	})
 </script>
 {% endblock %}

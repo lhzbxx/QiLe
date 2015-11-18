@@ -128,15 +128,16 @@
 		</nav>
 		<div id="coupon_list">
 		{% for coupon in coupons %}
+			{% if coupon.coupon_limit < room.room_price %}
 			{% if coupon.coupon_state == 0 or coupon.limit_time < current %}
 			<div class="stamp stamp03">
 			{% else %}
 				{% if coupon.coupon_color == 1 %}
-				<div class="stamp stamp01 active_coupon">
+				<div class="stamp stamp01 active_coupon" data-uuid={{ coupon.uuid }} data-discount={{ coupon.coupon_discount }} data-limit={{ coupon.coupon_limit }}>
 				{% elif coupon.coupon_color == 2 %}
-				<div class="stamp stamp02 active_coupon">
+				<div class="stamp stamp02 active_coupon" data-uuid={{ coupon.uuid }} data-discount={{ coupon.coupon_discount }} data-limit={{ coupon.coupon_limit }}>
 				{% else %}
-				<div class="stamp stamp02 active_coupon">
+				<div class="stamp stamp02 active_coupon" data-uuid={{ coupon.uuid }} data-discount={{ coupon.coupon_discount }} data-limit={{ coupon.coupon_limit }}>
 				{% endif %}
 			{% endif %}
 				<div class="par">
@@ -159,6 +160,7 @@
 					{% endif %}
 				</div> <i></i>
 			</div>
+			{% endif %}
 		{% endfor %}
 		</div>
 	</div>
@@ -181,7 +183,7 @@
 					<p>入住时间</p>
 				</div>
 				<div class="weui_cell_ft">
-					2015-11-08
+					{{ t[0] }}
 				</div>
 			</div>
 			<div class="weui_cell">
@@ -189,7 +191,7 @@
 					<p>离开时间</p>
 				</div>
 				<div class="weui_cell_ft">
-					2015-11-11
+					{{ t[1] }}
 				</div>
 			</div>
 		</div>
@@ -216,6 +218,14 @@
 			<div class="weui_cell" style="padding: 0px;">
 				<div class="weui_cell_bd weui_cell_primary" style="text-align: center; font-size: 27px;">
 					<p id="addCounpon">+</p>
+				</div>
+				<div class="weui_cell" id="coupon_show_div" style="display: none;">
+					<div class="weui_cell_bd weui_cell_primary">
+						<p><span id="remove_coupon_btn"><i class="glyphicon glyphicon-minus"></i></span>折扣</p>
+					</div>
+					<div class="weui_cell_ft">
+						满<span id="coupon_limit_show" data-uuid></span>元减<span id="coupon_discount_show"></span>元
+					</div>
 				</div>
 			</div>
 		</div>
@@ -270,6 +280,17 @@
 			<p class="weui_toast_content" style="margin-top: 64%;">数据加载中</p>
 		</div>
 	</div>
+	<div class="weui_dialog_alert" id="alert_dialog" style="display: none;">
+		<div class="weui_mask"></div>
+		<div class="weui_dialog">
+			<div class="weui_dialog_hd"> <strong class="weui_dialog_title" style="color: black">注意</strong>
+			</div>
+			<div class="weui_dialog_bd" id="alert_content"></div>
+			<div class="weui_dialog_ft">
+				<a href="javascript: $('#dialog1').hide();" class="weui_btn_dialog primary">确定</a>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 {% block script %}
 	<script type="text/javascript">
@@ -314,20 +335,38 @@
 						}
 					}
 				}
-				// if(!pass)  alert(tip);
+				// if(!pass) alert(tip);
 				return pass;
 			}
 			$("#footer_wrapper").hide();
 			$("#order_btn").click(function(){
 				// 验证表单。
+				// 未完成！！！
 				$('#loadingToast').show();
 				var t1 = $("#true_name_input").val();
 				$.post(
 					"{{ url_for('add_true_name') }}", 
 					{t1: t1}, 
 					function(result) {
-						window.location.href = "{{ url_for('pay_page') }}";
-						$("#loadingToast").hide();
+						var t2 = $("#coupon_limit_show").data('uuid');
+						$.post(
+							"{{ url_for('pay') }}", 
+							{t1: t1, room: '{{ room.room_name }}', coupon: t2, t1: '{{ t[0] }}', t2: '{{ t[1] }}', true_name: '{{ user.true_name }}'}, 
+							function(result) {
+								$("#loadingToast").hide();
+								if (result['data'] == '100') {
+									window.location.href = "/pay?id=" + result['id'];
+								} else if (result['data'] == '101') {
+									$("#alert_content").text("登录已失效~");
+									$("#alert_content").show();
+									window.location.href = "{{ url_for('index_page') }}";
+								} else if (result['data'] == '102') {
+									$("#alert_content").text("抱歉，房源已不可用~");
+									$("#alert_content").show();
+									window.location.href = "{{ url_for('index_page') }}";
+								}
+							}
+						);
 					}
 				);
 			});
@@ -384,6 +423,19 @@
 						t.parents(".weui_cell:first").remove();
 					}
 				);
+			});
+			$(".active_coupon").click(function() {
+				var t1 = $(this).data('discount');
+				var t2 = $(this).data('limit');
+				$("#filter2").fadeOut();
+				$("#bd").show();
+				$("#coupon_show_div").show();
+				$("#coupon_limit_show").text(t2);
+				$("#coupon_discount_show").text(t1);
+				$("#coupon_limit_show").data('uuid') = $(this).data('uuid');
+			});
+			$("#remove_coupon_btn").click(function() {
+				$("#coupon_show_div").hide();
 			});
 		});
 </script>

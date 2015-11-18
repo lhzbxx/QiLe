@@ -6,6 +6,7 @@
 	<title>其乐 - 登录</title>
 	<link rel="stylesheet" href="../static/css/weui.min.css"/>
 	<script src="../static/js/jquery.min.js"></script>
+	<script src="../static/js/jquery.cookie.js"></script>
 	<style type="text/css">
 		body {
 		    font-family: "Hiragino Sans GB","华文细黑","STHeiti","微软雅黑","Microsoft YaHei",SimHei,"Helvetica Neue",Helvetica,Arial,sans-serif !important;
@@ -164,6 +165,9 @@
 </body>
 <script type="text/javascript">
 	$(document).ready(function(){
+		if($.cookie('phone_number')) {
+			$("#login_username_input").val($.cookie('phone_number'));
+		}
 		$("#loadingToast").hide();
 		$("#tab_switch_1").click(function(){
 			$("#tab2").hide();
@@ -192,6 +196,8 @@
 				{t1: t1, t2: t2},
 				function(result) {
 					if (result['data'] == '100') {
+						// 存储手机号
+						$.cookie('phone_number', t1, { expires: 7 });
 						// 成功后返回到订单界面。
 						window.location.href="{{ request.values['from'] }}";
 					} else if (result['data'] == '101') {

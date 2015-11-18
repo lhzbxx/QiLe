@@ -71,6 +71,11 @@ create table orders (
     deal_state integer default 0,
     deal_price integer not null,
     deal_cost integer not null,
+    date1 text not null,
+    date2 text not null,
+    liver_info text,
+    coupon_uuid text,
+    true_name text,
     foreign key(user_uuid) references users(uuid),
     foreign key(room_uuid) references rooms(uuid)
 );
@@ -148,7 +153,8 @@ create table rooms (
     device_pc integer default 0,
     device_smoke integer default 0,
     star_average integer default 0,
-    stock text default '75153362648762663292463379097258784876021841565066235862633311089030688803667470190838367948312598497021919231',
+    stock text default '150306725297525326584926758194517569752043683130132471725266622178061377607334940381676735896625196994043838463',
+    room_switch integer default 1,
     foreign key(merchant_uuid) references merchants(uuid)
 );
 
