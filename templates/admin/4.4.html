@@ -4,17 +4,17 @@
 		<div class="page-content">
 			<!-- BEGIN PAGE HEADER-->
 			<h3 class="page-title">
-			添加商家 <small>添加一个新的商家</small>
+			添加优惠券 <small>添加一个新的优惠券</small>
 			</h3>
 			<div class="page-bar">
 				<ul class="page-breadcrumb">
 					<li>
 						<i class="fa fa-home"></i>
-						<a href="index.html">商家管理</a>
+						<a href="index.html">活动管理</a>
 						<i class="fa fa-angle-right"></i>
 					</li>
 					<li>
-						<a href="#">添加商家</a>
+						<a href="#">添加优惠券</a>
 					</li>
 				</ul>
 			</div>
@@ -27,7 +27,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="fa fa-shopping-cart"></i>
-									新的商家
+									新的优惠券
 								</div>
 								<div class="actions btn-set">
 									<button class="btn default">
@@ -48,47 +48,59 @@
 											<span class="required">*</span>
 										</label>
 										<div class="col-md-8">
-											<input id="merchant_name" type="text" class="form-control" placeholder=""></div>
+											<input id="coupon_name" type="text" class="form-control" placeholder=""></div>
 									</div>
 									<div class="form-group">
 										<label class="col-md-2 control-label">
-											联系方式:
+											折扣:
 											<span class="required">*</span>
 										</label>
 										<div class="col-md-8">
-											<input id="merchant_phone_number1" type="text" class="form-control" placeholder=""></div>
+											<input id="coupon_discount" type="text" class="form-control" placeholder=""></div>
 									</div>
 									<div class="form-group">
 										<label class="col-md-2 control-label">
-											描述:
+											限额:
+											<span class="required">*</span>
 										</label>
 										<div class="col-md-8">
-											<textarea id="merchant_description" class="form-control"></textarea>
-										</div>
+											<input id="coupon_limit" type="text" class="form-control" placeholder=""></div>
 									</div>
 									<div class="form-group">
 										<label class="col-md-2 control-label">
 											备注:
 										</label>
 										<div class="col-md-8">
-											<textarea id="merchant_remark" class="form-control"></textarea>
+											<textarea id="coupon_remark" class="form-control" placeholder="例如：仅限上海地区..."></textarea>
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="col-md-2 control-label">
-											用户名:
+											数量:
 											<span class="required">*</span>
 										</label>
 										<div class="col-md-8">
-											<input id="merchant_username" type="text" class="form-control" placeholder=""></div>
+											<input id="coupon_stock" type="text" class="form-control" placeholder="如果是无穷多，请填写一个大数字！"></div>
 									</div>
 									<div class="form-group">
 										<label class="col-md-2 control-label">
-											密码:
+											时限:
 											<span class="required">*</span>
 										</label>
 										<div class="col-md-8">
-											<input id="merchant_password" type="password" class="form-control" placeholder=""></div>
+											<input id="limit_time" type="text" class="form-control" placeholder="请填写总秒数~"></div>
+									</div>
+									<div class="form-group">
+										<label class="col-md-2 control-label">
+											颜色：
+											<span class="required">*</span>
+										</label>
+										<div class="col-md-8">
+											<select id="coupon_color" class="form-control input-medium" value="1">
+												<option value="1">红色</option>
+												<option value="2">橙色</option>
+											</select>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -102,28 +114,30 @@
 {% endblock %}
 {% block script %}
 <script type="text/javascript">
-	$("#0_3_left_bar").addClass("active open");
-	$("#0_3_left_bar a:first").append('<span class="selected"></span>');
-	$("#0_3_left_bar a:first span").addClass("open");
-	$("#1_3_2_left_bar").addClass("active");
+	$("#0_4_left_bar").addClass("active open");
+	$("#0_4_left_bar a:first").append('<span class="selected"></span>');
+	$("#0_4_left_bar a:first span").addClass("open");
+	$("#1_4_4_left_bar").addClass("active");
 	function reset() {
-		$("#merchant_name").val('');
-		$("#merchant_username").val('');
-		$("#merchant_password").val('');
-		$("#merchant_remark").val('');
-		$("#merchant_phone_number1").val('');
-		$("#merchant_description").val('');
+		$("#coupon_name").val('');
+		$("#coupon_discount").val('');
+		$("#coupon_limit").val('');
+		$("#limit_time").val('');
+		$("#coupon_remark").val('');
+		$("#coupon_stock").val('');
+		$("#coupon_color").val('');
 	}
 	$("#saveBtn").click(function() {
-		var t1 = $("#merchant_name").val();
-		var t2 = $("#merchant_username").val();
-		var t3 = $("#merchant_password").val();
-		var t4 = $("#merchant_remark").val();
-		var t5 = $("#merchant_phone_number1").val();
-		var t6 = $("#merchant_description").val();
+		var t1 = $("#coupon_name").val();
+		var t2 = $("#coupon_discount").val();
+		var t3 = $("#coupon_limit").val();
+		var t4 = $("#limit_time").val();
+		var t5 = $("#coupon_remark").val();
+		var t6 = $("#coupon_stock").val();
+		var t7 = $("#coupon_color").val();
 		$.post(
-			"{{ url_for('addMerchant') }}", 
-			{t1: t1, t2: t2, t3: t3, t4: t4, t5: t5, t6: t6}, 
+			"{{ url_for('add_coupon_template') }}", 
+			{t1: t1, t2: t2, t3: t3, t4: t4, t5: t5, t6: t6, t7: t7}, 
 			function(result) {
 				if (result['data'] == '100') {
 					alert('添加成功！');

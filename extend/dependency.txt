@@ -1,3 +1,4 @@
 flask-sqlalchemy
 qiniu
 flask
+qrcode

@@ -222,6 +222,10 @@ def admin_layout_page():
 def admin_coupon_template_list_page():
 	coupon_template = query_db('select * from coupon_template')
 	return render_template("admin/4.3.html", coupon_template = coupon_template)
+# 添加优惠券模板
+@app.route('/admin/add_coupon_template')
+def admin_add_coupon_template_page():
+	return render_template("admin/4.4.html")
 #
 #
 #
@@ -447,6 +451,25 @@ def remove_checkin():
 	g.db.execute('delete from user_checkin where uuid = ?', [t1])
 	g.db.commit()
 	return jsonify({"data": 100})
+# 添加优惠券模板
+@app.route('/add_coupon_template-back', methods=['POST'])
+def add_coupon_template():
+	uu = str(uuid.uuid4())
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	t3 = request.form.get("t3")
+	t4 = request.form.get("t4")
+	t5 = request.form.get("t5")
+	t6 = request.form.get("t6")
+	t7 = request.form.get("t7")
+	try:
+		g.db.execute('insert into coupon_template (uuid, coupon_name, coupon_discount, coupon_limit, limit_time, coupon_remark, coupon_stock, coupon_color, create_time) values (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+		 [uu, t1, t2, t3, t4, t5, t6, t7, int(time.time())])
+		g.db.commit()
+	except Exception, e:
+		print e
+		return jsonify({"data": 101})
+	return jsonify({"data": 100})
 # 发放优惠券
 @app.route('/distribute_coupon-back', methods=['POST'])
 def distribute_coupon():
@@ -458,6 +481,33 @@ def distribute_coupon():
 		return jsonify({"data": 100})
 	else:
 		return jsonify({"data": 101})
+def signal():
+	if session.get('user'):
+		# print session['user']
+		signal.login = session['user']
+	else:
+		signal.login = None
+	return signal
+# 送优惠券1
+# 参数分别是：名称，手机号，限额，折扣，截止时间，备注（例如地区）和颜色。
+def send_coupon(name, phone_number, limit, discount, date, remark, color=1):
+	uu = str(uuid.uuid4())
+	g.db.execute('insert into coupons (uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+		[uu, name, phone_number, limit, discount, int(time.time()), date, remark, color])
+	g.db.commit()
+# 送优惠券2
+# 参数是优惠券模板的UUID
+def send_coupon(phone_number, id):
+	uu = str(uuid.uuid4())
+	p = query_db('select * from coupon_template where uuid = ?', [id], one=True)
+	g.db.execute('insert into coupons (uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+		[uu, p['coupon_name'], phone_number, p['coupon_limit'], p['coupon_discount'], int(time.time()), p['limit_time']+int(time.time()), p['coupon_remark'], p['coupon_color']])
+	g.db.execute('update coupon_template set coupon_stock = ? where uuid = ?', [p['coupon_stock']-1, id])
+	g.db.commit()
+# 使用优惠券
+def use_coupon(id):
+	g.db.execute('update coupons set coupon_state = 1 where uuid = ?', [id])
+	g.db.commit()
 #
 #
 #
@@ -481,24 +531,6 @@ def query_db(query, args=(), one=False):
 	cur = g.db.execute(query, args)
 	rv = [dict((cur.description[idx][0], value) for idx, value in enumerate(row)) for row in cur.fetchall()]
 	return (rv[0] if rv else None) if one else rv
-def signal():
-	if session.get('user'):
-		# print session['user']
-		signal.login = session['user']
-	else:
-		signal.login = None
-	return signal
-# 发放优惠券
-# 参数分别是：名称，手机号，限额，折扣，截止时间，备注（例如地区）和颜色。
-def send_coupon(name, phone_number, limit, discount, date, remark, color=1):
-	uu = str(uuid.uuid4())
-	g.db.execute('insert into coupons (uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-		[uu, name, phone_number, limit, discount, int(time.time()), date, remark, color])
-	g.db.commit()
-# 使用优惠券
-def use_coupon(uuid):
-	g.db.execute('update coupons set coupon_state = 1 where uuid = ?', [uuid])
-	g.db.commit()
 
 if __name__ == '__main__':
 	app.run(debug = True)

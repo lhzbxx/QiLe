@@ -59,6 +59,9 @@
 										<i class="fa fa-bookmark"></i> 限时
 									</th>
 									<th>
+										<i class="fa fa-bookmark"></i> 库存
+									</th>
+									<th>
 										<i class="fa fa-bookmark"></i> 操作
 									</th>
 								</tr>
@@ -82,8 +85,13 @@
 										{{ ct.limit_time }}
 									</td>
 									<td>
-										<a href="{{ url_for('admin_modify_merchant_page', id=merchant.uuid) }}" class="btn default btn-xs green-stripe">
-										修改 </a>
+										{{ ct.coupon_stock }}
+									</td>
+									<td>
+										<a href="" class="btn btn-success btn-xs green-stripe">
+										显示 </a>
+										<a href="" class="btn btn-danger btn-xs green-stripe">
+										删除 </a>
 									</td>
 								</tr>
 								{% endfor %}
@@ -104,36 +112,5 @@
 	$("#0_4_left_bar a:first").append('<span class="selected"></span>');
 	$("#0_4_left_bar a:first span").addClass("open");
 	$("#1_4_3_left_bar").addClass("active");
-	function reset() {
-		$("#merchant_name").val() = '';
-		$("#merchant_username").val() = '';
-		$("#merchant_password").val() = '';
-		$("#merchant_remark").val() = '';
-		$("#merchant_phone_number1").val() = '';
-		$("#merchant_description").val() = '';
-	}
-	$("#saveBtn").click(function() {
-		var t1 = $("#merchant_name").val();
-		var t2 = $("#merchant_username").val();
-		var t3 = $("#merchant_password").val();
-		var t4 = $("#merchant_remark").val();
-		var t5 = $("#merchant_phone_number1").val();
-		var t6 = $("#merchant_description").val();
-		$.post(
-			"{{ url_for('addMerchant') }}", 
-			{t1: t1, t2: t2, t3: t3, t4: t4, t5: t5, t6: t6}, 
-			function(result) {
-				if (result['data'] == '100') {
-					alert('添加成功！');
-					reset();
-				} else {
-					alert('添加失败！');
-				}
-			}
-		);
-	});
-	$("#resetBtn").click(function() {
-		reset();
-	});
 </script>
 {% endblock %}

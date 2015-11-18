@@ -10,6 +10,14 @@ create table users (
     history_order_num integer default 0
 );
 
+drop table if exists user_info;
+create table user_info (
+    user_uuid primary key,
+    user_orders blob not null,
+    user_coupons blob not null,
+    foreign key(user_uuid) references users(uuid)
+);
+
 drop table if exists user_checkin;
 create table user_checkin (
     id integer primary key autoincrement,
@@ -87,7 +95,9 @@ create table coupon_template (
     coupon_limit integer not null,
     limit_time integer not null,
     coupon_remark text,
-    coupon_color integer not null
+    coupon_stock integer not null,
+    coupon_color integer not null,
+    create_time integer not null
 );
 
 drop table if exists places;
@@ -179,4 +189,14 @@ create table log (
     log_room integer default 0,
     log_advice integer default 0,
     log_coupon integer default 0
+);
+
+drop table if exists admin_users;
+create table admin_users (
+    id integer primary key autoincrement,
+    uuid text unique,
+    user_name integer not null,
+    user_passwd text not null,
+    login_session text,
+    auth integer default 1
 );
