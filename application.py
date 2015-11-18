@@ -142,12 +142,19 @@ def pay_page():
 @app.route('/login')
 def login_page():
 	return render_template("login.html")
-# 发放优惠券页面
+# 发放优惠券页面_弃用！！！
 @app.route('/distribute_coupon/<limit>/<discount>/<date>')
 def distribute_coupon_shanghai_ver1_page(limit, discount, date):
 	new_user_coupon = {'limit': limit, 'discount': discount, 'date': date}
 	session['coupon'] = new_user_coupon
-	return render_template("distribute_coupon.html")
+	return render_template("distribute_coupon_abandon.html")
+# 发放优惠券页面
+@app.route('/distribute_coupon/<id>')
+def distribute_coupon_page(id):
+	p = query_db('select * from coupon_template where uuid = ?', [id], one=True)
+	if p is None:
+		return redirect(url_for('index_page'))
+	return render_template("distribute_coupon.html", template = p)
 # 重置密码页面
 @app.route('/resetpwd')
 def resetpwd_page():
@@ -346,6 +353,7 @@ def addRoom():
 	t5 = request.form.get("t5")
 	t6 = request.form.get("t6")
 	t7 = request.form.get("t7")
+	t8 = request.form.get("t8")
 	img = request.form.getlist('img[]')
 	# 生成房源的UUID
 	u = str(uuid.uuid4())
@@ -361,8 +369,8 @@ def addRoom():
 			# 插入数据失败
 			return jsonify({"data": 101})
 	try:
-		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time, room_img_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-			[u, t1, t2, t3, t4, t5, t6, t7, int(time.time()), img[0]])
+		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time, room_cost, room_img_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+			[u, t1, t2, t3, t4, t5, t6, t7, t8, int(time.time()), img[0]])
 		g.db.commit()
 	except Exception, e:
 		# 插入数据失败
@@ -414,16 +422,19 @@ def modifyRoom():
 	t5 = request.form.get("t5")
 	t6 = request.form.get("t6")
 	t7 = request.form.get("t7")
-	img = request.form.get('img')
+	t8 = request.form.get("t8")
+	uu = request.form.get("uu")
+	img = request.form.getlist('img[]')
 	if not img:
 		# 缺少图片
 		return jsonify({"data": 102})
 	try:
-		g.db.execute('update rooms set room_name = ?, room_price = ?, room_remark1 = ?, room_type = ?, merchant_uuid = ?, room_description = ?, room_address = ?, room_img_url = ?) values (?, ?, ?, ?, ?, ?, ?, ?)', 
-			[t1, t2, t3, t4, t5, t6, t7, img[0]])
+		g.db.execute('update rooms set room_name = ?, room_price = ?, room_remark1 = ?, room_type = ?, merchant_uuid = ?, room_description = ?, room_address = ?, room_cost = ?, room_img_url = ? where uuid = ?', 
+			[t1, t2, t3, t4, t5, t6, t7, t8, img[0], uu])
 		g.db.commit()
 	except Exception, e:
 		# 插入数据失败
+		print e 
 		return jsonify({"data": 101})
 	# 修改成功。
 	return jsonify({"data": 100})
@@ -470,9 +481,39 @@ def add_coupon_template():
 		print e
 		return jsonify({"data": 101})
 	return jsonify({"data": 100})
+# 删除优惠券模板
+@app.route('/remove_coupon_template-back/<id>')
+def remove_coupon_template(id):
+	g.db.execute('delete from coupon_template where uuid = ?', [id])
+	g.db.commit()
+	return redirect(url_for('admin_coupon_template_list_page'))
 # 发放优惠券
 @app.route('/distribute_coupon-back', methods=['POST'])
 def distribute_coupon():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	p = query_db('select * from coupon_template where uuid = ?', [t2], one=True)
+	# 检查该用户是否已经领取该优惠券。
+	# ！！！未实现
+	# p = query_db('select * from coupons where phone_number = ? and coupon_name = ?', [t1, u'新人券'], one=True)
+	# if p is None:
+	# 	a = session['coupon']
+	# 	send_coupon(u'新人券', t1, a['limit'], a['discount'], int(time.time())+int(a['date']), u'上海地区', 1)
+	# 	return jsonify({"data": 100})
+	# else:
+	# 	return jsonify({"data": 101})
+	send_coupon(t1, t2)
+	return jsonify({"data": 100})
+def signal():
+	if session.get('user'):
+		# print session['user']
+		signal.login = session['user']
+	else:
+		signal.login = None
+	return signal
+# 发放优惠券_弃用！！！
+@app.route('/distribute_coupon_abandon-back', methods=['POST'])
+def distribute_coupon_abandon():
 	t1 = request.form.get("t1")
 	p = query_db('select * from coupons where phone_number = ? and coupon_name = ?', [t1, u'新人券'], one=True)
 	if p is None:

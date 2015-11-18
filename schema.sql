@@ -10,6 +10,8 @@ create table users (
     history_order_num integer default 0
 );
 
+INSERT INTO users VALUES (1, 123456, 13651608916, 123456, 13651608916, 123456, 123456, 0);
+
 drop table if exists user_info;
 create table user_info (
     user_uuid primary key,
@@ -48,6 +50,8 @@ create table merchants (
     merchant_number integer default 0
 );
 
+INSERT INTO merchants VALUES (1, 123456, 'test', '123', '123', 'test', 'test', 123456, 123456, 'test', 123456, 123456, 0, 0, 0);
+
 drop table if exists photoes;
 create table photoes (
     id integer primary key autoincrement,
@@ -85,6 +89,8 @@ create table coupons (
     coupon_remark text,
     coupon_color integer not null
 );
+
+INSERT INTO coupons VALUES (1, 123456, '123', 13651608916, 123, 123, 123456, 123456, 1, '123', 1);
 
 drop table if exists coupon_template;
 create table coupon_template (
