@@ -500,7 +500,7 @@ def remove_checkin():
 	return jsonify({"data": 100})
 # 移除商家
 @app.route('/remove_merchant-back', methods=['POST'])
-def remove_merchant():
+def admin_remove_merchant():
 	id = request.form.get("t1")
 	try:
 		g.db.execute('delete from merchants where uuid = ?', [id])
@@ -512,7 +512,7 @@ def remove_merchant():
 		return jsonify({"data": 101})
 # 移除房源
 @app.route('/remove_room-back', methods=['POST'])
-def remove_room():
+def admin_remove_room():
 	id = request.form.get("t1")
 	try:
 		g.db.execute('delete from rooms where uuid = ?', [id])
