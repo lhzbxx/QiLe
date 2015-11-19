@@ -129,6 +129,17 @@
 					</div>
 				</div>
 			</div>
+			<div class="weui_dialog_alert" id="dialog3" style="display: none;">
+				<div class="weui_mask"></div>
+				<div class="weui_dialog">
+					<div class="weui_dialog_hd"> <strong class="weui_dialog_title" style="color: black">操作</strong>
+					</div>
+					<div class="weui_dialog_bd">密码修改成功~</div>
+					<div class="weui_dialog_ft">
+						<a href="javascript: $('#dialog2').hide(); window.location.href='{{ request.values['from'] }}';" class="weui_btn_dialog primary">确定</a>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
@@ -150,7 +161,7 @@
 				function(result) {
 					if (result['data'] == '100') {
 						// 成功后返回到订单界面。
-						window.location.href="{{ request.values['from'] }}";
+						$('#dialog3').show();
 					} else if (result['data'] == '101') {
 						alert("手机号不存在！");
 					} else if (result['data'] == '102') {
