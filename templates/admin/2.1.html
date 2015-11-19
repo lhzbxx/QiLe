@@ -83,25 +83,34 @@
 									<td class="hidden-xs">
 										{{ order.user_uuid }}
 									</td>
-									<td>
-										{{ order.room_deal_time }}
+									<td class="hidden-xs">
+										{{ order.room_name }}
 									</td>
 									<td>
-										{{ order.order_deal_time }}
+										{{ order.date1 }}
 									</td>
 									<td>
-										{% if order.order_state == 1 %}
+										{{ order.date2 }}
+									</td>
+									<td>
+										{% if order.deal_state == 0 %}
+										<span class="label label-sm label-default">
+										未付款 </span>
+										{% elif order.deal_state == 1 %}
 										<span class="label label-sm label-info">
 										已付款 </span>
-										{% elif order.order_state == 2 %}
+										{% elif order.deal_state == 2 %}
 										<span class="label label-sm label-danger">
 										进行中 </span>
-										{% elif order.order_state == 3 %}
+										{% elif order.deal_state == 3 %}
 										<span class="label label-sm label-success">
 										已完成 </span>
-										{% elif order.order_state == 4 %}
+										{% elif order.deal_state == 4 %}
 										<span class="label label-sm label-warning">
 										已失效 </span>
+										{% elif order.deal_state == 5 %}
+										<span class="label label-sm label-warning">
+										已取消 </span>
 										{% else %}
 										错误！！！
 										{% endif %}
@@ -114,9 +123,8 @@
 										<a href="javascript:;" class="btn default btn-xs green-stripe">
 										完成 </a>
 										{% else %}
-										错误！！！
 										{% endif %}
-										<a href="javascript:;" class="btn danger btn-xs green-stripe">
+										<a href="javascript:$.post('{{ url_for('remove_order') }}', {t1: '{{ order.uuid }}'}, function(result) { if (result['data'] == '100') { alert('已删除！') } }); location.reload();" class="btn danger btn-xs green-stripe">
 										删除 </a>
 									</td>
 								</tr>

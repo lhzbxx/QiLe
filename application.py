@@ -171,6 +171,7 @@ def pay_page(id):
 	if not s.login:
 		return redirect(url_for('index_page'))
 	order = query_db('select * from orders where uuid = ?', [id], one=True)
+	order['liver_info'] = len(eval(order['liver_info']))-1
 	return render_template("pay.html", signal = s, order = order)
 # 登录页面
 @app.route('/login')
@@ -571,6 +572,7 @@ def search():
 # 支付的参数处理
 @app.route('/pay-back', methods=['POST'])
 def pay():
+	s = signal()
 	if not s.login:
 		# 未登录
 		return jsonify({"data": 101})
@@ -579,22 +581,24 @@ def pay():
 	t1 = request.form.get("t1")
 	t2 = request.form.get("t2")
 	true_name = request.form.get("true_name")
+	room_name = request.form.get("room_name")
 	# 检查优惠券是否可用。
 	discount = 0
 	limit = 0
 	if coupon != '':
-		coupon = query_db('select * from coupons where uuid = ?', [coupon])
-		if coupon['coupon_state'] != 1 and coupon['limit_time'] < int(time.time()):
+		c = query_db('select * from coupons where uuid = ?', [coupon], one=True)
+		if c['coupon_state'] != 1 and c['limit_time'] < int(time.time()):
 			# 如果优惠券已经不可用，或者已经超过期限。
 			pass
 		else:
-			discount = coupon['coupon_discount']
-			limit = coupon['coupon_discount']
-	room = query_db('select * from rooms where uuid = ?', [room])
+			discount = c['coupon_discount']
+			limit = c['coupon_discount']
+	room = query_db('select * from rooms where uuid = ?', [room], one=True)
 	if room is None:
-		return redirect(url_for('index_page'))
+		# 错误的房源。
+		return jsonify({"data": 103})
 	price = 0
-	if room['room_price'] > limit:
+	if room['room_price'] > int(limit):
 		price = room['room_price'] - discount
 		if price < 0:
 			price = 0
@@ -607,16 +611,34 @@ def pay():
 		return jsonify({"data": 102})
 	u = str(uuid.uuid4())
 	p = query_db('select * from user_checkin where user_uuid = ?', [s.login])
-	liver = jsonify(p)
+	liver = [len(p)]
+	if len(p) != 0:
+		for q in p:
+			liver.append([q['name'], q['type'], q['identify']])
+	liver = repr(liver)
 	try:
-		g.db.execute('insert into orders (uuid, user_uuid, room_uuid, date1, date2, deal_time, deal_price, deal_cost, liver_info, coupon_uuid, true_name) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-		 [u, s.login, room['uuid'], t1, t2, int(time.time()), price, room['room_cost'], liver, coupon, true_name])
+		g.db.execute('insert into orders (uuid, user_uuid, room_uuid, date1, date2, deal_time, deal_price, deal_cost, liver_info, coupon_uuid, true_name, room_name) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+		 [u, s.login, room['uuid'], t1, t2, int(time.time()), price, room['room_cost'], liver, coupon, true_name, room_name])
 		g.db.commit()
 	except Exception, e:
 		print e
 		raise e
 	# 插入订单
 	return jsonify({"data": 100, "id": u})
+# 取消订单
+@app.route('/cancel_order-back', methods=['POST'])
+def cancel_order():
+	t1 = request.form.get("t1")
+	g.db.execute('update orders set deal_state = 5 where uuid = ?', [t1])
+	g.db.commit()
+	return jsonify({"data": 100})
+# 删除订单
+@app.route('/remove_order-back', methods=['POST'])
+def remove_order():
+	t1 = request.form.get("t1")
+	g.db.execute('delete from orders where uuid = ?', [t1])
+	g.db.commit()
+	return jsonify({"data": 100})
 # 房源的开关
 @app.route('/change_room_state-back', methods=['POST'])
 def change_room_state():

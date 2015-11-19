@@ -249,7 +249,7 @@
 					<p>总价</p>
 				</div>
 				<div class="weui_cell_ft">
-					￥ {{ room.room_price }}
+					￥ <span id="room_price_show" data-price={{ room.room_price }}>{{ room.room_price }}</span>
 				</div>
 			</div>
 		</div>
@@ -287,7 +287,7 @@
 			</div>
 			<div class="weui_dialog_bd" id="alert_content"></div>
 			<div class="weui_dialog_ft">
-				<a href="javascript: $('#dialog1').hide();" class="weui_btn_dialog primary">确定</a>
+				<a id="confirm_btn" href="javascript: $('#dialog1').hide();" class="weui_btn_dialog primary">确定</a>
 			</div>
 		</div>
 	</div>
@@ -351,19 +351,24 @@
 						var t2 = $("#coupon_limit_show").data('uuid');
 						$.post(
 							"{{ url_for('pay') }}", 
-							{t1: t1, room: '{{ room.room_name }}', coupon: t2, t1: '{{ t[0] }}', t2: '{{ t[1] }}', true_name: '{{ user.true_name }}'}, 
+							{t1: t1, room: '{{ room.uuid }}', room_name: '{{ room.room_name }}', coupon: t2, t1: '{{ t[0] }}', t2: '{{ t[1] }}', true_name: '{{ user.true_name }}'}, 
 							function(result) {
 								$("#loadingToast").hide();
 								if (result['data'] == '100') {
-									window.location.href = "/pay?id=" + result['id'];
+									window.location.href = "/pay/" + result['id'];
 								} else if (result['data'] == '101') {
 									$("#alert_content").text("登录已失效~");
-									$("#alert_content").show();
-									window.location.href = "{{ url_for('index_page') }}";
+									$("#alert_dialog").show();
+									$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('detail_page', id=room.uuid) }}';");
 								} else if (result['data'] == '102') {
 									$("#alert_content").text("抱歉，房源已不可用~");
-									$("#alert_content").show();
-									window.location.href = "{{ url_for('index_page') }}";
+									$("#alert_dialog").show();
+									$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('index_page') }}';");
+								} else if (result['data'] == '103') {
+									$("#alert_content").text("未找到该房源~");
+									$("#alert_dialog").show();
+									$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('index_page') }}';");
+									
 								}
 							}
 						);
@@ -432,11 +437,13 @@
 				$("#coupon_show_div").show();
 				$("#coupon_limit_show").text(t2);
 				$("#coupon_discount_show").text(t1);
-				$("#coupon_limit_show").data('uuid') = $(this).data('uuid');
+				$("#coupon_limit_show").data('uuid', $(this).data('uuid'));
+				$('#room_price_show').text($("#room_price_show").data('price')-t1);
 			});
 			$("#remove_coupon_btn").click(function() {
 				$("#coupon_show_div").hide();
+				$('#room_price_show').text($("#room_price_show").data('price'));
 			});
-		});
-</script>
+		})
+	</script>
 {% endblock %}

@@ -67,6 +67,7 @@ create table orders (
     uuid text unique,
     user_uuid text not null,
     room_uuid text not null,
+    room_name text not null,
     deal_time integer not null,
     deal_state integer default 0,
     deal_price integer not null,

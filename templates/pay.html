@@ -81,13 +81,19 @@
 					<div class="weui_cell_bd weui_cell_primary">
 						<p>房间名称</p>
 					</div>
-					<div class="weui_cell_ft">无敌江景房</div>
+					<div class="weui_cell_ft">{{ order.room_name }}</div>
 				</div>
 				<div class="weui_cell">
 					<div class="weui_cell_bd weui_cell_primary">
-						<p>时间</p>
+						<p>入住时间</p>
 					</div>
-					<div class="weui_cell_ft">9-11~9-13</div>
+					<div class="weui_cell_ft">{{ order.date1 }}</div>
+				</div>
+				<div class="weui_cell">
+					<div class="weui_cell_bd weui_cell_primary">
+						<p>离开时间</p>
+					</div>
+					<div class="weui_cell_ft">{{ order.date2 }}</div>
 				</div>
 				<div class="weui_cell">
 					<div class="weui_cell_bd weui_cell_primary">
@@ -99,19 +105,19 @@
 					<div class="weui_cell_bd weui_cell_primary">
 						<p>入住人数</p>
 					</div>
-					<div class="weui_cell_ft">2</div>
+					<div class="weui_cell_ft">{{ order.liver_info }}</div>
 				</div>
 				<div class="weui_cell">
 					<div class="weui_cell_bd weui_cell_primary">
 						<p>金额</p>
 					</div>
-					<div class="weui_cell_ft">￥300</div>
+					<div class="weui_cell_ft">￥{{ order.deal_price }}</div>
 				</div>
 			</div>
 			<br>
 			<div class="weui_btn_area">
 				<a class="weui_btn weui_btn_primary" id="order_btn">立即支付</a>
-				<a class="weui_btn weui_btn_warn" id="cancel_btn" href="javascript:$('#loadingToast').show();window.location.href='{{ url_for('index_page') }}';$('#loadingToast').show();">取消订单</a>
+				<a class="weui_btn weui_btn_warn" id="cancel_btn">取消订单</a>
 			</div>
 		</div>
 	</div>
@@ -162,6 +168,19 @@
 			} else {
 				onBridgeReady();
 			}
+		});
+		$("#cancel_btn").click(function() {
+			$('#loadingToast').show();
+			$.post(
+				"{{ url_for('cancel_order') }}", 
+				{t1: '{{ order.uuid }}'}, 
+				function(result) {
+					if (result['data'] == '100') {
+						window.location.href='{{ url_for("index_page") }}';
+						$('#loadingToast').hide();
+					}
+				}
+			);
 		});
 	});
 </script>
