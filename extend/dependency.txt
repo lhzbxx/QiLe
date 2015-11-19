@@ -2,3 +2,5 @@ flask-sqlalchemy
 qiniu
 flask
 qrcode
+pypy
+gevent
