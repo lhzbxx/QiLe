@@ -153,14 +153,14 @@ def order_page(id):
 		t1 = date(int(p1[0]), int(p1[1]), int(p1[2])).strftime("%Y-%m-%d")
 		p2 = session['t'][3].split('-')
 		t2 = date(int(p2[0]), int(p2[1]), int(p2[2])).strftime("%Y-%m-%d")
-		t = [t1, t2]
+		t = [t1, t2, session['t'][0], session['t'][1]]
 	else:
 		# 临时的方案，这里还是需要改的，就是说如果直接进入了房源详情的页面。这里的时间先选择成今明两天。
 		today = date.today().strftime('%Y-%m-%d')
 		tomorrow = (date.today()+timedelta(days=1)).strftime('%Y-%m-%d')
-		t = [today, tomorrow]
-		t1 = date.today().strftime('%j')
-		t2 = t1 + 1
+		t = [today, tomorrow, t1, t2]
+		t1 = int(date.today().strftime('%j'))
+		t2 = int(t1 + 1)
 		session['t'] = [t1, t2, today, tomorrow]
 	return render_template("order.html", signal = s, room = room, user = user, checkins = checkins, coupons = coupons, current = int(time.time()), t = t)
 # 支付页面
@@ -598,12 +598,15 @@ def pay():
 		# 错误的房源。
 		return jsonify({"data": 103})
 	price = 0
-	if room['room_price'] > int(limit):
-		price = room['room_price'] - discount
+	# 总价=天数*单价-折扣
+	if not session.get('t'):
+		return jsonify({"data": 104})
+	total_day = session['t'][1] - session['t'][0] + 1
+	price = room['room_price'] * (total_day)
+	if price > int(limit):
+		price = price - discount
 		if price < 0:
 			price = 0
-	else:
-		price = room['room_price']
 	# 检查房间是否可用。
 	# 未完成！！！
 	if True == False:
