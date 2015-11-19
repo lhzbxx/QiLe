@@ -83,9 +83,8 @@ def index_page():
 @app.route('/search')
 def search_page():
 	s = signal()
-	print session['t']
 	if session.get('t'):
-		print session['t']
+		# print session['t']
 		rooms = query_db('select * from rooms where room_switch = ?', [1])
 		for j in range(len(rooms)-1, -1, -1):
 			# 366位的库存信息
@@ -96,7 +95,8 @@ def search_page():
 					break
 		return render_template("list.html", signal = s, rooms = rooms)
 	else:
-		return redirect(url_for('index_page'))
+		rooms = query_db('select * from rooms where room_switch = ?', [1])
+		return render_template("list.html", signal = s, rooms = rooms)
 # 房源详情
 @app.route('/detail/<id>')
 def detail_page(id):
