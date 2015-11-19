@@ -82,6 +82,7 @@ def index_page():
 # 搜索结果
 @app.route('/search')
 def search_page():
+	print session['t']
 	if session.get('t'):
 		print session['t']
 		s = signal()
