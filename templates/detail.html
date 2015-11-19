@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block title %}房间详情{% endblock %}
 {% block header %}
-	<link rel="stylesheet" href="../static/css/skippr.css"/>
-	<script src="../static/js/skippr.min.js"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/swiper.min.css') }}"/>
+	<script src="{{ url_for('static', filename='js/swiper.min.js') }}"></script>
 	<style type="text/css">
 		.aria-hidden {
 			right: 15px;
@@ -36,6 +36,28 @@
 			height: 250px;
 			width: 100%;
 		}
+	    .swiper-container {
+	        width: 100%;
+	        height: 100%;
+	    }
+	    .swiper-slide {
+	        text-align: center;
+	        font-size: 18px;
+	        background: #fff;
+	        /* Center slide text vertically */
+	        display: -webkit-box;
+	        display: -ms-flexbox;
+	        display: -webkit-flex;
+	        display: flex;
+	        -webkit-box-pack: center;
+	        -ms-flex-pack: center;
+	        -webkit-justify-content: center;
+	        justify-content: center;
+	        -webkit-box-align: center;
+	        -ms-flex-align: center;
+	        -webkit-align-items: center;
+	        align-items: center;
+	    }
 		.room_list_price {
 			text-align: center;
 			padding: 0 12px;
@@ -121,14 +143,14 @@
 			text-align: center;
 			font-size: 20px;
 			background-color: white;
-			margin: 10px 10px 5px 10px;
+			margin: 8px 10px 0px 10px;
 			padding: 5px;
 		}
 		#descriptionWrapper {
 			text-align: left;
 			font-size: 16px;
 			background-color: white;
-			margin: 0px 10px 10px 10px;
+			margin: 8px 10px 8px 10px;
 			padding: 10px;
 		}
 	</style>
@@ -172,11 +194,22 @@
 		<div class="jumbotron" style="margin-bottom: 0px; padding: 0px 0px 3px 0px;">
 			<div class="room_list">
 				<div class="room_list_img">
-					{% if photoes[0] %}
-					<img src="http://7xo1w8.com1.z0.glb.clouddn.com/{{ photoes[0].url }}?imageView2/0/h/250/interlace/1">
-					{% else %}
-					<img src="">
-					{% endif %}
+					<!-- Slider main container -->
+					<div class="swiper-container" style="padding-top: 0px;">
+					    <!-- Additional required wrapper -->
+					    <div class="swiper-wrapper" style="width: 100%;">
+					        <!-- Slides -->
+							{% for photo in photoes %}
+							<div class="swiper-slide" style="width: 200%; height: 250px; background-image: url(http://7xo1w8.com1.z0.glb.clouddn.com/{{ photo.url }}?imageView2/0/h/250/interlace/1)"></div>
+							{% endfor %}
+					    </div>
+					    <!-- If we need pagination -->
+					    <div class="swiper-pagination"></div>
+					    
+					    <!-- If we need navigation buttons -->
+					    <div class="swiper-button-prev"></div>
+					    <div class="swiper-button-next"></div>
+					</div>
 					<div class="room_list_price">¥
 						<em>{{ room.room_price }}</em>/天
 					</div>
@@ -312,12 +345,24 @@
 		<br>	
 		<br>
 		<div id="photo-modal" class="modal photo-modal" style="">
-			<div id="container" style="height: 300px; width: 100%; position: absolute; margin-top: 125px;">
-				<div id="slide_skippr">
+			<!-- Slider main container -->
+			<div class="swiper-container" style="height: 300px; width: 100%; position: absolute; margin-top: 125px;">
+			    <!-- Additional required wrapper -->
+			    <div class="swiper-wrapper">
+			        <!-- Slides -->
 					{% for photo in photoes %}
 					<div style="background-image: url(http://7xo1w8.com1.z0.glb.clouddn.com/{{ photo.url }}?imageView2/0/h/250/interlace/1)"></div>
 					{% endfor %}
-				</div>
+			    </div>
+			    <!-- If we need pagination -->
+			    <div class="swiper-pagination"></div>
+			    
+			    <!-- If we need navigation buttons -->
+			    <div class="swiper-button-prev"></div>
+			    <div class="swiper-button-next"></div>
+			    
+			    <!-- If we need scrollbar -->
+			    <div class="swiper-scrollbar"></div>
 			</div>
 			<div class="modal-table">
 				<div class="modal-cell">
@@ -356,25 +401,20 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#loadingToast").hide();
-        $("#slide_skippr").skippr({
-            transition: 'slide',
-            speed: 1000,
-            easing: 'easeOutQuart',
-            navType: 'bubble',
-            childrenElementType: 'div',
-            arrows: true,
-            autoPlay: false,
-            autoPlayDuration: 5000,
-            keyboardOnAlways: true,
-            hidePrevious: false
-        });
+		//initialize swiper when document ready 
+		var mySwiper = new Swiper ('.swiper-container', {
+			// Optional parameters
+			pagination: '.swiper-pagination',
+			direction: 'horizontal',
+			loop: true
+		})
         $("#photo-modal").hide();
     }); 
     $(".room_list_img").click(function(){
-    	$('#photo-modal').show();
+    	// $('#photo-modal').show();
     });
     $("#close_img_btn").click(function(){
-    	$('#photo-modal').hide();
+    	// $('#photo-modal').hide();
     });
 	// $("#close_btn").click(function(){
 	// 	$("#book").fadeOut();
