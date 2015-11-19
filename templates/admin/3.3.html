@@ -101,7 +101,7 @@
 										<a href="{{ url_for('admin_modify_room_page', id=room.uuid) }}" class="btn default btn-xs green-stripe">
 										修改 </a>
 										<a href="javascript: $.post('{{ url_for('admin_remove_room') }}', {t1: '{{ room.uuid }}'}, function(result) { if (result['data'] == '100') { alert('已删除！') } }); location.reload();" class="btn default btn-xs green-stripe">
-										修改 </a>
+										删除 </a>
 									</td>
 								</tr>
 								{% endfor %}

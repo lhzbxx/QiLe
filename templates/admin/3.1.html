@@ -85,7 +85,7 @@
 										<a href="{{ url_for('admin_modify_merchant_page', id=merchant.uuid) }}" class="btn default btn-xs green-stripe">
 										修改 </a>
 										<a href="javascript: $.post('{{ url_for('admin_remove_merchant') }}', {t1: '{{ merchant.uuid }}'}, function(result) { if (result['data'] == '100') { alert('已删除！') } }); location.reload();" class="btn default btn-xs green-stripe">
-										修改 </a>
+										删除 </a>
 									</td>
 								</tr>
 								{% endfor %}
