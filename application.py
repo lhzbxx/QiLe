@@ -498,6 +498,30 @@ def remove_checkin():
 	g.db.execute('delete from user_checkin where uuid = ?', [t1])
 	g.db.commit()
 	return jsonify({"data": 100})
+# 移除商家
+@app.route('/remove_merchant-back', methods=['POST'])
+def remove_merchant():
+	id = request.form.get("t1")
+	try:
+		g.db.execute('delete from merchants where uuid = ?', [id])
+		g.db.commit()
+		return jsonify({"data": 100})
+	except Exception, e:
+		print e
+		raise e
+		return jsonify({"data": 101})
+# 移除房源
+@app.route('/remove_room-back', methods=['POST'])
+def remove_room():
+	id = request.form.get("t1")
+	try:
+		g.db.execute('delete from rooms where uuid = ?', [id])
+		g.db.commit()
+		return jsonify({"data": 100})
+	except Exception, e:
+		print e
+		raise e
+		return jsonify({"data": 101})
 # 添加优惠券模板
 @app.route('/add_coupon_template-back', methods=['POST'])
 def add_coupon_template():
