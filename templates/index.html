@@ -180,16 +180,15 @@
 		    locale: {
 		      format: 'YYYY-MM-DD'
 		    },
-		    startDate: date1,
-		    endDate: date2,
+		    minDate: date1,
 		    opens: 'center',
 		    drops: 'down',
 		    autoApply: true
 		}, 
 			function(start, end, label) {
 				$("#showTime").text(start.format('YYYY-MM-DD') + ' 到 ' + end.format('YYYY-MM-DD'));
-				date1 = start;
-				date2 = end;
+				date1 = start.format('YYYY-MM-DD');
+				date2 = end.format('YYYY-MM-DD');
 		});
 		$('#date_range_pick').click(function(){ 
 			$('html, body').animate({scrollTop:400}, 300); 
@@ -203,10 +202,10 @@
 				function(result) {
 					if (result['data'] == '100') {
 						window.location.href="{{ url_for('search_page') }}";
+						$("#loadingToast").hide();
 					} else {
 						alert("未知错误！");
 					}
-					$("#loadingToast").hide();
 				}
 			);
 		})

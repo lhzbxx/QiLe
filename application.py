@@ -82,10 +82,10 @@ def index_page():
 # 搜索结果
 @app.route('/search')
 def search_page():
+	s = signal()
 	print session['t']
 	if session.get('t'):
 		print session['t']
-		s = signal()
 		rooms = query_db('select * from rooms where room_switch = ?', [1])
 		for j in range(len(rooms)-1, -1, -1):
 			# 366位的库存信息
