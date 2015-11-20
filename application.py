@@ -13,6 +13,7 @@ from flask import *
 import sqlite3
 import os
 import time
+import sched
 import uuid
 import urllib
 import urllib2
@@ -34,6 +35,17 @@ app.config.update(dict(
 	USERNAME='admin',
 	PASSWORD='default'
 ))
+schedule = sched.scheduler(time.time, time.sleep)
+# 检测订单是否已经超时。
+def check_order_valid_func(order_uuid):
+	order = query_db('select * from orders where uuid = ?', [order_uuid], one=True)
+	if order['deal_state'] == 0:
+		g.db.execute('update orders set deal_state = ? where uuid = ?', [4, order_uuid])
+		g.db.commit()
+		user = query_db('select * from users where uuid = ?', [order['user_uuid']], one=True)
+		send_sms(user['phone_number'], "抱歉，您的订单已经失效。")
+		
+
 #
 #
 #
@@ -184,7 +196,14 @@ def distribute_coupon_shanghai_ver1_page(limit, discount, date):
 	new_user_coupon = {'limit': limit, 'discount': discount, 'date': date}
 	session['coupon'] = new_user_coupon
 	return render_template("distribute_coupon_abandon.html")
-# 发放优惠券页面
+# 发放优惠券页面2（含有地区信息）
+@app.route('/distribute_coupon_with_block/<id>/<block>')
+def distribute_coupon_with_block_page(id, block):
+	p = query_db('select * from coupon_template where uuid = ?', [id], one=True)
+	if p is None:
+		return redirect(url_for('index_page'))
+	return render_template("distribute_coupon_with_block.html", template = p, block = block)
+# 发放优惠券页面1（不含有地区信息）
 @app.route('/distribute_coupon/<id>')
 def distribute_coupon_page(id):
 	p = query_db('select * from coupon_template where uuid = ?', [id], one=True)
@@ -214,8 +233,17 @@ def admin_test_page():
 # 订单列表
 @app.route('/admin/order_list')
 def admin_order_list_page():
-	orders = query_db('select * from orders')
+	orders = query_db('select * from orders where deal_state == 1')
+	for i in orders:
+		i['deal_time'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['deal_time']))
 	return render_template("admin/2.1.html", orders = orders)
+# 待订单列表
+@app.route('/admin/order_to_deal_list')
+def admin_order_to_deal_list_page():
+	orders = query_db('select * from orders where deal_state != 1')
+	for i in orders:
+		i['deal_time'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['deal_time']))
+	return render_template("admin/2.3.html", orders = orders)
 # 商家列表
 @app.route('/admin/merchant_list')
 def admin_merchant_list_page():
@@ -355,10 +383,7 @@ def resetpwd():
 def sendVerifyCode():
 	vcode = random.randint(10000, 99999)
 	session['vcode'] = vcode
-	params = urllib.urlencode({'smsMob': request.form.get("t1"), 'Uid': 'dingfanla', 'Key': '19c35d39ee379898d25e', 'smsText': '验证码：' + str(vcode)})
-	url = 'http://utf8.sms.webchinese.cn/?' + params
-	req = urllib2.Request(url)
-	print urllib2.urlopen(req).read()
+	send_sms(request.form.get("t1"), '验证码：' + str(vcode))
 	print vcode
 	return jsonify({"data": 100})
 # 添加商家
@@ -547,7 +572,7 @@ def remove_coupon_template(id):
 	g.db.execute('delete from coupon_template where uuid = ?', [id])
 	g.db.commit()
 	return redirect(url_for('admin_coupon_template_list_page'))
-# 发放优惠券
+# 发放优惠券（不含有地区信息）
 @app.route('/distribute_coupon-back', methods=['POST'])
 def distribute_coupon():
 	t1 = request.form.get("t1")
@@ -562,6 +587,23 @@ def distribute_coupon():
 	# 	return jsonify({"data": 100})
 	# else:
 	# 	return jsonify({"data": 101})
+	send_coupon(t1, t2)
+	return jsonify({"data": 100})
+# 发放优惠券（含有地区信息）
+@app.route('/distribute_coupon_with_block-back', methods=['POST'])
+def distribute_coupon_with_block():
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	t3 = request.form.get("t3")
+	p = query_db('select * from coupon_template where uuid = ?', [t2], one=True)
+	# 检查该用户是否已经领取该优惠券。
+	# ！！！未实现
+	q = query_db('select * from coupon_block where block = ?', [t3], one=True)
+	if q is None:
+		g.db.execute('insert into coupon_block (block, coupon_uuid, create_time) values (?, ?, ?)', [t3, t2, int(time.time())])
+	else:
+		g.db.execute('update coupon_block set count = ? where coupon_uuid = ? and block = ?', [q['count']+1, t2, t3])
+	g.db.commit()
 	send_coupon(t1, t2)
 	return jsonify({"data": 100})
 def signal():
@@ -648,6 +690,9 @@ def pay():
 		g.db.execute('insert into orders (uuid, user_uuid, room_uuid, date1, date2, deal_time, deal_price, deal_cost, liver_info, coupon_uuid, true_name, room_name) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
 		 [u, s.login, room['uuid'], t1, t2, int(time.time()), price, room['room_cost'], liver, coupon, true_name, room_name])
 		g.db.commit()
+		user = query_db('select * from users where uuid = ?', [s.login], one=True)
+		send_sms(user['phone_number'], "下了一个新订单，快付钱！")
+		check_order_valid(u)
 	except Exception, e:
 		print e
 		raise e
@@ -703,10 +748,23 @@ def send_coupon(phone_number, id):
 		[uu, p['coupon_name'], phone_number, p['coupon_limit'], p['coupon_discount'], int(time.time()), p['limit_time']+int(time.time()), p['coupon_remark'], p['coupon_color']])
 	g.db.execute('update coupon_template set coupon_stock = ? where uuid = ?', [p['coupon_stock']-1, id])
 	g.db.commit()
+	send_sms(phone_number, "领取了" + p[coupon_discount] + "元优惠券！")
 # 使用优惠券
 def use_coupon(id):
 	g.db.execute('update coupons set coupon_state = 1 where uuid = ?', [id])
 	g.db.commit()
+# 发送短信
+def send_sms(phone_number, content):
+	params = urllib.urlencode({'smsMob': phone_number, 'Uid': 'dingfanla', 'Key': '19c35d39ee379898d25e', 'smsText': content})
+	url = 'http://utf8.sms.webchinese.cn/?' + params
+	req = urllib2.Request(url)
+	print urllib2.urlopen(req).read()
+# 生成计划任务，检测订单是否有效。
+def check_order_valid(order_uuid):
+	print order_uuid
+	schedule.enter(900, 0, check_order_valid_func, (order_uuid,))  
+	schedule.run()
+
 #
 #
 #
