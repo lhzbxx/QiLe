@@ -10,14 +10,14 @@ create table users (
     history_order_num integer default 0
 );
 
-INSERT INTO users VALUES (1, 123456, 13651608916, 123456, 13651608916, 123456, 123456, 0);
+INSERT INTO users VALUES (0, 0, 13651608916, 123456, 13651608916, 0, null, 0);
 
 drop table if exists user_info;
 create table user_info (
-    user_uuid primary key,
-    user_orders blob not null,
-    user_coupons blob not null,
-    foreign key(user_uuid) references users(uuid)
+    phone_number primary key,
+    user_orders text not null,
+    user_coupons text not null,
+    foreign key(phone_number) references users(phone_number)
 );
 
 drop table if exists user_checkin;
@@ -50,7 +50,7 @@ create table merchants (
     merchant_number integer default 0
 );
 
-INSERT INTO merchants VALUES (1, 123456, 'test', '123', '123', 'test', 'test', 123456, 123456, 'test', 123456, 123456, 0, 0, 0);
+INSERT INTO merchants VALUES (0, 0, 'test', 'test', 'test', 'test_description', 'test_remark', 123456, 123456, 'test_address', 'test_img_url', 0, 0, 0, 0);
 
 drop table if exists photoes;
 create table photoes (
@@ -84,7 +84,8 @@ create table orders (
 drop table if exists coupons;
 create table coupons (
     id integer primary key autoincrement,
-    uuid text unique,
+    uuid text not null,
+    coupon_uuid text not null,
     coupon_name text not null,
     phone_number integer not null,
     coupon_discount integer not null,
@@ -93,10 +94,11 @@ create table coupons (
     limit_time integer not null,
     coupon_state integer default 1,
     coupon_remark text,
-    coupon_color integer not null
+    coupon_color integer not null,
+    foreign key(coupon_uuid) references coupon_template(uuid)
 );
 
-INSERT INTO coupons VALUES (1, 123456, '123', 13651608916, 123, 123, 123456, 123456, 1, '123', 1);
+INSERT INTO coupons VALUES (0, 0, 0, 'test', 13651608916, 50, 100, 0, 1000000, 1, 'test', 1);
 
 drop table if exists coupon_template;
 create table coupon_template (
@@ -110,6 +112,20 @@ create table coupon_template (
     coupon_stock integer not null,
     coupon_color integer not null,
     create_time integer not null
+);
+
+INSERT INTO coupon_template VALUES (0, "init0", '新人券', 40, 100, 2592000, ' ', 9999999, 2, 0);
+INSERT INTO coupon_template VALUES (1, "init1", '红包券', 10, 100, 604800, ' ', 9999999, 1, 0);
+INSERT INTO coupon_template VALUES (2, "init2", '红包券', 10, 100, 604800, ' ', 9999999, 1, 0);
+INSERT INTO coupon_template VALUES (3, "init3", '红包券', 10, 100, 604800, ' ', 9999999, 1, 0);
+
+drop table if exists coupon_block;
+create table coupon_block (
+    block text not null,
+    coupon_uuid text not null,
+    count integer default 0,
+    create_time integer not null,
+    constraint pk_coupon_block primary key (block, coupon_uuid)
 );
 
 drop table if exists places;

@@ -13,6 +13,7 @@ from flask import *
 import sqlite3
 import os
 import time
+import thread
 import sched
 import uuid
 import urllib
@@ -44,7 +45,11 @@ def check_order_valid_func(order_uuid):
 		g.db.commit()
 		user = query_db('select * from users where uuid = ?', [order['user_uuid']], one=True)
 		send_sms(user['phone_number'], "抱歉，您的订单已经失效。")
-		
+# 生成计划任务，检测订单是否有效。
+def check_order_valid(order_uuid):
+	# print order_uuid
+	schedule.enter(900, 0, check_order_valid_func, (order_uuid,))  
+	schedule.run()
 
 #
 #
@@ -353,11 +358,10 @@ def register():
 	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [u, t1, t2, t1, int(time.time())])
 	g.db.commit()
 	# 注册成功。
-	send_coupon(u'新人券', t1, 100, 40, int(time.time())+2592000, u'上海地区', 2)
-	send_coupon(u'红包券', t1, 100, 10, int(time.time())+604800, u'上海地区', 1)
-	send_coupon(u'红包券', t1, 100, 10, int(time.time())+604800, u'上海地区', 1)
-	send_coupon(u'红包券', t1, 100, 10, int(time.time())+604800, u'上海地区', 1)
-	send_coupon(u'红包券', t1, 100, 10, int(time.time())+604800, u'上海地区', 1)
+	send_coupon(t1, 'init0')
+	send_coupon(t1, 'init1')
+	send_coupon(t1, 'init2')
+	send_coupon(t1, 'init3')
 	# 成功后送优惠券
 	session['user'] = u
 	return jsonify({"data": 100})
@@ -579,7 +583,6 @@ def distribute_coupon():
 	t2 = request.form.get("t2")
 	p = query_db('select * from coupon_template where uuid = ?', [t2], one=True)
 	# 检查该用户是否已经领取该优惠券。
-	# ！！！未实现
 	# p = query_db('select * from coupons where phone_number = ? and coupon_name = ?', [t1, u'新人券'], one=True)
 	# if p is None:
 	# 	a = session['coupon']
@@ -587,8 +590,10 @@ def distribute_coupon():
 	# 	return jsonify({"data": 100})
 	# else:
 	# 	return jsonify({"data": 101})
-	send_coupon(t1, t2)
-	return jsonify({"data": 100})
+	if send_coupon(t1, t2):
+		return jsonify({"data": 100})
+	else:
+		return jsonify({"data": 101})
 # 发放优惠券（含有地区信息）
 @app.route('/distribute_coupon_with_block-back', methods=['POST'])
 def distribute_coupon_with_block():
@@ -596,16 +601,17 @@ def distribute_coupon_with_block():
 	t2 = request.form.get("t2")
 	t3 = request.form.get("t3")
 	p = query_db('select * from coupon_template where uuid = ?', [t2], one=True)
-	# 检查该用户是否已经领取该优惠券。
-	# ！！！未实现
 	q = query_db('select * from coupon_block where block = ?', [t3], one=True)
 	if q is None:
 		g.db.execute('insert into coupon_block (block, coupon_uuid, create_time) values (?, ?, ?)', [t3, t2, int(time.time())])
 	else:
 		g.db.execute('update coupon_block set count = ? where coupon_uuid = ? and block = ?', [q['count']+1, t2, t3])
 	g.db.commit()
-	send_coupon(t1, t2)
-	return jsonify({"data": 100})
+	# 检查该用户是否已经领取该优惠券。
+	if send_coupon(t1, t2):
+		return jsonify({"data": 100})
+	else:
+		return jsonify({"data": 101})
 def signal():
 	if session.get('user'):
 		# print session['user']
@@ -692,7 +698,7 @@ def pay():
 		g.db.commit()
 		user = query_db('select * from users where uuid = ?', [s.login], one=True)
 		send_sms(user['phone_number'], "下了一个新订单，快付钱！")
-		check_order_valid(u)
+		thread.start_new_thread( check_order_valid, (u, ) )
 	except Exception, e:
 		print e
 		raise e
@@ -742,13 +748,19 @@ def send_coupon(name, phone_number, limit, discount, date, remark, color=1):
 # 送优惠券2
 # 参数是优惠券模板的UUID
 def send_coupon(phone_number, id):
-	uu = str(uuid.uuid4())
 	p = query_db('select * from coupon_template where uuid = ?', [id], one=True)
-	g.db.execute('insert into coupons (uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-		[uu, p['coupon_name'], phone_number, p['coupon_limit'], p['coupon_discount'], int(time.time()), p['limit_time']+int(time.time()), p['coupon_remark'], p['coupon_color']])
+	# 如果优惠券模板找不到，则直接返回。
+	if p is None:
+		return False
+	u = query_db('select * from coupons where phone_number = ? and coupon_uuid = ?', [phone_number, id])
+	if u is not None:
+		return False
+	g.db.execute('insert into coupons (uuid, coupon_uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+		[u, id, p['coupon_name'], phone_number, p['coupon_limit'], p['coupon_discount'], int(time.time()), p['limit_time']+int(time.time()), p['coupon_remark'], p['coupon_color']])
 	g.db.execute('update coupon_template set coupon_stock = ? where uuid = ?', [p['coupon_stock']-1, id])
 	g.db.commit()
-	send_sms(phone_number, "领取了" + p[coupon_discount] + "元优惠券！")
+	send_sms(phone_number, "亲，您的其乐账户中成功添加" + str(p['coupon_discount']) + "元红包噢，记得尽快使用哦！微信关注其乐，即享更多精彩活动！")
+	return True
 # 使用优惠券
 def use_coupon(id):
 	g.db.execute('update coupons set coupon_state = 1 where uuid = ?', [id])
@@ -759,12 +771,6 @@ def send_sms(phone_number, content):
 	url = 'http://utf8.sms.webchinese.cn/?' + params
 	req = urllib2.Request(url)
 	print urllib2.urlopen(req).read()
-# 生成计划任务，检测订单是否有效。
-def check_order_valid(order_uuid):
-	print order_uuid
-	schedule.enter(900, 0, check_order_valid_func, (order_uuid,))  
-	schedule.run()
-
 #
 #
 #
