@@ -67,7 +67,11 @@
 				</div>
 				<div class="weui_opr_area">
 					<p class="weui_btn_area">
+						{% if remark == '1' %}
+						<a href="http://mp.weixin.qq.com/s?__biz=MzA4NDMzODQ0NQ==&mid=400845337&idx=1&sn=3682b8e4e4500e1a784c9eb5b7ddfbf2#rd" class="weui_btn weui_btn_primary">确认</a>
+						{% else %}
 						<a href="javascript:window.location.href='{{ url_for('index_page') }}';" class="weui_btn weui_btn_primary">确认</a>
+						{% endif %}
 <!-- 						<a href="javascript:window.location.href='{{ url_for('index_page') }}';" class="weui_btn weui_btn_default">返回主页</a> -->
 					</p>
 				</div>

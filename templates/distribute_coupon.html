@@ -158,9 +158,9 @@
 				function(result) {
 					if (result['data'] == '100') {
 						// 成功后返回结果页面。
-						window.location.href="{{ url_for('.result_page', sign=1, title='领取成功', content='红包已经塞入您的账户！') }}";
+						window.location.href="{{ url_for('.result_page', sign=1, title='领取成功', content='红包已经塞入您的账户！', remark=0) }}";
 					} else if (result['data'] == '101') {
-						window.location.href="{{ url_for('.result_page', sign=0, title='领取失败', content='抱歉，您已经领取过了~') }}";
+						window.location.href="{{ url_for('.result_page', sign=0, title='领取失败', content='抱歉，您已经领取过了~', remark=0) }}";
 					}
 					$("#loadingToast").hide();
 				}

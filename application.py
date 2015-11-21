@@ -17,6 +17,7 @@ import uuid
 import urllib
 import urllib2
 import random
+import requests
 import md5
 import string
 from datetime import date, timedelta
@@ -151,9 +152,9 @@ def user_setting_page():
 def success_page():
 	return render_template("success.html")
 # 结果页面
-@app.route('/result/<sign>/<title>/<content>')
-def result_page(sign, title, content):
-	return render_template("result.html", sign = sign, title = title, content = content)
+@app.route('/result/<sign>/<title>/<content>/<remark>')
+def result_page(sign, title, content, remark):
+	return render_template("result.html", sign = sign, title = title, content = content, remark = remark)
 # 下单页面
 @app.route('/order/<id>')
 def order_page(id):
@@ -196,10 +197,10 @@ def pay_page():
 	order['liver_info'] = len(eval(order['liver_info']))-1
 	rand_str = random_str(32)
 	time_str = int(time.time())
-	sign = sign_algorithm("appid=gh_e49bbcb61f80&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id[:32] + "&signType=MD5&ChenLiang2QiLeFun20151121ccccccc")
+	sign = sign_algorithm("appid=wxfee84b23a06c2b97&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id[:32] + "&signType=MD5&ChenLiang2QiLeFun20151121ccccccc")
 	sign = [time_str, rand_str, sign]
 	xml = """<xml>
-			<appid>gh_e49bbcb61f80</appid>
+			<appid>wxfee84b23a06c2b97</appid>
 			<attach>支付测试</attach>
 			<body>JSAPI支付测试</body>
 			<mch_id>1271526501</mch_id>
@@ -208,14 +209,16 @@ def pay_page():
 			<openid>oUpF8uMuAJO_M2pxb1Q9zNjWeS6o</openid>
 			<out_trade_no>""" + str(id[:32]) + """</out_trade_no>
 			<spbill_create_ip>""" + str(request.remote_addr) + """</spbill_create_ip>
-			<total_fee>""" + order['deal_price'] + """</total_fee>
+			<total_fee>""" + str(order['deal_price']) + """</total_fee>
 			<trade_type>JSAPI</trade_type>
-			<sign>""" + sign_algorithm("appid=gh_e49bbcb61f80&attach=支付测试&body=JSAPI支付测试&mch_id=1271526501&nonce_str="+str(rand_str)+
+			<sign>""" + sign_algorithm("appid=wxfee84b23a06c2b97&attach=支付测试&body=JSAPI支付测试&mch_id=1271526501&nonce_str="+str(rand_str)+
 				"&notify_url=http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php&openid=&out_trade_no="+str(id[:32])+"&spbill_create_ip="+
 				str(request.remote_addr)+"&total_fee="+str(order['deal_price'])+"&trade_type=JSAPI") + """</sign>
 			</xml>"""
 	headers = {'Content-Type': 'application/xml'}
-	print request.post('http://www.my-website.net/xml', data=xml, headers=headers)
+	r = requests.post('https://api.mch.weixin.qq.com/pay/unifiedorder', data=xml, headers=headers)
+	r.encoding = 'utf-8'
+	print r.text
 	return render_template("pay.html", signal = s, order = order, sign = sign)
 # 登录页面
 @app.route('/login')
@@ -257,13 +260,23 @@ def page_not_found(e):
 # 首页
 @app.route('/admin')
 def admin_index_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	return render_template("admin/1.html")
 @app.route('/admin/test')
 def admin_test_page():
 	return render_template("admin/1-test.html")
+# login
+@app.route('/admin/login')
+def admin_login_page():
+	return render_template("admin/login.html")
 # 订单列表
 @app.route('/admin/order_list')
 def admin_order_list_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	orders = query_db('select * from orders where deal_state == 1')
 	for i in orders:
 		i['deal_time'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['deal_time']))
@@ -271,6 +284,9 @@ def admin_order_list_page():
 # 待订单列表
 @app.route('/admin/order_to_deal_list')
 def admin_order_to_deal_list_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	orders = query_db('select * from orders where deal_state != 1')
 	for i in orders:
 		i['deal_time'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['deal_time']))
@@ -278,15 +294,24 @@ def admin_order_to_deal_list_page():
 # 商家列表
 @app.route('/admin/merchant_list')
 def admin_merchant_list_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	merchants = query_db('select * from merchants')
 	return render_template("admin/3.1.html", merchants = merchants)
 # 添加商家
 @app.route('/admin/add_merchant')
 def admin_add_merchant_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	return render_template("admin/3.2.html")
 # 修改商家
 @app.route('/admin/modify_merchant/<id>')
 def admin_modify_merchant_page(id):
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	if len(id) != 36:
 		return redirect(url_for('admin_add_merchant_page'))
 	merchant = query_db('select * from merchants where uuid = ?', [id], one=True)
@@ -294,11 +319,17 @@ def admin_modify_merchant_page(id):
 # 房源列表
 @app.route('/admin/room_list')
 def admin_room_list_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	rooms = query_db('select * from rooms')
 	return render_template("admin/3.3.html", rooms = rooms)
 # 添加房源
 @app.route('/admin/add_room')
 def admin_add_room_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	q = Auth('FCFQs6B-thjgt30-HEmCS9ZUCGQBxx2Zsg_WO1k5', 'Z8LCTm4gxo_dfX7HT0EhFnXmsFTGwZ8MyCFXmSXF')
 	# 上传策略仅指定空间名和上传后的文件名，其他参数仅为默认值
 	auth = q.upload_token('qile')
@@ -307,6 +338,9 @@ def admin_add_room_page():
 # 修改房源
 @app.route('/admin/modify_room/<id>')
 def admin_modify_room_page(id):
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	if len(id) != 36:
 		return redirect(url_for('admin_add_room_page'))
 	q = Auth('FCFQs6B-thjgt30-HEmCS9ZUCGQBxx2Zsg_WO1k5', 'Z8LCTm4gxo_dfX7HT0EhFnXmsFTGwZ8MyCFXmSXF')
@@ -318,15 +352,24 @@ def admin_modify_room_page(id):
 	return render_template("admin/3.4_m.html", merchants = merchants, auth = auth, room = room, photoes = photoes)
 @app.route('/admin/layout')
 def admin_layout_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	return render_template("admin/admin_layout.html")
 # 优惠券模板列表
 @app.route('/admin/coupon_template_list')
 def admin_coupon_template_list_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	coupon_template = query_db('select * from coupon_template')
 	return render_template("admin/4.3.html", coupon_template = coupon_template)
 # 添加优惠券模板
 @app.route('/admin/add_coupon_template')
 def admin_add_coupon_template_page():
+	s = admin_signal()
+	if not s.login:
+		return redirect(url_for('admin_login_page'))
 	return render_template("admin/4.4.html")
 #
 #
@@ -355,6 +398,11 @@ def login():
 			# 登录成功。
 			session['user'] = user['uuid']
 			return jsonify({"data": 100})
+# 后台登录
+@app.route('/admin_login-back', methods=['POST'])
+def admin_login():
+	session['admin_user'] = 'ahahah'
+	return jsonify({"data": 100})
 # 登出
 @app.route('/logout-back', methods=['POST'])
 def logout():
@@ -761,6 +809,13 @@ def signal():
 	if session.get('user'):
 		# print session['user']
 		signal.login = session['user']
+	else:
+		signal.login = None
+	return signal
+def admin_signal():
+	if session.get('admin_user'):
+		# print session['user']
+		signal.login = session['admin_user']
 	else:
 		signal.login = None
 	return signal
