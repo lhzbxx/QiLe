@@ -405,9 +405,9 @@
 							{t1: m, t2: t, t3: n}, 
 							function(result) {
 								$("#liverCells").append('<div class="weui_cell"><div class="weui_cell_bd weui_cell_primary"><p><span class="remove_checkin_btn" data-uuid="' + result['uuid'] + '"><i class="glyphicon glyphicon-minus"></i></span> '+m+'</p></div><div class="weui_cell_ft">'+n+'</div></div>');
-								$("#liverNameInput").val() = '';
-								$("#liverTypeInput").val() = '';
-								$("#liverNumberInput").val() = '';
+								$("#liverNameInput").val('');
+								$("#liverTypeInput").val('');
+								$("#liverNumberInput").val('');
 							}
 						);
 						$("#filter1").fadeOut();

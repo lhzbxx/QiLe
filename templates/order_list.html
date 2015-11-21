@@ -3,9 +3,9 @@
 {% block header %}
 	<style type="text/css">
 		.order {
-			margin-bottom: 5px;
+			margin: 10px;
 			background: white;
-			height: 100px;
+			height: 150px;
 		}
 		.order p {
 			margin-bottom: 0px;
@@ -34,22 +34,100 @@
 			font-size: 0.8em;
 			color: rgba(0,0,0,.5);
 		}
-		.bottom {
+		.bottom1 {
+			border-right: 1px solid rgba(0,0,0,.1);
+		}
+		.bottom2 {
+			border-left: 1px solid rgba(0,0,0,.1);
+		}
+		.bottom a {
 			float: left;
 			width: 50%;
-			height: 32px;
+			height: 33px;
 			text-align: center;
 			font-size: 1.1em;
-			vertical-align: center;
-			border: 1px solid rgba(0,0,0,.1);
+			padding-top: 3px;
+			color: rgba(0,0,0,.8);
+			border-top: 1px solid rgba(0,0,0,.1);
+			border-bottom: 1px solid rgba(0,0,0,.1);
 		}
-		#content_wrapper {
+		.bottom a:link {text-decoration: none; color: rgba(0,0,0,.8);}
+		.bottom a:visited {text-decoration: none; color: rgba(0,0,0,.8);}
+		.bottom a:hover {text-decoration: none; color: rgba(0,0,0,.8);}
+		.bottom a:active {text-decoration: none; color: rgba(0,0,0,.8);}
+		body {
 			background: rgba(0,0,0,.1)
+		}
+		.order img {
+			width: 100%;
+		}
+		.order_detail {
+			padding-top: 10px;
+			height: 117px;
+		}
+		.room_name {
+			font-size: 1.3em;
+		}
+		.deal_state {
+			margin-top: 5px;
+			margin-bottom: 10px;
 		}
 	</style>
 {% endblock %}
 {% block content %}
+	{% for order in orders %}
 	<div class="order">
+		<div class="order_detail">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-xs-8">
+						<p class="room_name">{{ order.room_name }}</p>
+					</div>
+					<div class="col-xs-4 deal_state">
+						{% if order.deal_state == 0 %}
+						<span class="label label-sm label-default">
+						未付款 </span>
+						{% elif order.deal_state == 1 %}
+						<span class="label label-sm label-info">
+						已付款 </span>
+						{% elif order.deal_state == 2 %}
+						<span class="label label-sm label-danger">
+						进行中 </span>
+						{% elif order.deal_state == 3 %}
+						<span class="label label-sm label-success">
+						已完成 </span>
+						{% elif order.deal_state == 4 %}
+						<span class="label label-sm label-warning">
+						已失效 </span>
+						{% elif order.deal_state == 5 %}
+						<span class="label label-sm label-warning">
+						已取消 </span>
+						{% else %}
+						错误！！！
+						{% endif %}
+					</div>
+					<div style="clear: both;"></div>
+					<div class="col-xs-4" style="padding-right: 0px;">
+						<img src="http://7xo1w8.com1.z0.glb.clouddn.com/{{ order.deal_cost }}">
+					</div>
+					<div class="col-xs-8">
+						{{ order.date1[5:7] }}月{{ order.date1[8:10] }}日 - {{ order.date2[5:7] }}月{{ order.date2[8:10] }}日
+						<br>
+						订单总额：¥{{ order.deal_price }}
+						<br>
+						{{ order.deal_time }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div style="clear: both;"></div>
+		<div class="bottom">
+			<a class="bottom1 viewDetailBtn" href="javascript: $('#loadingToast').show(); window.location.href='{{ url_for('order_detail_page', id=order.uuid) }}'; $('#loadingToast').show(); ">查看详情</a>
+			<a class="bottom2 commentBtn">评价</a>
+		</div>
+	</div>
+	{% endfor %}
+<!-- 	<div class="order">
 		<div class="left_order">
 			<p>上海无敌江景房</p>
 			<p class="description">2015/11/06 18:23</p>
@@ -61,59 +139,7 @@
 		<div style="clear: both;"></div>
 		<a class="bottom viewDetailBtn">查看详情</a>
 		<a class="bottom commentBtn">评价</a>
-	</div>
-	<div class="order">
-		<div class="left_order">
-			<p>上海无敌江景房</p>
-			<p class="description">2015/11/06 18:23</p>
-		</div>
-		<div class="right_order">
-			<p>￥10</p>
-			<p class="description">已完成</p>
-		</div>
-		<div style="clear: both;"></div>
-		<a class="bottom viewDetailBtn">查看详情</a>
-		<a class="bottom commentBtn">评价</a>
-	</div>
-	<div class="order">
-		<div class="left_order">
-			<p>上海无敌江景房</p>
-			<p class="description">2015/11/06 18:23</p>
-		</div>
-		<div class="right_order">
-			<p>￥10</p>
-			<p class="description">已完成</p>
-		</div>
-		<div style="clear: both;"></div>
-		<a class="bottom viewDetailBtn">查看详情</a>
-		<a class="bottom commentBtn">评价</a>
-	</div>
-	<div class="order">
-		<div class="left_order">
-			<p>上海无敌江景房</p>
-			<p class="description">2015/11/06 18:23</p>
-		</div>
-		<div class="right_order">
-			<p>￥10</p>
-			<p class="description">已完成</p>
-		</div>
-		<div style="clear: both;"></div>
-		<a class="bottom viewDetailBtn">查看详情</a>
-		<a class="bottom commentBtn">评价</a>
-	</div>
-	<div class="order">
-		<div class="left_order">
-			<p>上海无敌江景房</p>
-			<p class="description">2015/11/06 18:23</p>
-		</div>
-		<div class="right_order">
-			<p>￥10</p>
-			<p class="description">已完成</p>
-		</div>
-		<div style="clear: both;"></div>
-		<a class="bottom viewDetailBtn">查看详情</a>
-		<a class="bottom commentBtn">评价</a>
-	</div>
+	</div> -->
 	<div id="loadingToast" class="weui_loading_toast" style="display: none;">
 		<div class="weui_mask_transparent"></div>
 		<div class="weui_toast">
@@ -139,11 +165,6 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#loadingToast").hide();
-		$(".viewDetailBtn").click(function() {
-			$("#loadingToast").show();
-			window.location.href = "{{ url_for('order_detail_page') }}";
-			$('#loadingToast').show();
-		});
 		$(".commentBtn").click(function() {
 			alert("暂未开放，敬请期待！");
 		});

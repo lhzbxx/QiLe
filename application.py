@@ -118,12 +118,27 @@ def coupon_list_page():
 @app.route('/order_list')
 def order_list_page():
 	s = signal()
-	return render_template("order_list.html", signal = s)
+	if not s.login:
+		return redirect(url_for('index_page'))
+	orders = query_db('select * from orders where user_uuid = ?', [s.login])
+	for i in orders:
+		i['deal_time'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['deal_time']))
+		room = query_db('select * from rooms where uuid = ?', [i['room_uuid']], one=True)
+		i['deal_cost'] = room['room_img_url']
+	return render_template("order_list.html", signal = s, orders = orders)
 # 下单详细
-@app.route('/order_detail')
-def order_detail_page():
+@app.route('/order_detail/<id>')
+def order_detail_page(id):
 	s = signal()
-	return render_template("order_detail.html", signal = s)
+	if not s.login:
+		return redirect(url_for('index_page'))
+	order = query_db('select * from orders where uuid = ?', [id], one=True)
+	liver = eval(order['liver_info'])
+	del liver[0]
+	if order['coupon_uuid']:
+		coupon = query_db('select * from coupons where uuid = ?', [order['coupon_uuid']], one=True)
+		return render_template("order_detail.html", signal = s, order = order, liver = liver, coupon = coupon)
+	return render_template("order_detail.html", signal = s, order = order, liver = liver)
 # 个人设置
 @app.route('/user_setting')
 def user_setting_page():

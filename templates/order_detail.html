@@ -71,7 +71,7 @@
 		<div class="weui_cells weui_cells_split">
 			<div class="weui_cell">
 				<div class="weui_cell_ft">
-					XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+					{{ order.uuid[:12] }}
 				</div>
 			</div>
 		</div>
@@ -82,7 +82,7 @@
 					<p>名称</p>
 				</div>
 				<div class="weui_cell_ft">
-					徐家汇 美罗城 万体馆一居室
+					{{ order.room_name }}
 				</div>
 			</div>
 		</div>
@@ -93,7 +93,7 @@
 					<p>入住时间</p>
 				</div>
 				<div class="weui_cell_ft">
-					2015-11-08
+					{{ order.date1 }}
 				</div>
 			</div>
 			<div class="weui_cell">
@@ -101,21 +101,24 @@
 					<p>离开时间</p>
 				</div>
 				<div class="weui_cell_ft">
-					2015-11-11
+					{{ order.date2 }}
 				</div>
 			</div>
 		</div>
 		<div class="weui_cells_title">入住人</div>
 		<div class="weui_cells weui_cells_split">
+			{% for i in liver %}
 			<div class="weui_cell">
 				<div class="weui_cell_bd weui_cell_primary">
-					<p>XXX</p>
+					<p>{{ i[0] }}</p>
 				</div>
 				<div class="weui_cell_ft">
-					XXXXXXXXXXXXXXXXXXXXX
+					{{ i[2] }}
 				</div>
 			</div>
+			{% endfor %}
 		</div>
+		{% if coupon %}
 		<div class="weui_cells_title">优惠券</div>
 		<div class="weui_cells weui_cells_split">
 			<div class="weui_cell">
@@ -123,10 +126,11 @@
 					<p>使用</p>
 				</div>
 				<div class="weui_cell_ft">
-					满150减20
+					满{{ coupon.coupon_limit }}减{{ coupon.coupon_discount }}
 				</div>
 			</div>
 		</div>
+		{% endif %}
 		<div class="weui_cells_title">预订人</div>
 		<div class="weui_cells weui_cells_form">
 			<div class="weui_cell">
@@ -134,7 +138,7 @@
 					<p>真实姓名</p>
 				</div>
 				<div class="weui_cell_ft">
-					XXXX
+					{{ order.true_name }}
 				</div>
 			</div>
 		</div>
@@ -145,12 +149,15 @@
 					<p>总价</p>
 				</div>
 				<div class="weui_cell_ft">
-					￥ 120
+					¥{{ order.deal_price }}
 				</div>
 			</div>
 		</div>
 		<div class="weui_opr_area" style="padding: 10px;">
 			<p class="weui_btn_area">
+				{% if order.deal_state == 0 %}
+				<a class="weui_btn weui_btn_warn" id="order_btn">立即支付</a>
+				{% endif %}
 				<a id="order_btn" href="{{ url_for('order_list_page') }}" class="weui_btn weui_btn_primary">返回</a>
 			</p>
 		</div>
