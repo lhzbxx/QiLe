@@ -201,16 +201,18 @@
 				<div class="weui_cell_bd weui_cell_primary" style="text-align: center; font-size: 27px;">
 					<p id="addLiver">+</p>
 				</div>
-				{% for checkin in checkins %}
-				<div class="weui_cell">
-					<div class="weui_cell_bd weui_cell_primary">
-						<p><span class="remove_checkin_btn" data-uuid="{{ checkin.uuid }}"><i class="glyphicon glyphicon-minus"></i></span> {{ checkin.name }}</p>
+				<div id="liver_div">
+					{% for checkin in checkins %}
+					<div class="weui_cell">
+						<div class="weui_cell_bd weui_cell_primary">
+							<p><span class="remove_checkin_btn" data-uuid="{{ checkin.uuid }}"><i class="glyphicon glyphicon-minus"></i></span> {{ checkin.name }}</p>
+						</div>
+						<div class="weui_cell_ft">
+							{{ checkin.identify }}
+						</div>
 					</div>
-					<div class="weui_cell_ft">
-						{{ checkin.identify }}
-					</div>
+					{% endfor %}
 				</div>
-				{% endfor %}
 			</div>
 		</div>
 		<div class="weui_cells_title">优惠券</div>
@@ -287,7 +289,7 @@
 			</div>
 			<div class="weui_dialog_bd" id="alert_content"></div>
 			<div class="weui_dialog_ft">
-				<a id="confirm_btn" href="javascript: $('#dialog1').hide();" class="weui_btn_dialog primary">确定</a>
+				<a id="confirm_btn" href="javascript: $('#alert_dialog').hide();" class="weui_btn_dialog primary">确定</a>
 			</div>
 		</div>
 	</div>
@@ -341,7 +343,16 @@
 			$("#footer_wrapper").hide();
 			$("#order_btn").click(function(){
 				// 验证表单。
-				// 未完成！！！
+				if ($('#true_name_input').val() == '') {
+					$("#alert_content").text("请填写真实姓名~");
+					$("#alert_dialog").show();
+					return;
+				}
+				if ($('#liver_div').val() == '') {
+					$("#alert_content").text("请填写入住人信息~");
+					$("#alert_dialog").show();
+					return;
+				}
 				$('#loadingToast').show();
 				var t1 = $("#true_name_input").val();
 				$.post(

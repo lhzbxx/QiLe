@@ -17,6 +17,7 @@ import uuid
 import urllib
 import urllib2
 import random
+import hashlib
 from datetime import date, timedelta
 from qiniu import Auth
 
@@ -189,7 +190,13 @@ def pay_page(id):
 		return redirect(url_for('index_page'))
 	order = query_db('select * from orders where uuid = ?', [id], one=True)
 	order['liver_info'] = len(eval(order['liver_info']))-1
-	return render_template("pay.html", signal = s, order = order)
+	rand_str = os.urandom(32)
+	time_str = int(time.time())
+	sign = "appid=gh_e49bbcb61f80&timeStamp=" + time_str + "&nonceStr=" + rand_str + "&package=prepay_id=" + id + "&signType=MD5&ChenLiang2QiLeFun20151121ccccccc"
+	m = hashlib.md5()
+	m.update(sign)
+	sign = [time_str, rand_str, m.hexdigest()]
+	return render_template("pay.html", signal = s, order = order, sign = sign)
 # 登录页面
 @app.route('/login')
 def login_page():

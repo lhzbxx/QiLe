@@ -138,20 +138,17 @@
 			$("#tab_switch_2").addClass("active");
 		});
 		$("#order_btn").click(function(){
-			var t = Date.parse(new Date())/1000;
-			var u = Math.random().toString(36).substr(2);
-			var A="appid=gh_e49bbcb61f80&body=test&device_info=WEB&mch_id=1271526501&nonce_str="+u;
 			function onBridgeReady() {
 				WeixinJSBridge.invoke(
 					'getBrandWCPayRequest', {
 					"appId"		: "gh_e49bbcb61f80",		//公众号名称，由商户传入     
-					"timeStamp"	: t,						//时间戳，自1970年以来的秒数     
-					"nonceStr"	: u,						//随机串     
-					"package" 	: "prepay_id="+u,     
+					"timeStamp"	: {{ sign[0] }},			//时间戳，自1970年以来的秒数     
+					"nonceStr"	: {{ sign[1] }},			//随机串     
+					"package" 	: "prepay_id={{ order.uuid }}",
 					"signType"	: "MD5",					//微信签名方式:     
-					"paySign" 	: "70EA570631E4BB79628FBCA90534C63FF7FADD89"	//微信签名 
+					"paySign" 	: {{ sign[2] }}	//微信签名 
 				},
-				function(res) {     
+				function(res) {
 					if(res.err_msg == "get_brand_wcpay_request:ok" ) {
 						window.location.href = '{{ url_for("success_page") }}';
 					}
