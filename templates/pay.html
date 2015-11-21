@@ -124,6 +124,7 @@
 </body>
 <script type="text/javascript">
 	$(document).ready(function(){
+		alert("{{ sign[2] }}");
 		$("#loadingToast").hide();
 		$("#tab_switch_1").click(function(){
 			$("#tab2").hide();
@@ -141,12 +142,12 @@
 			function onBridgeReady() {
 				WeixinJSBridge.invoke(
 					'getBrandWCPayRequest', {
-					"appId"		: "gh_e49bbcb61f80",		//公众号名称，由商户传入     
-					"timeStamp"	: {{ sign[0] }},			//时间戳，自1970年以来的秒数     
-					"nonceStr"	: {{ sign[1] }},			//随机串     
+					"appId"		: "gh_e49bbcb61f80",		//公众号名称，由商户传入
+					"timeStamp"	: {{ sign[0] }},			//时间戳，自1970年以来的秒数
+					"nonceStr"	: "{{ sign[1] }}",			//随机串
 					"package" 	: "prepay_id={{ order.uuid }}",
-					"signType"	: "MD5",					//微信签名方式:     
-					"paySign" 	: {{ sign[2] }}	//微信签名 
+					"signType"	: "MD5",					//微信签名方式
+					"paySign" 	: "{{ sign[2] }}"			//微信签名 
 				},
 				function(res) {
 					if(res.err_msg == "get_brand_wcpay_request:ok" ) {

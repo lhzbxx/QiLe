@@ -197,7 +197,7 @@
 		</div>
 		<div class="weui_cells_title">入住人</div>
 		<div class="weui_cells weui_cells_split">
-			<div id="liverCells" class="weui_cell" style="padding: 0px;">
+			<div id="liver_div" class="weui_cell" style="padding: 0px;">
 				<div class="weui_cell_bd weui_cell_primary" style="text-align: center; font-size: 27px;">
 					<p id="addLiver">+</p>
 				</div>
@@ -348,7 +348,7 @@
 					$("#alert_dialog").show();
 					return;
 				}
-				if ($('#liver_div').val() == '') {
+				if ($('#liver_div').text() == '') {
 					$("#alert_content").text("请填写入住人信息~");
 					$("#alert_dialog").show();
 					return;
@@ -366,7 +366,7 @@
 							function(result) {
 								$("#loadingToast").hide();
 								if (result['data'] == '100') {
-									window.location.href = "/pay/" + result['id'];
+									window.location.href = "/pay?id=" + result['id'];
 								} else if (result['data'] == '101') {
 									$("#alert_content").text("登录已失效~");
 									$("#alert_dialog").show();
@@ -415,7 +415,7 @@
 							"{{ url_for('add_checkin') }}", 
 							{t1: m, t2: t, t3: n}, 
 							function(result) {
-								$("#liverCells").append('<div class="weui_cell"><div class="weui_cell_bd weui_cell_primary"><p><span class="remove_checkin_btn" data-uuid="' + result['uuid'] + '"><i class="glyphicon glyphicon-minus"></i></span> '+m+'</p></div><div class="weui_cell_ft">'+n+'</div></div>');
+								$("#liver_div").append('<div class="weui_cell"><div class="weui_cell_bd weui_cell_primary"><p><span class="remove_checkin_btn" data-uuid="' + result['uuid'] + '"><i class="glyphicon glyphicon-minus"></i></span> '+m+'</p></div><div class="weui_cell_ft">'+n+'</div></div>');
 								$("#liverNameInput").val('');
 								$("#liverTypeInput").val('');
 								$("#liverNumberInput").val('');

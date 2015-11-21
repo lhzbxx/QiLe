@@ -17,7 +17,8 @@ import uuid
 import urllib
 import urllib2
 import random
-import hashlib
+import md5
+import string
 from datetime import date, timedelta
 from qiniu import Auth
 
@@ -182,20 +183,25 @@ def order_page(id):
 		session['t'] = [t1, t2, today, tomorrow]
 	return render_template("order.html", signal = s, room = room, user = user, checkins = checkins, coupons = coupons, current = int(time.time()), t = t)
 # 支付页面
-@app.route('/pay/<id>')
-def pay_page(id):
+@app.route('/pay')
+def pay_page():
 	s = signal()
 	# 如果没有登录，则返回首页。
 	if not s.login:
 		return redirect(url_for('index_page'))
+	id = request.args.get('id')
 	order = query_db('select * from orders where uuid = ?', [id], one=True)
+	if not order:
+		return redirect(url_for('index_page'))
 	order['liver_info'] = len(eval(order['liver_info']))-1
-	rand_str = os.urandom(32)
+	rand_str = random_str(32)
 	time_str = int(time.time())
-	sign = "appid=gh_e49bbcb61f80&timeStamp=" + time_str + "&nonceStr=" + rand_str + "&package=prepay_id=" + id + "&signType=MD5&ChenLiang2QiLeFun20151121ccccccc"
-	m = hashlib.md5()
+	print rand_str
+	sign = "appid=gh_e49bbcb61f80&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id + "&signType=MD5&ChenLiang2QiLeFun20151121ccccccc"
+	m = md5.new()
+	print sign
 	m.update(sign)
-	sign = [time_str, rand_str, m.hexdigest()]
+	sign = [time_str, rand_str, m.hexdigest().upper()]
 	return render_template("pay.html", signal = s, order = order, sign = sign)
 # 登录页面
 @app.route('/login')
@@ -800,6 +806,10 @@ def query_db(query, args=(), one=False):
 	cur = g.db.execute(query, args)
 	rv = [dict((cur.description[idx][0], value) for idx, value in enumerate(row)) for row in cur.fetchall()]
 	return (rv[0] if rv else None) if one else rv
+def random_str(randomlength=8):
+    a = list(string.ascii_letters)
+    random.shuffle(a)
+    return ''.join(a[:randomlength])
 # class Scheduler(object):
 # 	def __init__(self, sleep_time, function):
 # 		self.sleep_time = sleep_time
