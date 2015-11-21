@@ -196,12 +196,26 @@ def pay_page():
 	order['liver_info'] = len(eval(order['liver_info']))-1
 	rand_str = random_str(32)
 	time_str = int(time.time())
-	print rand_str
-	sign = "appid=gh_e49bbcb61f80&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id + "&signType=MD5&ChenLiang2QiLeFun20151121ccccccc"
-	m = md5.new()
-	print sign
-	m.update(sign)
-	sign = [time_str, rand_str, m.hexdigest().upper()]
+	sign = sign_algorithm("appid=gh_e49bbcb61f80&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id[:32] + "&signType=MD5&ChenLiang2QiLeFun20151121ccccccc")
+	sign = [time_str, rand_str, sign]
+	xml = """<xml>
+			<appid>gh_e49bbcb61f80</appid>
+			<attach>支付测试</attach>
+			<body>JSAPI支付测试</body>
+			<mch_id>1271526501</mch_id>
+			<nonce_str>""" + str(rand_str) + """</nonce_str>
+			<notify_url>http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php</notify_url>
+			<openid>oUpF8uMuAJO_M2pxb1Q9zNjWeS6o</openid>
+			<out_trade_no>""" + str(id[:32]) + """</out_trade_no>
+			<spbill_create_ip>""" + str(request.remote_addr) + """</spbill_create_ip>
+			<total_fee>""" + order['deal_price'] + """</total_fee>
+			<trade_type>JSAPI</trade_type>
+			<sign>""" + sign_algorithm("appid=gh_e49bbcb61f80&attach=支付测试&body=JSAPI支付测试&mch_id=1271526501&nonce_str="+str(rand_str)+
+				"&notify_url=http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php&openid=&out_trade_no="+str(id[:32])+"&spbill_create_ip="+
+				str(request.remote_addr)+"&total_fee="+str(order['deal_price'])+"&trade_type=JSAPI") + """</sign>
+			</xml>"""
+	headers = {'Content-Type': 'application/xml'}
+	print request.post('http://www.my-website.net/xml', data=xml, headers=headers)
 	return render_template("pay.html", signal = s, order = order, sign = sign)
 # 登录页面
 @app.route('/login')
@@ -806,10 +820,19 @@ def query_db(query, args=(), one=False):
 	cur = g.db.execute(query, args)
 	rv = [dict((cur.description[idx][0], value) for idx, value in enumerate(row)) for row in cur.fetchall()]
 	return (rv[0] if rv else None) if one else rv
+# 生成随机字符串
 def random_str(randomlength=8):
     a = list(string.ascii_letters)
     random.shuffle(a)
     return ''.join(a[:randomlength])
+# 生成微信所需要的签名
+def sign_algorithm(*params):
+	m = md5.new()
+	sign = ''
+	for param in params:
+		sign += '&' + param
+	m.update(sign)
+	return m.hexdigest().upper()
 # class Scheduler(object):
 # 	def __init__(self, sleep_time, function):
 # 		self.sleep_time = sleep_time
