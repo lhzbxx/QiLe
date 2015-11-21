@@ -13,8 +13,6 @@ from flask import *
 import sqlite3
 import os
 import time
-import thread
-import sched
 import uuid
 import urllib
 import urllib2
@@ -66,18 +64,7 @@ def WW_upload():
         file = request.files['file']
         file.save(os.path.join("img", file.filename))
         return "success"
-# 检测订单是否超时。
-def check_order_valid(order_uuid):
-	# print order_uuid
-	# schedule.enter(900, 0, check_order_valid_func, (order_uuid,))  
-	# schedule.run()
-	orders = query_db('select * from orders where deal_state = ?', [0])
-	for i in orders:
-		if i['deal_time'] - int(time.time()) > 900:
-			g.db.execute('update orders set deal_state = ? where uuid = ?', [4, i['uuid']])
-			g.db.commit()
-			user = query_db('select * from users where uuid = ?', [i['user_uuid']], one=True)
-			send_sms(user['phone_number'], "抱歉，您的订单已经失效。")
+
 #
 #
 #
@@ -791,31 +778,52 @@ def query_db(query, args=(), one=False):
 	cur = g.db.execute(query, args)
 	rv = [dict((cur.description[idx][0], value) for idx, value in enumerate(row)) for row in cur.fetchall()]
 	return (rv[0] if rv else None) if one else rv
-class Scheduler(object):
-	def __init__(self, sleep_time, function):
-		self.sleep_time = sleep_time
-		self.function = function
-		self._t = None
-	def start(self):
-		if self._t is None:
-			self._t = Timer(self.sleep_time, self._run)
-			self._t.start()
-		else:
-			raise Exception("this timer is already running")
-	def _run(self):
-		self.function()
-		self._t = Timer(self.sleep_time, self._run)
-		self._t.start()
-	def stop(self):
-		if self._t is not None:
-			self._t.cancel()
-			self._t = None
+# class Scheduler(object):
+# 	def __init__(self, sleep_time, function):
+# 		self.sleep_time = sleep_time
+# 		self.function = function
+# 		self._t = None
+# 	def start(self):
+# 		if self._t is None:
+# 			self._t = Timer(self.sleep_time, self._run)
+# 			self._t.start()
+# 		else:
+# 			raise Exception("this timer is already running")
+# 	def _run(self):
+# 		self.function()
+# 		self._t = Timer(self.sleep_time, self._run)
+# 		self._t.start()
+# 	def stop(self):
+# 		if self._t is not None:
+# 			self._t.cancel()
+# 			self._t = None
+# 检测订单是否超时。
+def check_order_valid():
+	orders = query_db('select * from orders where deal_state = ?', [0])
+	for i in orders:
+		if i['deal_time'] - int(time.time()) > 900:
+			g.db.execute('update orders set deal_state = ? where uuid = ?', [4, i['uuid']])
+			g.db.commit()
+			user = query_db('select * from users where uuid = ?', [i['user_uuid']], one=True)
+			send_sms(user['phone_number'], "抱歉，您的订单已经失效。")
+# 	# print order_uuid
+# 	# schedule.enter(900, 0, check_order_valid_func, (order_uuid,))  
+# 	# schedule.run()
+# 	print "OK"
+# 	orders = query_db('select * from orders where deal_state = ?', [0])
+# 	for i in orders:
+# 		if i['deal_time'] - int(time.time()) > 10:
+# 			g.db.execute('update orders set deal_state = ? where uuid = ?', [4, i['uuid']])
+# 			g.db.commit()
+# 			user = query_db('select * from users where uuid = ?', [i['user_uuid']], one=True)
+# 			send_sms(user['phone_number'], "抱歉，您的订单已经失效。")
+# @app.before_first_request
+# def before_first_request():
+# 	scheduler = Scheduler(3, check_order_valid)
+# 	scheduler.start()
 
 if __name__ == '__main__':
-	scheduler = Scheduler(5, check_order_valid)
-	scheduler.start()
 	app.run(debug = True)
-	scheduler.stop()
 #
 #
 #
