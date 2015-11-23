@@ -868,8 +868,8 @@ def send_sms(phone_number, content):
 	print urllib2.urlopen(req).read()
 # 获取用户的code（微信端）
 def get_weixin_user_code(id):
-	debug = '127.0.0.1'
-	# debug = 'www.qilefun.com'
+	# debug = '127.0.0.1'
+	debug = 'www.qilefun.com'
 	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=http%3A%2F%2F' + debug + '%2Fpay&response_type=100&scope=snsapi_base&state=' + id  + '#wechat_redirect'
 	print 'getting code: ' + url
 	return url
