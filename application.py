@@ -247,10 +247,11 @@ def pay_page(id):
 	r = requests.post('https://api.mch.weixin.qq.com/pay/unifiedorder', data=xml, headers=headers)
 	r.encoding = 'utf-8'
 	arr = xmlToArray(r.text)
+	prepay_id = arr['prepay_id']
 	print '>>>pay_page xml result: ' + r.text
 	print '>>>pay_page prepay_id: ' + arr['prepay_id']
-	sign = sign_algorithm_one("appid=wxfee84b23a06c2b97&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id[:32] + "&signType=MD5")
-	sign = [time_str, rand_str, sign]
+	sign = sign_algorithm_one("appid=wxfee84b23a06c2b97&nonceStr=" + rand_str + "&package=prepay_id=" + prepay_id + "&signType=MD5&timeStamp=" + str(time_str))
+	sign = [time_str, rand_str, sign, prepay_id]
 	return render_template("pay.html", signal = s, order = order, sign = sign)
 def xmlToArray(xml):
 	"""将xml转为array"""
