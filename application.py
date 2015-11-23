@@ -191,9 +191,12 @@ def pay_page():
 	if not s.login:
 		return redirect(url_for('index_page'))
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
-	id = request.args.get('id')
+	id = ''
+	if request.args.get('id'):
+		id = request.args.get('id')
 	if not user['open_id']:
 		if request.args.get('code'):
+			id = request.args.get('state')
 			c = request.args.get('code')
 			openid = get_weixin_user_openid(c)
 			# g.db.execute('update users set open_id = ? where uuid = ?', [openid, s.login])
@@ -227,7 +230,7 @@ def pay_page():
 	headers = {'Content-Type': 'application/xml'}
 	r = requests.post('https://api.mch.weixin.qq.com/pay/unifiedorder', data=xml, headers=headers)
 	r.encoding = 'utf-8'
-	print r.text
+	print 'paypaypaypaypayapy' + r.text
 	return render_template("pay.html", signal = s, order = order, sign = sign)
 # 登录页面
 @app.route('/login')
@@ -863,7 +866,7 @@ def send_sms(phone_number, content):
 	print urllib2.urlopen(req).read()
 # 获取用户的code（微信端）
 def get_weixin_user_code(id):
-	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=http%3A%2F%2Fwww.qilefun.com%2Fpay&response_type=100&scope=snsapi_base&state=' + id + '#wechat_redirect'
+	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=http%3A%2F%2Fwww.qilefun.com%2Fpay&response_type=100&scope=snsapi_base&state=' + id  + '#wechat_redirect'
 	return url
 # 获取用户的openid（微信端）
 def get_weixin_user_openid(code):
@@ -872,7 +875,7 @@ def get_weixin_user_openid(code):
 	&code=''' + code + '''&grant_type=authorization_code
 	'''
 	req = urllib2.Request(url)
-	print urllib2.urlopen(req).read()
+	print 'get open_id: ' + urllib2.urlopen(req).read()
 	return 'aaa'
 #
 #
