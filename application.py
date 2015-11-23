@@ -191,18 +191,24 @@ def pay_page():
 	if not s.login:
 		return redirect(url_for('index_page'))
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
-	id = ''
-	if request.args.get('id'):
-		id = request.args.get('id')
-	if not user['open_id']:
-		if request.args.get('code'):
-			id = request.args.get('state')
-			c = request.args.get('code')
-			openid = get_weixin_user_openid(c)
-			# g.db.execute('update users set open_id = ? where uuid = ?', [openid, s.login])
-			# g.db.commit()
-		else:
-			return redirect(get_weixin_user_code(id))
+	if not request.args.get('id'):
+		return redirect(url_for('index_page'))
+	id = request.args.get('id')
+	print id
+	c = request.args.get('code')
+	print c
+	openid = get_weixin_user_openid(c)
+	g.db.execute('update users set open_id = ? where uuid = ?', [openid, s.login])
+	g.db.commit()
+	# if not user['open_id']:
+	# 	if request.args.get('code'):
+	# 		id = request.args.get('state')
+	# 		c = request.args.get('code')
+	# 		openid = get_weixin_user_openid(c)
+	# 		# g.db.execute('update users set open_id = ? where uuid = ?', [openid, s.login])
+	# 		# g.db.commit()
+	# 	else:
+	# 		return redirect(get_weixin_user_code(id))
 	order = query_db('select * from orders where uuid = ?', [id], one=True)
 	if not order:
 		return redirect(url_for('index_page'))
@@ -869,7 +875,8 @@ def send_sms(phone_number, content):
 # 获取用户的code（微信端）
 def get_weixin_user_code(id):
 	# debug = '127.0.0.1'
-	debug = 'www.qilefun.com'
+	param = urllib.urlencode({'id': id})
+	debug = 'www.qilefun.com%2Fpay%3F' + param
 	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=https%3A%2F%2F' + debug + '&response_type=100&scope=snsapi_base&state=' + id  + '#wechat_redirect'
 	# url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx520c15f417810387&redirect_uri=https%3A%2F%2Fchong.qq.com%2Fphp%2Findex.php%3Fd%3D%26c%3DwxAdapter%26m%3DmobileDeal%26showwxpaytitle%3D1%26vb2ctag%3D4_2030_5_1194_60&response_type=code&scope=snsapi_base&state=123#wechat_redirect'
 	print 'getting code: ' + url
