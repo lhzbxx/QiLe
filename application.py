@@ -186,6 +186,7 @@ def order_page(id):
 # 支付页面
 @app.route('/pay')
 def pay_page():
+	return redirect(url_for('index_page'))
 	s = signal()
 	# 如果没有登录，则返回首页。
 	if not s.login:
