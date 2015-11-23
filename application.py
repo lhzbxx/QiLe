@@ -195,7 +195,7 @@ def pay_page():
 	if not user['open_id']:
 		if request.args.get('code'):
 			c = request.args.get('code')
-			openid = get_weixin_user_openid(id)
+			openid = get_weixin_user_openid(c)
 			# g.db.execute('update users set open_id = ? where uuid = ?', [openid, s.login])
 			# g.db.commit()
 		else:
@@ -863,10 +863,8 @@ def send_sms(phone_number, content):
 	print urllib2.urlopen(req).read()
 # 获取用户的code（微信端）
 def get_weixin_user_code(id):
-	url = url_for('pay_page')
-	req = urllib2.Request(url)
-	print urllib2.urlopen(req).read()
-	return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=' + str(url_for('pay_page')) + '&response_type=100&scope=snsapi_base&state=' + id + '#wechat_redirect'
+	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=http%3A%2F%2Fwww.qilefun.com%2Fpay&response_type=100&scope=snsapi_base&state=' + id + '#wechat_redirect'
+	return url
 # 获取用户的openid（微信端）
 def get_weixin_user_openid(code):
 	url = '''
