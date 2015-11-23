@@ -199,12 +199,16 @@ def pay_page(id):
 	# if not request.args.get('id'):
 	# 	return redirect(url_for('index_page'))
 	# id = request.args.get('id')
+	openid = ''
+	if not user['open_id']:
+		c = request.args.get('code')
+		print ">>>pay_page code get from weixin: " + str(c)
+		openid = get_weixin_user_openid(c)
+		g.db.execute('update users set open_id = ? where uuid = ?', [openid, s.login])
+		g.db.commit()
+	else:
+		openid = user['open_id']
 	print ">>>pay_page order uuid: " + str(id)
-	c = request.args.get('code')
-	print ">>>pay_page code get from weixin: " + str(c)
-	openid = get_weixin_user_openid(c)
-	g.db.execute('update users set open_id = ? where uuid = ?', [openid, s.login])
-	g.db.commit()
 	# if not user['open_id']:
 	# 	if request.args.get('code'):
 	# 		id = request.args.get('state')
