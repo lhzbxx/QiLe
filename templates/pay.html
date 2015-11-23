@@ -188,7 +188,7 @@
 					signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
 					paySign: '{{ sign[2] }}', // 支付签名
 					complete: function (res) {
-						if (res.err_msg = 'get_brand_wcpay_request:ok') {
+						if (res.errMsg = 'chooseWXPay:ok') {
 							window.location.href="{{ url_for('.result_page', sign=1, title='支付成功', content='支付完毕，可以返回订单中心查看详情！', remark=0) }}";
 						}
 					}
