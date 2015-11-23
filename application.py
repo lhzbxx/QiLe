@@ -194,9 +194,9 @@ def pay_page():
 	if not request.args.get('id'):
 		return redirect(url_for('index_page'))
 	id = request.args.get('id')
-	print id
+	print ">>>pay_page order uuid: " + str(id)
 	c = request.args.get('code')
-	print c
+	print ">>>pay_page code get from weixin: " + str(c)
 	openid = get_weixin_user_openid(c)
 	g.db.execute('update users set open_id = ? where uuid = ?', [openid, s.login])
 	g.db.commit()
@@ -236,7 +236,7 @@ def pay_page():
 	headers = {'Content-Type': 'application/xml'}
 	r = requests.post('https://api.mch.weixin.qq.com/pay/unifiedorder', data=xml, headers=headers)
 	r.encoding = 'utf-8'
-	print 'paypaypaypaypayapy' + r.text
+	print '>>>pay_page xml result: ' + r.text
 	return render_template("pay.html", signal = s, order = order, sign = sign)
 # 登录页面
 @app.route('/login')
@@ -877,8 +877,8 @@ def get_weixin_user_code(id):
 	# debug = '127.0.0.1'
 	param = urllib.urlencode({'id': id})
 	debug = 'www.qilefun.com%2Fpay%3F' + param
-	# url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=https%3A%2F%2F' + debug + '&response_type=100&scope=snsapi_base&state=' + id  + '#wechat_redirect'
-	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx520c15f417810387&redirect_uri=https%3A%2F%2Fchong.qq.com%2Fphp%2Findex.php%3Fd%3D%26c%3DwxAdapter%26m%3DmobileDeal%26showwxpaytitle%3D1%26vb2ctag%3D4_2030_5_1194_60&response_type=code&scope=snsapi_base&state=123#wechat_redirect'
+	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=https%3A%2F%2F' + debug + '&response_type=100&scope=snsapi_base&state=' + id  + '#wechat_redirect'
+	# url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx520c15f417810387&redirect_uri=https%3A%2F%2Fchong.qq.com%2Fphp%2Findex.php%3Fd%3D%26c%3DwxAdapter%26m%3DmobileDeal%26showwxpaytitle%3D1%26vb2ctag%3D4_2030_5_1194_60&response_type=code&scope=snsapi_base&state=123#wechat_redirect'
 	print 'getting code: ' + url
 	return url
 # 获取用户的openid（微信端）
