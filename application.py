@@ -194,7 +194,7 @@ def pay_page(id):
 	if not s.login:
 		return redirect(url_for('index_page'))
 	params = request.args.items()
-	print ">>>pay_page all params: " params.__str__()
+	print ">>>pay_page all params: " + params.__str__()
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
 	# if not request.args.get('id'):
 	# 	return redirect(url_for('index_page'))
