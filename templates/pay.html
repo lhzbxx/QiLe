@@ -146,7 +146,7 @@
 				WeixinJSBridge.invoke(
 					'getBrandWCPayRequest', {
 					"appId"		: "wxfee84b23a06c2b97",		//公众号名称，由商户传入
-					"timeStamp"	: {{ sign[0] }},			//时间戳，自1970年以来的秒数
+					"timeStamp"	: "{{ sign[0] }}",			//时间戳，自1970年以来的秒数
 					"nonceStr"	: "{{ sign[1] }}",			//随机串
 					"package" 	: "prepay_id={{ sign[3] }}",
 					"signType"	: "MD5",					//微信签名方式
