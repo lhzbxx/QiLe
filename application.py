@@ -932,14 +932,14 @@ def random_str(randomlength=8):
     random.shuffle(a)
     return ''.join(a[:randomlength])
 # 生成微信所需要的签名
-def sign_algorithm_one_one(param):
+def sign_algorithm_one(param):
 	m = md5.new()
 	sign = param
 	m.update(sign)
 	result = m.hexdigest().upper()
 	print ">>>md5 sign: " + result
 	return result
-def sign_algorithm_one_multi(*params):
+def sign_algorithm_multi(*params):
 	m = md5.new()
 	sign = ''
 	for param in params:
