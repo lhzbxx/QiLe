@@ -424,7 +424,7 @@
 		{% if signal.login %}
 			window.location.href="{{ url_for('order_page', id=request.path[8:]) }}";
 		{% else %}
-			window.location.href="{{ url_for('login_page', from=request.url) }}";
+			window.location.href="{{ url_for('login_page', next=request.url) }}";
 		{% endif %}
 		$("#loadingToast").hide();
 	});

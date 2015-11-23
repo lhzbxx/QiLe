@@ -99,11 +99,11 @@
 					</div>
 				</div>
 				<br>
-				<a href="{{ url_for('resetpwd_page', from=request.url) }}" style="position: relative; text-align: right; right: 20px; text-decoration: underline; color: #F05B72; display: block; font-size: 14px;">忘记密码</a>
+				<a href="{{ url_for('resetpwd_page', next=request.url) }}" style="position: relative; text-align: right; right: 20px; text-decoration: underline; color: #F05B72; display: block; font-size: 14px;">忘记密码</a>
 				<br>
 				<div class="weui_btn_area">
 					<a class="weui_btn weui_btn_primary" id="login_btn">登录</a>
-					<a href="javascript: window.location.href='{{ request.values['from'] }}';" class="weui_btn weui_btn_warn" id="cancel_btn">取消</a>
+					<a href="javascript: window.location.href='{{ request.values['next'] }}';" class="weui_btn weui_btn_warn" id="cancel_btn">取消</a>
 				</div>
 			</div>
 			<div id="tab2" style="display: none;">
@@ -137,7 +137,7 @@
 				<br>
 				<div class="weui_btn_area">
 					<a class="weui_btn weui_btn_primary" id="register_btn">注册</a>
-					<a href="javascript: window.location.href='{{ request.values['from'] }}';" class="weui_btn weui_btn_warn" id="cancel_register_btn">取消</a>
+					<a href="javascript: window.location.href='{{ request.values['next'] }}';" class="weui_btn weui_btn_warn" id="cancel_register_btn">取消</a>
 				</div>
 			</div>
 			<div class="weui_dialog_alert" id="dialog1" style="display: none;">
@@ -201,7 +201,7 @@
 						// 存储手机号
 						$.cookie('phone_number', t1, { expires: 7 });
 						// 成功后返回到订单界面。
-						window.location.href="{{ request.values['from'] }}";
+						window.location.href="{{ request.values['next'] }}";
 					} else if (result['data'] == '101') {
 						alert("手机号不存在！");
 					} else {
@@ -226,7 +226,7 @@
 				function(result) {
 					if (result['data'] == '100') {
 						// 成功后返回到订单界面。
-						window.location.href="{{ request.values['from'] }}";
+						window.location.href="{{ request.values['next'] }}";
 					} else if (result['data'] == '101') {
 						alert("手机号已存在！");
 					} else if (result['data'] == '102') {
