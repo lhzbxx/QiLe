@@ -253,6 +253,7 @@ def pay_page(id):
 	prepay_id = arr['prepay_id']
 	print '>>>pay_page xml result: ' + r.text
 	sign = sign_algorithm_one("appId=wxfee84b23a06c2b97&nonceStr=" + str(rand_str) + "&package=prepay_id=" + str(prepay_id) + "&signType=MD5&timeStamp=" + str(time_str))
+	a.sign()
 	a = wx_sign.Sign(get_jsapi_ticket(), request.url).ret
 	sign = [time_str, rand_str, sign, prepay_id, a]
 	print '>>>pay_page sign->front: ' + str(sign)
