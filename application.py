@@ -894,8 +894,10 @@ def get_weixin_user_code(id):
 def get_weixin_user_openid(code):
 	url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxfee84b23a06c2b97&secret=c5072c12cf5f7b0497750bc7739d7cac&code=' + str(code) + '&grant_type=authorization_code'
 	req = urllib2.Request(url)
-	print '>>>get second step open_id: ' + urllib2.urlopen(req).read()
-	return 'aaa'
+	t = urllib2.urlopen(req).read()
+	print '>>>get second step open_id: ' + t
+	t = eval(t)
+	return t['openid']
 #
 #
 #
