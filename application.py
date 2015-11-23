@@ -192,11 +192,11 @@ def pay_page():
 		return redirect(url_for('index_page'))
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
 	id = request.args.get('id')
-	if not user['openid']:
+	if not user['open_id']:
 		if request.args.get('code'):
 			c = request.args.get('code')
 			openid = get_weixin_user_openid(id)
-			# g.db.execute('update users set openid = ? where uuid = ?', [openid, s.login])
+			# g.db.execute('update users set open_id = ? where uuid = ?', [openid, s.login])
 			# g.db.commit()
 		else:
 			return redirect(get_weixin_user_code(id))
