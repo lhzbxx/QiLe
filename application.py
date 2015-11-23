@@ -193,8 +193,8 @@ def pay_page():
 	# 如果没有登录，则返回首页。
 	if not s.login:
 		return redirect(url_for('index_page'))
-	params = request.args.items()
-	return params.__str__()
+	# params = request.args.items()
+	# return params.__str__()
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
 	# if not request.args.get('id'):
 	# 	return redirect(url_for('index_page'))
