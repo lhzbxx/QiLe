@@ -366,7 +366,7 @@
 							function(result) {
 								$("#loadingToast").hide();
 								if (result['data'] == '100') {
-									window.location.href = "/pay?id=" + result['id'];
+									window.location.href = "/pay/" + result['id'];
 								} else if (result['data'] == '101') {
 									$("#alert_content").text("登录已失效~");
 									$("#alert_dialog").show();
@@ -380,7 +380,7 @@
 									$("#alert_dialog").show();
 									$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('index_page') }}';");
 								} else if (result['data'] == '105') {
-									alert(result['url']);
+									// alert(result['url']);
 									window.location.href = result['url'];
 									// window.location.href = result['url'];
 								}
