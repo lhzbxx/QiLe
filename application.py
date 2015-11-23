@@ -225,7 +225,7 @@ def pay_page(id):
 	order['liver_info'] = len(eval(order['liver_info']))-1
 	rand_str = random_str(32)
 	time_str = int(time.time())
-	sign = sign_algorithm("appid=wxfee84b23a06c2b97&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id[:32] + "&signType=MD5&ChenLiang2QiLeFun20151121ccccccc")
+	sign = sign_algorithm_one("appid=wxfee84b23a06c2b97&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id[:32] + "&signType=MD5&ChenLiang2QiLeFun20151121ccccccc")
 	sign = [time_str, rand_str, sign]
 	xml = """<xml>
 			<appid>wxfee84b23a06c2b97</appid>
@@ -932,14 +932,14 @@ def random_str(randomlength=8):
     random.shuffle(a)
     return ''.join(a[:randomlength])
 # 生成微信所需要的签名
-def sign_algorithm_one(param):
+def sign_algorithm_one_one(param):
 	m = md5.new()
 	sign = param
 	m.update(sign)
 	result = m.hexdigest().upper()
 	print ">>>md5 sign: " + result
 	return result
-def sign_algorithm_multi(*params):
+def sign_algorithm_one_multi(*params):
 	m = md5.new()
 	sign = ''
 	for param in params:
