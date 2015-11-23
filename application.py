@@ -950,6 +950,7 @@ def sign_algorithm_one(param):
 	sign = param + "&key=ChenLiang2QiLeFun20151121ccccccc"
 	m.update(sign)
 	result = m.hexdigest().upper()
+	print ">>>md5 param: " + sign
 	print ">>>md5 sign: " + result
 	return result
 def sign_algorithm_multi(*params):
