@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 # 
-# RESTful-API
-# 
 # 
 
 #########
@@ -23,6 +21,7 @@ import string
 from datetime import date, timedelta
 from qiniu import Auth
 import xml.etree.ElementTree as ET
+import wx_sign
 
 #########
 #
@@ -36,7 +35,11 @@ app.config.update(dict(
 	# 生成秘钥
 	SECRET_KEY=os.urandom(24),
 	USERNAME='admin',
-	PASSWORD='default'
+	PASSWORD='default',
+	access_token = '',
+	access_token_valid = 0,
+	jsapi_ticket = '',
+	jsapi_ticket_valid = 0
 ))
 #
 #
@@ -250,7 +253,8 @@ def pay_page(id):
 	prepay_id = arr['prepay_id']
 	print '>>>pay_page xml result: ' + r.text
 	sign = sign_algorithm_one("appId=wxfee84b23a06c2b97&nonceStr=" + str(rand_str) + "&package=prepay_id=" + str(prepay_id) + "&signType=MD5&timeStamp=" + str(time_str))
-	sign = [time_str, rand_str, sign, prepay_id]
+	a = wx_sign.Sign(get_jsapi_ticket(), request.url).ret
+	sign = [time_str, rand_str, sign, prepay_id, a]
 	print '>>>pay_page sign->front: ' + str(sign)
 	return render_template("pay.html", signal = s, order = order, sign = sign)
 def xmlToArray(xml):
@@ -989,6 +993,31 @@ def check_order_valid():
 			g.db.commit()
 			user = query_db('select * from users where uuid = ?', [i['user_uuid']], one=True)
 			send_sms(user['phone_number'], "抱歉，您的订单已经失效。")
+def get_access_token():
+	now = int(time.time())
+	if now - app.config['access_token_valid'] > 7200:
+		url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxfee84b23a06c2b97&secret=c5072c12cf5f7b0497750bc7739d7cac'
+		req = urllib2.Request(url)
+		t = urllib2.urlopen(req).read()
+		t = eval(t)['access_token']
+		print '>>>get access_token: ' + t
+		app.config['access_token'] = t
+		app.config['access_token_valid'] = now
+		return t
+	else:
+		return app.config['access_token']
+def get_jsapi_ticket():
+	now = int(time.time())
+	if now - app.config['jsapi_ticket_valid'] > 7200:
+		url = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=' + get_access_token() + '&type=jsapi'
+		req = urllib2.Request(url)
+		t = urllib2.urlopen(req).read()
+		t = eval(t)
+		app.config['jsapi_ticket'] = t['ticket']
+		app.config['jsapi_ticket_valid'] = now
+		return t['ticket']
+	else:
+		return app.config['jsapi_ticket']
 # 	# print order_uuid
 # 	# schedule.enter(900, 0, check_order_valid_func, (order_uuid,))  
 # 	# schedule.run()
