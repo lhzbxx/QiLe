@@ -380,7 +380,7 @@
 									$("#alert_dialog").show();
 									$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('index_page') }}';");
 								} else if (result['data'] == '105') {
-									// alert("OK");
+									alert(result['url']);
 									window.location.href = result['url'];
 									// window.location.href = result['url'];
 								}
