@@ -178,9 +178,9 @@ def order_page(id):
 		# 临时的方案，这里还是需要改的，就是说如果直接进入了房源详情的页面。这里的时间先选择成今明两天。
 		today = date.today().strftime('%Y-%m-%d')
 		tomorrow = (date.today()+timedelta(days=1)).strftime('%Y-%m-%d')
-		t = [today, tomorrow, t1, t2]
 		t1 = int(date.today().strftime('%j'))
 		t2 = int(t1 + 1)
+		t = [today, tomorrow, t1, t2]
 		session['t'] = [t1, t2, today, tomorrow]
 	return render_template("order.html", signal = s, room = room, user = user, checkins = checkins, coupons = coupons, current = int(time.time()), t = t)
 # 支付页面
@@ -784,6 +784,8 @@ def pay():
 		g.db.commit()
 		user = query_db('select * from users where uuid = ?', [s.login], one=True)
 		send_sms(user['phone_number'], "下了一个新订单，快付钱！")
+		if not user['open_id']:
+			return jsonify({'data': 105, 'url': get_weixin_user_code(u)})
 		# thread.start_new_thread( check_order_valid, (u, ) )
 	except Exception, e:
 		print e
@@ -866,7 +868,10 @@ def send_sms(phone_number, content):
 	print urllib2.urlopen(req).read()
 # 获取用户的code（微信端）
 def get_weixin_user_code(id):
-	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=http%3A%2F%2Fwww.qilefun.com%2Fpay&response_type=100&scope=snsapi_base&state=' + id  + '#wechat_redirect'
+	debug = '127.0.0.1'
+	# debug = 'www.qilefun.com'
+	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=http%3A%2F%2F' + debug + '%2Fpay&response_type=100&scope=snsapi_base&state=' + id  + '#wechat_redirect'
+	print 'getting code: ' + url
 	return url
 # 获取用户的openid（微信端）
 def get_weixin_user_openid(code):
