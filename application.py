@@ -191,8 +191,8 @@ def pay_page():
 	if not s.login:
 		return redirect(url_for('index_page'))
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
-	if not request.args.get('id'):
-		return redirect(url_for('index_page'))
+	# if not request.args.get('id'):
+	# 	return redirect(url_for('index_page'))
 	id = request.args.get('id')
 	print ">>>pay_page order uuid: " + str(id)
 	c = request.args.get('code')
