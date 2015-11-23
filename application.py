@@ -224,13 +224,13 @@ def pay_page():
 			<mch_id>1271526501</mch_id>
 			<nonce_str>""" + str(rand_str) + """</nonce_str>
 			<notify_url>http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php</notify_url>
-			<openid>oUpF8uMuAJO_M2pxb1Q9zNjWeS6o</openid>
+			<openid>""" + str(openid) + """</openid>
 			<out_trade_no>""" + str(id[:32]) + """</out_trade_no>
 			<spbill_create_ip>""" + str(request.remote_addr) + """</spbill_create_ip>
 			<total_fee>""" + str(order['deal_price']) + """</total_fee>
 			<trade_type>JSAPI</trade_type>
 			<sign>""" + sign_algorithm("appid=wxfee84b23a06c2b97&attach=支付测试&body=JSAPI支付测试&mch_id=1271526501&nonce_str="+str(rand_str)+
-				"&notify_url=http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php&openid=&out_trade_no="+str(id[:32])+"&spbill_create_ip="+
+				"&notify_url=http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php&openid="+str(openid)+"&out_trade_no="+str(id[:32])+"&spbill_create_ip="+
 				str(request.remote_addr)+"&total_fee="+str(order['deal_price'])+"&trade_type=JSAPI") + """</sign>
 			</xml>"""
 	headers = {'Content-Type': 'application/xml'}
@@ -873,7 +873,7 @@ def send_sms(phone_number, content):
 	params = urllib.urlencode({'smsMob': phone_number, 'Uid': 'dingfanla', 'Key': '19c35d39ee379898d25e', 'smsText': content})
 	url = 'http://utf8.sms.webchinese.cn/?' + params
 	req = urllib2.Request(url)
-	print urllib2.urlopen(req).read()
+	print ">>>send_sms: " + urllib2.urlopen(req).read()
 # 获取用户的code（微信端）
 def get_weixin_user_code(id):
 	# debug = '127.0.0.1'
@@ -881,13 +881,13 @@ def get_weixin_user_code(id):
 	debug = 'www.qilefun.com%2Fpay%3F' + param
 	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=https%3A%2F%2F' + debug + '&response_type=100&scope=snsapi_base&state=' + id  + '#wechat_redirect'
 	# url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx520c15f417810387&redirect_uri=https%3A%2F%2Fchong.qq.com%2Fphp%2Findex.php%3Fd%3D%26c%3DwxAdapter%26m%3DmobileDeal%26showwxpaytitle%3D1%26vb2ctag%3D4_2030_5_1194_60&response_type=code&scope=snsapi_base&state=123#wechat_redirect'
-	print 'getting code: ' + url
+	print '>>>get first step code: ' + url
 	return url
 # 获取用户的openid（微信端）
 def get_weixin_user_openid(code):
 	url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxfee84b23a06c2b97&secret=c5072c12cf5f7b0497750bc7739d7cac&code=' + str(code) + '&grant_type=authorization_code'
 	req = urllib2.Request(url)
-	print 'get open_id: ' + urllib2.urlopen(req).read()
+	print '>>>get second step open_id: ' + urllib2.urlopen(req).read()
 	return 'aaa'
 #
 #
