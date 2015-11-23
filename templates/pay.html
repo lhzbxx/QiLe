@@ -124,14 +124,10 @@
 </body>
 <script type="text/javascript">
 	$(document).ready(function(){
-		alert({
-					"appid"		: "wxfee84b23a06c2b97",		//公众号名称，由商户传入
-					"timeStamp"	: {{ sign[0] }},			//时间戳，自1970年以来的秒数
-					"nonceStr"	: "{{ sign[1] }}",			//随机串
-					"package" 	: "prepay_id={{ sign[3] }}",
-					"signType"	: "MD5",					//微信签名方式
-					"paySign" 	: "{{ sign[2] }}"			//微信签名 
-				});
+		alert("{{ sign[0] }}");
+		alert("{{ sign[1] }}");
+		alert("{{ sign[2] }}");
+		alert("{{ sign[3] }}");
 		$("#loadingToast").hide();
 		$("#tab_switch_1").click(function(){
 			$("#tab2").hide();
