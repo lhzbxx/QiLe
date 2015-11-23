@@ -22,6 +22,7 @@ import md5
 import string
 from datetime import date, timedelta
 from qiniu import Auth
+import xml.etree.ElementTree as ET
 
 #########
 #
@@ -225,8 +226,6 @@ def pay_page(id):
 	order['liver_info'] = len(eval(order['liver_info']))-1
 	rand_str = random_str(32)
 	time_str = int(time.time())
-	sign = sign_algorithm_one("appid=wxfee84b23a06c2b97&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id[:32] + "&signType=MD5")
-	sign = [time_str, rand_str, sign]
 	xml = """<xml>
 			<appid>wxfee84b23a06c2b97</appid>
 			<attach>支付测试</attach>
@@ -247,8 +246,20 @@ def pay_page(id):
 	headers = {'Content-Type': 'application/xml'}
 	r = requests.post('https://api.mch.weixin.qq.com/pay/unifiedorder', data=xml, headers=headers)
 	r.encoding = 'utf-8'
+	arr = xmlToArray(r.text)
 	print '>>>pay_page xml result: ' + r.text
+	print '>>>pay_page prepay_id: ' + arr['prepay_id']
+	sign = sign_algorithm_one("appid=wxfee84b23a06c2b97&timeStamp=" + str(time_str) + "&nonceStr=" + rand_str + "&package=prepay_id=" + id[:32] + "&signType=MD5")
+	sign = [time_str, rand_str, sign]
 	return render_template("pay.html", signal = s, order = order, sign = sign)
+def xmlToArray(xml):
+	"""将xml转为array"""
+	array_data = {}
+	root = ET.fromstring(xml)
+	for child in root:
+		value = child.text
+		array_data[child.tag] = value
+	return array_data
 # 登录页面
 @app.route('/login')
 def login_page():
