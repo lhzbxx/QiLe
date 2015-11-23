@@ -601,18 +601,20 @@ def modifyRoom():
 # 更新真实姓名
 @app.route('/add_true_name-back', methods=['POST'])
 def add_true_name():
+	s = signal()
 	t1 = request.form.get("t1")
-	g.db.execute('update users set true_name = ? where uuid = ?', [t1, session['user']])
+	g.db.execute('update users set true_name = ? where uuid = ?', [t1, s.login])
 	g.db.commit()
 	return jsonify({"data": 100})
 # 添加入住人
 @app.route('/add_checkin-back', methods=['POST'])
 def add_checkin():
+	s = signal()
 	t1 = request.form.get("t1")
 	t2 = request.form.get("t2")
 	t3 = request.form.get("t3")
 	uu = str(uuid.uuid4())
-	g.db.execute('insert into user_checkin (uuid, user_uuid, name, type, identify) values (?, ?, ?, ?, ?)', [uu, session['user'], t1, t2, t3])
+	g.db.execute('insert into user_checkin (uuid, user_uuid, name, type, identify) values (?, ?, ?, ?, ?)', [uu, s.login, t1, t2, t3])
 	g.db.commit()
 	return jsonify({"data": 100, 'uuid': uu})
 # 移除入住人
