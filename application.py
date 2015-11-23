@@ -187,14 +187,14 @@ def order_page(id):
 		session['t'] = [t1, t2, today, tomorrow]
 	return render_template("order.html", signal = s, room = room, user = user, checkins = checkins, coupons = coupons, current = int(time.time()), t = t)
 # 支付页面
-@app.route('/pay')
-def pay_page():
+@app.route('/pay/<id>')
+def pay_page(id):
 	s = signal()
 	# 如果没有登录，则返回首页。
 	if not s.login:
 		return redirect(url_for('index_page'))
-	params = request.args.items()
-	return params.__str__()
+	# params = request.args.items()
+	# return params.__str__()
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
 	# if not request.args.get('id'):
 	# 	return redirect(url_for('index_page'))
@@ -886,7 +886,7 @@ def get_weixin_user_code(id):
 	# debug = '127.0.0.1'
 	param = urllib.urlencode({'id': id})
 	debug = 'www.qilefun.com%2Fpay%3F' + param
-	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=http%3A%2F%2Fwww.qilefun.com%2Fpay%3F' + id + '&response_type=code&scope=snsapi_base&state=' + id  + '#wechat_redirect'
+	url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=http%3A%2F%2Fwww.qilefun.com%2Fpay%2F' + id + '&response_type=code&scope=snsapi_base&state=' + id  + '#wechat_redirect'
 	# url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx520c15f417810387&redirect_uri=https%3A%2F%2Fchong.qq.com%2Fphp%2Findex.php%3Fd%3D%26c%3DwxAdapter%26m%3DmobileDeal%26showwxpaytitle%3D1%26vb2ctag%3D4_2030_5_1194_60&response_type=code&scope=snsapi_base&state=123#wechat_redirect'
 	print '>>>get first step code: ' + url
 	return url
