@@ -11,7 +11,7 @@ create table users (
     history_order_num integer default 0
 );
 
-INSERT INTO users VALUES (0, 0, 13651608916, 123456, 13651608916, 0, null, 0);
+INSERT INTO users VALUES (0, 0, 13651608916, 123456, 13651608916, 0, null, null, 0);
 
 drop table if exists user_info;
 create table user_info (
