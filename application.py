@@ -209,6 +209,7 @@ def pay_page(id):
 	else:
 		openid = user['open_id']
 	print ">>>pay_page order uuid: " + str(id)
+	print ">>>pay_page order openid: " + str(openid)
 	# if not user['open_id']:
 	# 	if request.args.get('code'):
 	# 		id = request.args.get('state')
