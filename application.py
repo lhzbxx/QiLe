@@ -251,7 +251,7 @@ def pay_page(id):
 	print '>>>pay_page xml result: ' + r.text
 	sign = sign_algorithm_one("appid=wxfee84b23a06c2b97&nonceStr=" + rand_str + "&package=prepay_id=" + prepay_id + "&signType=MD5&timeStamp=" + str(time_str))
 	sign = [time_str, rand_str, sign, prepay_id]
-	print '>>>pay_page sign->front: ' + sign
+	print '>>>pay_page sign->front: ' + str(sign)
 	return render_template("pay.html", signal = s, order = order, sign = sign)
 def xmlToArray(xml):
 	"""将xml转为array"""
