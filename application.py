@@ -190,7 +190,16 @@ def pay_page():
 	# 如果没有登录，则返回首页。
 	if not s.login:
 		return redirect(url_for('index_page'))
+	user = query_db('select * from users where uuid = ?', [s.login], one=True)
 	id = request.args.get('id')
+	if not user['openid']:
+		if request.args.get('code'):
+			c = request.args.get('code')
+			openid = get_weixin_user_openid(id)
+			# g.db.execute('update users set openid = ? where uuid = ?', [openid, s.login])
+			# g.db.commit()
+		else:
+			return redirect(get_weixin_user_code(id))
 	order = query_db('select * from orders where uuid = ?', [id], one=True)
 	if not order:
 		return redirect(url_for('index_page'))
@@ -852,6 +861,22 @@ def send_sms(phone_number, content):
 	url = 'http://utf8.sms.webchinese.cn/?' + params
 	req = urllib2.Request(url)
 	print urllib2.urlopen(req).read()
+# 获取用户的code（微信端）
+def get_weixin_user_code(id):
+	url = urllib.urlencode(url_for('pay_page'))
+	req = urllib2.Request(url)
+	print urllib2.urlopen(req).read()
+	return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfee84b23a06c2b97&redirect_uri=' + 
+		url_for('pay_page') + '&response_type=100&scope=snsapi_base&state=' + id + '#wechat_redirect'
+# 获取用户的openid（微信端）
+def get_weixin_user_openid(code):
+	url = '''
+	https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxfee84b23a06c2b97&secret=c5072c12cf5f7b0497750bc7739d7cac
+	&code=''' + code + '''&grant_type=authorization_code
+	'''
+	req = urllib2.Request(url)
+	print urllib2.urlopen(req).read()
+	return 'aaa'
 #
 #
 #

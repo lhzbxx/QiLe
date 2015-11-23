@@ -7,6 +7,7 @@ create table users (
     phone_number integer not null,
     register_time integer not null,
     true_name text,
+    open_id text,
     history_order_num integer default 0
 );
 
