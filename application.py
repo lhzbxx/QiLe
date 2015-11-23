@@ -829,6 +829,8 @@ def signal():
 	if session.get('user'):
 		# print session['user']
 		signal.login = session['user']
+	elif request.cookies.get('username'):
+		signal.login = request.cookies.get('username')
 	else:
 		signal.login = None
 	return signal

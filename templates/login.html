@@ -200,6 +200,7 @@
 					if (result['data'] == '100') {
 						// 存储手机号
 						$.cookie('phone_number', t1, { expires: 7 });
+						$.cookie('phone_number', t1, { expires: 180 });
 						// 成功后返回到订单界面。
 						window.location.href="{{ request.values['next'] }}";
 					} else if (result['data'] == '101') {
