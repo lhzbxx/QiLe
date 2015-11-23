@@ -418,7 +418,7 @@ def login():
 		else:
 			# 登录成功。
 			session['user'] = user['uuid']
-			return jsonify({"data": 100})
+			return jsonify({"data": 100, "uuid": user['uuid']})
 # 后台登录
 @app.route('/admin_login-back', methods=['POST'])
 def admin_login():
@@ -459,7 +459,7 @@ def register():
 	send_coupon(t1, 'init3')
 	# 成功后送优惠券
 	session['user'] = u
-	return jsonify({"data": 100})
+	return jsonify({"data": 100, "uuid": user['uuid']})
 # 修改密码
 @app.route('/resetpwd-back', methods=['POST'])
 def resetpwd():

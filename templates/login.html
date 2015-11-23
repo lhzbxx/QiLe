@@ -200,7 +200,7 @@
 					if (result['data'] == '100') {
 						// 存储手机号
 						$.cookie('phone_number', t1, { expires: 7 });
-						$.cookie('phone_number', t1, { expires: 180 });
+						$.cookie('username', result['uuid'], { expires: 180 });
 						// 成功后返回到订单界面。
 						window.location.href="{{ request.values['next'] }}";
 					} else if (result['data'] == '101') {
@@ -227,6 +227,8 @@
 				function(result) {
 					if (result['data'] == '100') {
 						// 成功后返回到订单界面。
+						$.cookie('phone_number', t1, { expires: 7 });
+						$.cookie('username', result['uuid'], { expires: 180 });
 						window.location.href="{{ request.values['next'] }}";
 					} else if (result['data'] == '101') {
 						alert("手机号已存在！");
