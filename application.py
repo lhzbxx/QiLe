@@ -864,7 +864,7 @@ def pay_success():
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
 	t1 = request.form.get("t1")
 	order = query_db('select * from orders where uuid = ?', [t1], one=True)
-	room = query_db('select merchant_uuid, room_name where uuid = ?', [order['room_uuid']], one=True)
+	room = query_db('select merchant_uuid, room_name from rooms where uuid = ?', [order['room_uuid']], one=True)
 	merchant = query_db('select * from merchants where uuid = ?', [room['merchant_uuid']], one=True)
 	g.db.execute('update orders set deal_state = 1 where uuid = ?', [t1])
 	g.db.commit()
