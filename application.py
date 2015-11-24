@@ -874,14 +874,15 @@ def pay_success():
 	order = query_db('select * from orders where uuid = ?', [t1], one=True)
 	room = query_db('select merchant_uuid, room_name from rooms where uuid = ?', [order['room_uuid']], one=True)
 	merchant = query_db('select * from merchants where uuid = ?', [room['merchant_uuid']], one=True)
-	g.db.execute('update orders set deal_state = 1 where uuid = ?', [t1])
-	g.db.commit()
 	t1 = timedate2int(order['date1'])
 	t2 = timedate2int(order['date2'])
 	# 进行处理库存的减少。
-	p = int(a['stock'])
+	p = int(room['stock'])
 	for i in range(t1-1, t2-1):
 		p = ~(1<<i) & p
+	print ">>>pay_success: stock update: " + bin(p)
+	g.db.execute('update orders set deal_state = 1, stock = ? where uuid = ?', [p, t1])
+	g.db.commit()
 	send_sms(user['phone_number'], '订单确认：' + liverstr(order['liver_info']) + '在' + str(order['date1']) + '至' + str(order['date2']) + '入住' + str(merchant['merchant_name']) + str(room['room_name']) + str(timedate2timedelta(order['date2'], order['date1'])) + '晚' + '总价：￥' + str(order['deal_price']) + '地址：' + str(merchant['merchant_address']) + '电话：' + str(merchant['merchant_phone_number1']) + '其乐客服：4000125176，关注微信公众号其乐，更多惊喜等待你！')
 	return jsonify({"data": 100})
 def liverstr(liver):
