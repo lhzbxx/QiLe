@@ -876,9 +876,9 @@ def timestamp2timestr(stamp):
 def timedate2timedelta(date1, date2):
 	# date1 > date2
 	p1 = date1.split('-')
-	t1 = date(int(p1[0]), int(p1[1]), int(p1[2])).strftime("%Y-%m-%d")
+	t1 = int(date(int(p1[0]), int(p1[1]), int(p1[2])).strftime('%j'))
 	p2 = date2.split('-')
-	t2 = date(int(p2[0]), int(p2[1]), int(p2[2])).strftime("%Y-%m-%d")
+	t2 = int(date(int(p2[0]), int(p2[1]), int(p2[2])).strftime('%j'))
 	return t1-t2
 def signal():
 	if session.get('user'):
