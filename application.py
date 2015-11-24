@@ -880,7 +880,7 @@ def check_room_stock():
 		total_day_of_year = 366
 	for i in range(total_day_of_year):
 		if 1<<i & p == 0:
-			r = r + datetime.strftime("%Y-%m-%d", datetime.strptime((str(i+1)), '%j')) + '\r\n'
+			r = r + datetime.strftime(datetime.strptime((str(i+1)), '%j'), "%Y-%m-%d") + '\r\n'
 	return jsonify({"data": 100, "stock": r})
 # 支付成功后的处理
 @app.route('/pay_success-back', methods=['POST'])
