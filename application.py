@@ -18,7 +18,7 @@ import random
 import requests
 import md5
 import string
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from qiniu import Auth
 import xml.etree.ElementTree as ET
 import wx_sign
@@ -880,7 +880,7 @@ def check_room_stock():
 		total_day_of_year = 366
 	for i in range(total_day_of_year):
 		if 1<<i & p == 0:
-			r = r + datetime.datetime.strftime("%Y-%m-%d", datetime.datetime.strptime((str(i+1)), '%j')) + '\r\n'
+			r = r + datetime.strftime("%Y-%m-%d", datetime.strptime((str(i+1)), '%j')) + '\r\n'
 	return jsonify({"data": 100, "stock": r})
 # 支付成功后的处理
 @app.route('/pay_success-back', methods=['POST'])
