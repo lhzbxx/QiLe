@@ -867,6 +867,21 @@ def change_room_state():
 		g.db.execute('update rooms set room_switch = ? where uuid = ?', [0, t1])
 		g.db.commit()
 		return jsonify({"data": 100})
+# 查看房源的库存
+@app.route('/check_room_stock-back', methods=['POST'])
+def check_room_stock():
+	t1 = request.form.get("t1")
+	room = query_db('select * from rooms where uuid = ?', [t1], one=True)
+	p = int(room['stock'])
+	r = ''
+	total_day_of_year = 365
+	this_year = time.localtime()[0]
+	if thisyear % 400 == 0 or ( thisyear % 4 ==0 and thisyear % 100 != 0 ):
+		total_day_of_year = 366
+	for i in range(total_day_of_year):
+		if 1<<i & p == 0:
+			r = r + datetime.datetime.strftime("%Y-%m-%d", datetime.datetime.strptime((str(i+1)), '%j')) + '\r\n'
+	return jsonify({"data": 100, "stock": r})
 # 支付成功后的处理
 @app.route('/pay_success-back', methods=['POST'])
 def pay_success():
