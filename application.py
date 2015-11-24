@@ -105,11 +105,11 @@ def search_page():
 	s = signal()
 	if session.get('t'):
 		# print session['t']
-		rooms = query_db('select * from rooms where room_switch = ?', [1])
+		rooms = query_db('select * from rooms where room_switch = 1')
 		for j in range(len(rooms)-1, -1, -1):
 			# 366位的库存信息
 			p = int(rooms[j]['stock'])
-			for i in range(session['t'][0]-1, session['t'][1]):
+			for i in range(session['t'][0]-1, session['t'][1]-1):
 				if 1<<i & p == 0:
 					del rooms[j]
 					break
@@ -813,8 +813,7 @@ def pay():
 		if price < 0:
 			price = 0
 	# 检查房间是否可用。
-	# 未完成！！！
-	if True == False:
+	if is_valid_room(room, session['t'][0], session['t'][1]) == False:
 		# 房源已不可用。
 		return jsonify({"data": 102})
 	u = str(uuid.uuid4())
@@ -877,17 +876,14 @@ def pay_success():
 	merchant = query_db('select * from merchants where uuid = ?', [room['merchant_uuid']], one=True)
 	g.db.execute('update orders set deal_state = 1 where uuid = ?', [t1])
 	g.db.commit()
+	t1 = timedate2int(order['date1'])
+	t2 = timedate2int(order['date2'])
+	# 进行处理库存的减少。
+	p = int(a['stock'])
+	for i in range(t1-1, t2-1):
+		p = ~(1<<i) & p
 	send_sms(user['phone_number'], '订单确认：' + liverstr(order['liver_info']) + '在' + str(order['date1']) + '至' + str(order['date2']) + '入住' + str(merchant['merchant_name']) + str(room['room_name']) + str(timedate2timedelta(order['date2'], order['date1'])) + '晚' + '总价：￥' + str(order['deal_price']) + '地址：' + str(merchant['merchant_address']) + '电话：' + str(merchant['merchant_phone_number1']) + '其乐客服：4000125176，关注微信公众号其乐，更多惊喜等待你！')
 	return jsonify({"data": 100})
-def timestamp2timestr(stamp):
-	return time.strftime("%Y-%m-%d", time.localtime(stamp))
-def timedate2timedelta(date1, date2):
-	# date1 > date2
-	p1 = date1.split('-')
-	t1 = int(date(int(p1[0]), int(p1[1]), int(p1[2])).strftime('%j'))
-	p2 = date2.split('-')
-	t2 = int(date(int(p2[0]), int(p2[1]), int(p2[2])).strftime('%j'))
-	return t1-t2
 def liverstr(liver):
 	liver = eval(liver)
 	del liver[0]
@@ -1011,6 +1007,40 @@ def sign_algorithm_multi(*params):
 	sign = sign + "&key=ChenLiang2QiLeFun20151121ccccccc"
 	m.update(sign)
 	return m.hexdigest().upper()
+# 检查优惠券是否可用
+def is_valid_coupon(id, phone_number):
+	a = query_db('select * from coupons where uuid = ? and phone_number = ? and coupon_state = 1', [id, phone_number], one=True)
+	if a:
+		return True
+	else:
+		return False
+# 检查房源是否可用
+def is_valid_room(a, t1, t2):
+	if a:
+		if a['room_switch'] != 1:
+			print ">>>is_valid_room: room_switch off!!!"
+			return False
+		p = int(a['stock'])
+		for i in range(t1-1, t2-1):
+			if 1<<i & p == 0:
+				return False
+		return True
+	else:
+		return False
+def timestamp2timestr(stamp):
+	return time.strftime("%Y-%m-%d", time.localtime(stamp))
+def timedate2timedelta(date1, date2):
+	# date1 > date2
+	p1 = date1.split('-')
+	t1 = int(date(int(p1[0]), int(p1[1]), int(p1[2])).strftime('%j'))
+	p2 = date2.split('-')
+	t2 = int(date(int(p2[0]), int(p2[1]), int(p2[2])).strftime('%j'))
+	return t1-t2
+def timedate2int(d):
+	p1 = d.split('-')
+	t1 = int(date(int(p1[0]), int(p1[1]), int(p1[2])).strftime('%j'))
+	return t1
+
 # class Scheduler(object):
 # 	def __init__(self, sleep_time, function):
 # 		self.sleep_time = sleep_time
