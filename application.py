@@ -238,10 +238,12 @@ def pay_page(id):
 	order['liver_info'] = len(eval(order['liver_info']))-1
 	rand_str = random_str(32)
 	time_str = int(time.time())
+	aaaaaaaa = query_db('select room_name from rooms where uuid = ?', [order['room_uuid']], one=True)
+	aaaaaaaa = aaaaaaaa['room_name']
 	xml = """<xml>
 			<appid>wxfee84b23a06c2b97</appid>
 			<attach>支付测试</attach>
-			<body>JSAPI支付测试</body>
+			<body>""" + aaaaaaaa + """</body>
 			<mch_id>1271526501</mch_id>
 			<nonce_str>""" + str(rand_str) + """</nonce_str>
 			<notify_url>http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php</notify_url>
@@ -250,7 +252,7 @@ def pay_page(id):
 			<spbill_create_ip>""" + str(request.remote_addr) + """</spbill_create_ip>
 			<total_fee>""" + str(int(order['deal_price']*100)) + """</total_fee>
 			<trade_type>JSAPI</trade_type>
-			<sign>""" + sign_algorithm_one("appid=wxfee84b23a06c2b97&attach=支付测试&body=JSAPI支付测试&mch_id=1271526501&nonce_str="+str(rand_str)+
+			<sign>""" + sign_algorithm_one("appid=wxfee84b23a06c2b97&attach=支付测试&body=" + aaaaaaaa + "&mch_id=1271526501&nonce_str="+str(rand_str)+
 				"&notify_url=http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php&openid="+str(openid)+"&out_trade_no="+str(id[:32])+"&spbill_create_ip="+
 				str(request.remote_addr)+"&total_fee="+str(int(order['deal_price']*100))+"&trade_type=JSAPI") + """</sign>
 			</xml>"""
