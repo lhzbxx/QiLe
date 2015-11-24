@@ -197,8 +197,8 @@
 }
 
 .daterangepicker td.active, .daterangepicker td.active:hover {
-  background-color: #357ebd;
-  border-color: #3071a9;
+  background-color: #ef4f4f;
+  border-color: #ef4f4f;
   color: #fff;
 }
 
@@ -249,7 +249,7 @@
 }
 
 .daterangepicker .input-mini.active {
-  border: 1px solid #357ebd;
+  border: 1px solid #ef4f4f;
 }
 
 .daterangepicker .daterangepicker_input i {

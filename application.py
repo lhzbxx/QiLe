@@ -913,7 +913,7 @@ def admin_signal():
 	return signal
 # 送优惠券1
 # 参数分别是：名称，手机号，限额，折扣，截止时间，备注（例如地区）和颜色。
-def send_coupon(name, phone_number, limit, discount, date, remark, color=1):
+def send_coupon_abandon(name, phone_number, limit, discount, date, remark, color=1):
 	uu = str(uuid.uuid4())
 	g.db.execute('insert into coupons (uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
 		[uu, name, phone_number, limit, discount, int(time.time()), date, remark, color])
@@ -924,10 +924,15 @@ def send_coupon(phone_number, id):
 	p = query_db('select * from coupon_template where uuid = ?', [id], one=True)
 	# 如果优惠券模板找不到，则直接返回。
 	if p is None:
+		print ">>>send_coupon: can not find the template!!!"
 		return False
 	u = query_db('select * from coupons where phone_number = ? and coupon_uuid = ?', [phone_number, id])
-	if u is not None:
+	if u:
+		print u
+		print ">>>send_coupon: there exists coupon!!!"
 		return False
+	print ">>>send_coupon: success!!!"
+	u = str(uuid.uuid4())
 	g.db.execute('insert into coupons (uuid, coupon_uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
 		[u, id, p['coupon_name'], phone_number, p['coupon_limit'], p['coupon_discount'], int(time.time()), p['limit_time']+int(time.time()), p['coupon_remark'], p['coupon_color']])
 	g.db.execute('update coupon_template set coupon_stock = ? where uuid = ?', [p['coupon_stock']-1, id])
