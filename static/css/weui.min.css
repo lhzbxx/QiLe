@@ -229,7 +229,7 @@ a img {
 }
 .weui_btn_primary:not(.weui_btn_disabled):active {
 	color: rgba(255, 255, 255, .4);
-	background-color: #039702
+	background-color: rgba(239, 79, 79, 0.95)
 }
 .weui_btn_primary {
 	background-color: rgba(239, 79, 79, 0.95);
@@ -239,23 +239,15 @@ a img {
 	-o-transition: background 0.25s linear;
 	transition: background 0.25s linear;
 }
-.weui_btn_primary:not(.weui_btn_disabled):visited {
-	color: transparent;
-	background-color: transparent;
-}
-.weui_btn_primary:not(.weui_btn_disabled):active {
-	color: transparent;
-	background-color: transparent;
-}
 .weui_btn_warn {
-	background-color: #ef4f4f
+	background-color: rgba(205, 205, 205, 0.95)
 }
 .weui_btn_warn:not(.weui_btn_disabled):visited {
 	color: #fff
 }
 .weui_btn_warn:not(.weui_btn_disabled):active {
 	color: rgba(255, 255, 255, .4);
-	background-color: #c13e3e
+	background-color: rgba(205, 205, 205, 0.95)
 }
 .weui_btn_disabled {
 	color: rgba(255, 255, 255, .6)
