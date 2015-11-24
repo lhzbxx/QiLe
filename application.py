@@ -884,7 +884,7 @@ def pay_success():
 		p = ~(1<<i) & p
 	print ">>>pay_success: stock update: " + bin(p)
 	g.db.execute('update orders set deal_state = 1 where uuid = ?', [t1])
-	g.db.execute('update rooms set stock = ? where uuid = ?', [p])
+	g.db.execute('update rooms set stock = ? where uuid = ?', [p, room['uuid']])
 	g.db.commit()
 	send_sms(user['phone_number'], '订单确认：' + liverstr(order['liver_info']) + '在' + str(order['date1']) + '至' + str(order['date2']) + '入住' + str(merchant['merchant_name']) + str(room['room_name']) + str(timedate2timedelta(order['date2'], order['date1'])) + '晚' + '总价：￥' + str(order['deal_price']) + '地址：' + str(merchant['merchant_address']) + '电话：' + str(merchant['merchant_phone_number1']) + '其乐客服：4000125176，关注微信公众号其乐，更多惊喜等待你！')
 	return jsonify({"data": 100})
