@@ -876,7 +876,7 @@ def check_room_stock():
 	r = ''
 	total_day_of_year = 365
 	this_year = time.localtime()[0]
-	if thisyear % 400 == 0 or ( thisyear % 4 ==0 and thisyear % 100 != 0 ):
+	if this_year % 400 == 0 or ( this_year % 4 ==0 and this_year % 100 != 0 ):
 		total_day_of_year = 366
 	for i in range(total_day_of_year):
 		if 1<<i & p == 0:
