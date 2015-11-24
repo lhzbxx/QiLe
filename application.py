@@ -239,11 +239,11 @@ def pay_page(id):
 			<openid>""" + str(openid) + """</openid>
 			<out_trade_no>""" + str(id[:32]) + """</out_trade_no>
 			<spbill_create_ip>""" + str(request.remote_addr) + """</spbill_create_ip>
-			<total_fee>""" + str(order['deal_price']) + """</total_fee>
+			<total_fee>""" + str(order['deal_price']*100) + """</total_fee>
 			<trade_type>JSAPI</trade_type>
 			<sign>""" + sign_algorithm_one("appid=wxfee84b23a06c2b97&attach=支付测试&body=JSAPI支付测试&mch_id=1271526501&nonce_str="+str(rand_str)+
 				"&notify_url=http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php&openid="+str(openid)+"&out_trade_no="+str(id[:32])+"&spbill_create_ip="+
-				str(request.remote_addr)+"&total_fee="+str(order['deal_price'])+"&trade_type=JSAPI") + """</sign>
+				str(request.remote_addr)+"&total_fee="+str(order['deal_price']*100)+"&trade_type=JSAPI") + """</sign>
 			</xml>"""
 	print ">>> pay_page xml: " + xml
 	headers = {'Content-Type': 'application/xml'}
@@ -797,7 +797,7 @@ def pay():
 	# 总价=天数*单价-折扣
 	if not session.get('t'):
 		return jsonify({"data": 104})
-	total_day = session['t'][1] - session['t'][0] + 1
+	total_day = session['t'][1] - session['t'][0]
 	price = room['room_price'] * (total_day)
 	if price > int(limit):
 		price = price - discount
@@ -818,6 +818,7 @@ def pay():
 	try:
 		g.db.execute('insert into orders (uuid, user_uuid, room_uuid, date1, date2, deal_time, deal_price, deal_cost, liver_info, coupon_uuid, true_name, room_name) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
 		 [u, s.login, room['uuid'], t1, t2, int(time.time()), price, room['room_cost'], liver, coupon, true_name, room_name])
+		print ">>>pay order_price: " + str(price)
 		g.db.commit()
 		user = query_db('select * from users where uuid = ?', [s.login], one=True)
 		send_sms(user['phone_number'], "下了一个新订单，快付钱！")
