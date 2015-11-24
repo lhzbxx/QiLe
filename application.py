@@ -821,7 +821,7 @@ def pay():
 		print ">>>pay order_price: " + str(price)
 		g.db.commit()
 		user = query_db('select * from users where uuid = ?', [s.login], one=True)
-		send_sms(user['phone_number'], "下了一个新订单，快付钱！")
+		# send_sms(user['phone_number'], "下了一个新订单，快付钱！")
 		if not user['open_id']:
 			return jsonify({'data': 105, 'url': get_weixin_user_code(u)})
 		# thread.start_new_thread( check_order_valid, (u, ) )
@@ -857,6 +857,29 @@ def change_room_state():
 		g.db.execute('update rooms set room_switch = ? where uuid = ?', [0, t1])
 		g.db.commit()
 		return jsonify({"data": 100})
+# 支付成功后的处理
+@app.route('/pay_success-back', methods=['POST'])
+def pay_success():
+	s = signal()
+	user = query_db('select * from users where uuid = ?', [s.login], one=True)
+	t1 = request.form.get("t1")
+	order = query_db('select * from orders where uuid = ?', [t1], one=True)
+	room = query_db('select merchant_uuid, room_name where uuid = ?', [order['room_uuid']], one=True)
+	merchant = query_db('select * from merchants where uuid = ?', [room['merchant_uuid']], one=True)
+	g.db.execute('update orders set deal_state = 1 where uuid = ?', [t1])
+	g.db.commit()
+	send_sms(user['phone_number'], u'【其乐订房】确认：' + user['true_name'] + order['date1'] + u'至' + order['date2'] + u'入住' + merchant['merchant_name'] + room['room_name'] + str(timedate2timedelta(order['date2'], order['date1']))
+	 + u'晚' + u'总价 ￥' + str(order['deal_price']) + u'地址：' + merchant['merchant_address'] + u'电话：' + str(merchant['merchant_phone_number1']) + u'其乐客服：4000125176，关注微信公众号其乐，更多惊喜等待你！')
+	return jsonify({"data": 100})
+def timestamp2timestr(stamp):
+	return time.strftime("%Y-%m-%d", time.localtime(stamp))
+def timedate2timedelta(date1, date2):
+	# date1 > date2
+	p1 = date1.split('-')
+	t1 = date(int(p1[0]), int(p1[1]), int(p1[2])).strftime("%Y-%m-%d")
+	p2 = date2.split('-')
+	t2 = date(int(p2[0]), int(p2[1]), int(p2[2])).strftime("%Y-%m-%d")
+	return t1-t2
 def signal():
 	if session.get('user'):
 		# print session['user']
