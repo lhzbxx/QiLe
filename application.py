@@ -22,12 +22,19 @@ from datetime import date, timedelta
 from qiniu import Auth
 import xml.etree.ElementTree as ET
 import wx_sign
+import sys  
+
+
 
 #########
 #
 # 初始化
 # 
 #########
+#
+reload(sys)  
+sys.setdefaultencoding('utf8')
+
 app = Flask(__name__)
 app.config.update(dict(
 	DATABASE=os.path.join(app.root_path, 'db/main.db'),
@@ -41,6 +48,7 @@ app.config.update(dict(
 	jsapi_ticket = '',
 	jsapi_ticket_valid = 0
 ))
+
 #
 #
 #
@@ -51,6 +59,7 @@ app.config.update(dict(
 # 0. 测试
 # 
 #########
+#
 @app.route('/test/api/hello')
 def test_hello():
 	r = {'status': 100, "msg": "Hello!"}
