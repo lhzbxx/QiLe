@@ -868,7 +868,7 @@ def pay_success():
 	merchant = query_db('select * from merchants where uuid = ?', [room['merchant_uuid']], one=True)
 	g.db.execute('update orders set deal_state = 1 where uuid = ?', [t1])
 	g.db.commit()
-	send_sms(user['phone_number'], '【其乐订房】确认：' + str(user['true_name']) + str(order['date1']) + '至' + str(order['date2']) + '入住' + str(merchant['merchant_name']) + str(room['room_name']) + str(timedate2timedelta(order['date2'], order['date1'])) + '晚' + '总价：￥' + str(order['deal_price']) + '地址：' + str(merchant['merchant_address']) + '电话：' + str(merchant['merchant_phone_number1']) + '其乐客服：4000125176，关注微信公众号其乐，更多惊喜等待你！')
+	send_sms(user['phone_number'], '订单确认：' + liverstr(order['liver_info']) + '在' + str(order['date1']) + '至' + str(order['date2']) + '入住' + str(merchant['merchant_name']) + str(room['room_name']) + str(timedate2timedelta(order['date2'], order['date1'])) + '晚' + '总价：￥' + str(order['deal_price']) + '地址：' + str(merchant['merchant_address']) + '电话：' + str(merchant['merchant_phone_number1']) + '其乐客服：4000125176，关注微信公众号其乐，更多惊喜等待你！')
 	return jsonify({"data": 100})
 def timestamp2timestr(stamp):
 	return time.strftime("%Y-%m-%d", time.localtime(stamp))
@@ -879,6 +879,13 @@ def timedate2timedelta(date1, date2):
 	p2 = date2.split('-')
 	t2 = int(date(int(p2[0]), int(p2[1]), int(p2[2])).strftime('%j'))
 	return t1-t2
+def liverstr(liver):
+	liver = eval(liver)
+	del liver[0]
+	r = ''
+	for i in liver:
+		r = r + i[0] + ' '
+	return r
 def signal():
 	if session.get('user'):
 		# print session['user']
