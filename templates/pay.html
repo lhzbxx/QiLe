@@ -172,15 +172,6 @@
 			// } else {
 			// 	onBridgeReady();
 			// }
-			$.post(
-				"{{ url_for('pay_success') }}", 
-				{t1: '{{ order.uuid }}'}, 
-				function(result) {
-					if (result['data'] == '100') {
-						window.location.href="{{ url_for('.result_page', sign=1, title='支付成功', content='支付完毕，可以返回订单中心查看详情！', remark=0) }}";
-					}
-				}
-			);
 		    wx.config({
 		        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
 		        appId: 'wxfee84b23a06c2b97', // 必填，公众号的唯一标识
