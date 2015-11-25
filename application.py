@@ -899,7 +899,7 @@ def pay_success():
 		p = ~(1<<i) & p
 	print ">>>pay_success: stock update: " + bin(p)
 	try:
-		g.db.execute('update orders set deal_state = 1 where uuid = ?', [t1])
+		g.db.execute('update orders set deal_state = 1 where uuid = ?', [request.form.get("t1")])
 		g.db.commit()
 		g.db.execute('update rooms set stock = ? where uuid = ?', [str(p), room['uuid']])
 		g.db.commit()
