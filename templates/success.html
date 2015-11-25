@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-	<title>其乐 - 登录</title>
+	<title>其乐 - 操作成功</title>
 	<link rel="stylesheet" href="../static/css/weui.min.css"/>
 	<script src="../static/js/jquery.min.js"></script>
 	<style type="text/css">
@@ -12,7 +12,7 @@
 		    color: #888;
 		}
 		.hd {
-			padding: 2em 0;
+			padding: 0;
 		}
 		.page_title {
 			text-align: center;
@@ -50,7 +50,7 @@
 <body>
 	<div class="page cell">
 		<div class="hd">
-			<h1 class="page_title">其乐</h1>
+			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';"><img style="width: 200px; height: 140px; margin-bottom: -50px;" src="{{ url_for('static', filename='images/logo.png') }}"></h1>
 		</div>
 		<div class="bd">
 			<div class="weui_msg" style="padding-top: 25px;">

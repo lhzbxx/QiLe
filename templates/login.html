@@ -13,14 +13,14 @@
 		    color: #888;
 		}
 		.hd {
-			padding: 2em 0;
+			padding-top: 2em;
 		}
 		.page_title {
 			text-align: center;
 			font-size: 34px;
 			color: #3CC51F;
 			font-weight: 400;
-			margin: 0 15%;
+			margin: 0;
 		}
 		#login_switch {
 			padding: 0 20px;
@@ -51,7 +51,7 @@
 <body>
 	<div class="page cell">
 		<div class="hd">
-			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';">其乐</h1>
+			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';"><img style="width: 200px; height: 140px;" src="{{ url_for('static', filename='images/logo.png') }}"></h1>
 		</div>
 		<div class="bd">
 			<div id="login_switch">
