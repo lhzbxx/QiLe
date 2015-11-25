@@ -155,9 +155,9 @@
 		</div>
 		<div class="weui_opr_area" style="padding: 10px;">
 			<p class="weui_btn_area">
-<!-- 				{% if order.deal_state == 0 %}
+				{% if order.deal_state == 0 %}
 				<a class="weui_btn weui_btn_warn" id="order_btn">立即支付</a>
-				{% endif %} -->
+				{% endif %}
 				<a id="order_btn" href="{{ url_for('order_list_page') }}" class="weui_btn weui_btn_primary">返回</a>
 			</p>
 		</div>
@@ -187,6 +187,34 @@
 	<script type="text/javascript">
 		$("#loadingToast").hide();
 		$(document).ready(function() {
+			$("#order_btn").click(function(){
+				$.post(
+					"{{ url_for('pay') }}", 
+					{room: '{{ room.uuid }}', room_name: '{{ room.room_name }}', coupon: '{{ coupon.uuid }}', t1: '{{ order.date1 }}', t2: '{{ order.date2 }}', true_name: '{{ order.true_name }}'}, 
+					function(result) {
+						$("#loadingToast").hide();
+						if (result['data'] == '100') {
+							window.location.href = "/pay/" + result['id'];
+						} else if (result['data'] == '101') {
+							$("#alert_content").text("登录已失效~");
+							$("#alert_dialog").show();
+							$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('detail_page', id=room.uuid) }}';");
+						} else if (result['data'] == '102') {
+							$("#alert_content").text("抱歉，房源已不可用~");
+							$("#alert_dialog").show();
+							$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('index_page') }}';");
+						} else if (result['data'] == '103') {
+							$("#alert_content").text("未找到该房源~");
+							$("#alert_dialog").show();
+							$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('index_page') }}';");
+						} else if (result['data'] == '105') {
+							// alert(result['url']);
+							window.location.href = result['url'];
+							// window.location.href = result['url'];
+						}
+					}
+				);
+			});
 		});
 </script>
 {% endblock %}

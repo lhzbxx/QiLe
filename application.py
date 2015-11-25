@@ -152,12 +152,13 @@ def order_detail_page(id):
 	if not s.login:
 		return redirect(url_for('index_page'))
 	order = query_db('select * from orders where uuid = ?', [id], one=True)
+	room = query_db('select * from rooms where uuid = ?', [order['room_uuid']], one=True)
 	liver = eval(order['liver_info'])
 	del liver[0]
 	if order['coupon_uuid']:
 		coupon = query_db('select * from coupons where uuid = ?', [order['coupon_uuid']], one=True)
-		return render_template("order_detail.html", signal = s, order = order, liver = liver, coupon = coupon)
-	return render_template("order_detail.html", signal = s, order = order, liver = liver)
+		return render_template("order_detail.html", signal = s, order = order, liver = liver, coupon = coupon, room = room)
+	return render_template("order_detail.html", signal = s, order = order, liver = liver, room = room)
 # 个人设置
 @app.route('/user_setting')
 def user_setting_page():
