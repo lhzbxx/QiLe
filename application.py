@@ -796,7 +796,7 @@ def pay():
 	# 检查优惠券是否可用。
 	discount = 0
 	limit = 0
-	if not coupon:
+	if not coupon or coupon == '':
 		c = query_db('select * from coupons where uuid = ?', [coupon], one=True)
 		if c['coupon_state'] != 1 and c['limit_time'] < int(time.time()):
 			# 如果优惠券已经不可用，或者已经超过期限。
