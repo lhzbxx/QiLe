@@ -190,7 +190,8 @@
 			$("#order_btn").click(function(){
 				$.post(
 					"{{ url_for('pay') }}", 
-					{order_uuid: '{{ order.uuid }}', room: '{{ room.uuid }}', room_name: '{{ room.room_name }}', coupon: '{{ coupon.uuid }}', t1: '{{ order.date1 }}', t2: '{{ order.date2 }}', true_name: '{{ order.true_name }}'}, 
+					{order_uuid: '{{ order.uuid }}', room: '{{ room.uuid }}', room_name: '{{ room.room_name }}',
+		{% if coupon %} coupon: '{{ coupon.uuid }}', {% endif %} t1: '{{ order.date1 }}', t2: '{{ order.date2 }}', true_name: '{{ order.true_name }}'}, 
 					function(result) {
 						$("#loadingToast").hide();
 						if (result['data'] == '100') {
