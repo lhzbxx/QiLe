@@ -156,9 +156,11 @@
 		<div class="weui_opr_area" style="padding: 10px;">
 			<p class="weui_btn_area">
 				{% if order.deal_state == 0 %}
-				<a class="weui_btn weui_btn_warn" id="order_btn">立即支付</a>
-				{% endif %}
+				<a class="weui_btn weui_btn_primary" id="order_btn">立即支付</a>
+				<a id="order_btn" href="{{ url_for('order_list_page') }}" class="weui_btn weui_btn_warn">返回</a>
+				{% else %}
 				<a id="order_btn" href="{{ url_for('order_list_page') }}" class="weui_btn weui_btn_primary">返回</a>
+				{% endif %}
 			</p>
 		</div>
 	</div>
