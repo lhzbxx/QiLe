@@ -172,3 +172,6 @@ Work:
 	1. 使用PageSpeed对网页进行检查。
 	2. 对Nginx服务器设置了gzip压缩。
 	3. 将一些CSS文件进行了压缩。
+	4. layout的JS加载顺序调整。
+To Work:
+	1. 将另一个layout合并出来。
