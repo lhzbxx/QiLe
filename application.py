@@ -792,6 +792,7 @@ def pay():
 	t2 = request.form.get("t2")
 	true_name = request.form.get("true_name")
 	room_name = request.form.get("room_name")
+	order_uuid = request.form.get("order_uuid")
 	# 检查优惠券是否可用。
 	discount = 0
 	limit = 0
@@ -820,6 +821,10 @@ def pay():
 	# 检查房间是否可用。
 	if is_valid_room(room, session['t'][0], session['t'][1]) == False:
 		# 房源已不可用。
+		# 此时将订单失效。
+		if order_uuid:
+			g.db.execute('update orders set deal_state = 4 where uuid = ?', [order_uuid])
+			g.db.commit()
 		return jsonify({"data": 102})
 	u = str(uuid.uuid4())
 	p = query_db('select * from user_checkin where user_uuid = ?', [s.login])
