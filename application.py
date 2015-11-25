@@ -178,6 +178,8 @@ def order_page(id):
 	if not s.login:
 		return redirect(url_for('index_page'))
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
+	if not user:
+		return redirect(url_for('index_page'))
 	room = query_db('select * from rooms where uuid = ?', [id], one=True)
 	checkins = query_db('select * from user_checkin where user_uuid = ?', [s.login])
 	coupons = query_db('select * from coupons where phone_number = ?', [user['phone_number']])
