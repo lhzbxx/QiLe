@@ -15,7 +15,7 @@
 			background-color: #FBF9FE;
 		}
 		.hd {
-			padding: 2em 0;
+			padding: 0;
 		}
 		.page_title {
 			text-align: center;
@@ -53,7 +53,7 @@
 <body>
 	<div class="page cell">
 		<div class="hd">
-			<h1 class="page_title">其乐</h1>
+			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';"><img style="width: 200px; height: 140px; margin-bottom: -50px;" src="{{ url_for('static', filename='images/logo.png') }}"></h1>
 		</div>
 		<div class="bd">
 			<div id="loadingToast" class="weui_loading_toast" style="display: none;">
