@@ -103,10 +103,10 @@
 	cursor: pointer;
 	-moz-background-size: 27px 44px;
 	-webkit-background-size: 27px 44px;
-	background-size: 27px 44px;
+	background-size: 18px 33px;
 	background-position: center;
 	background-repeat: no-repeat;
-	opacity: 0.8;
+	opacity: 0.3;
 }
 .swiper-button-next.swiper-button-disabled, .swiper-button-prev.swiper-button-disabled {
 	opacity: .35;
