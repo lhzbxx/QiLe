@@ -929,16 +929,16 @@ def remove_order():
 		p = (1<<i) | p
 	print ">>>pay_success: stock update: " + bin(p)
 	g.db.execute('update orders set deal_state = 5 where uuid = ?', [t1])
+	g.db.commit()
 	g.db.execute('update rooms set stock = ? where uuid = ?', [str(p), room['uuid']])
+	g.db.commit()
 	user = query_db('select phone_number from users where uuid = ?', [order['user_uuid']], one=True)
+	g.db.commit()
 	if order['coupon_uuid']:
 		g.db.execute('update coupons set coupon_state = 1 where phone_number = ? and uuid = ?', [user['phone_number'], order['coupon_uuid']])
-	g.db.execute('delete from orders where uuid = ?', [t1])
-	try:
 		g.db.commit()
-	except Exception, e:
-		print e
-		raise e
+	g.db.execute('delete from orders where uuid = ?', [t1])
+	g.db.commit()
 	return jsonify({"data": 100})
 # 房源的开关
 @app.route('/change_room_state-back', methods=['POST'])
