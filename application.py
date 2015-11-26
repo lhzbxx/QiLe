@@ -928,6 +928,7 @@ def remove_order():
 	for i in range(t1-1, t2-1):
 		p = (1<<i) | p
 	print ">>>pay_success: stock update: " + bin(p)
+	t1 = request.form.get("t1")
 	g.db.execute('update orders set deal_state = 5 where uuid = ?', [t1])
 	g.db.commit()
 	g.db.execute('update rooms set stock = ? where uuid = ?', [str(p), room['uuid']])
