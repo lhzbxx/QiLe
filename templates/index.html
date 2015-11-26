@@ -65,7 +65,7 @@
 		    </div>
 		    <!-- If we need pagination -->
 		    <div class="swiper-pagination"></div>
-		    
+
 		    <!-- If we need navigation buttons -->
 <!-- 		    <div class="swiper-button-prev"></div>
 		    <div class="swiper-button-next"></div> -->
@@ -117,7 +117,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$("#loadingToast").hide();
-		//initialize swiper when document ready 
+		//initialize swiper when document ready
 		var mySwiper = new Swiper ('.swiper-container', {
 			// Optional parameters
 			pagination: '.swiper-pagination',
@@ -156,44 +156,59 @@
 		//		$("#mask").fadeOut();
 		//		$("#date-picker").fadeOut();
 		// });
-		Date.prototype.DateAdd = function(strInterval, Number) {   
-			var dtTmp = this;  
-			switch (strInterval) {   
-				case 's' :return new Date(Date.parse(dtTmp) + (1000 * Number));  
-				case 'n' :return new Date(Date.parse(dtTmp) + (60000 * Number));  
-				case 'h' :return new Date(Date.parse(dtTmp) + (3600000 * Number));  
-				case 'd' :return new Date(Date.parse(dtTmp) + (86400000 * Number));  
-				case 'w' :return new Date(Date.parse(dtTmp) + ((86400000 * 7) * Number));  
-				case 'q' :return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number*3, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());  
-				case 'm' :return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());  
-				case 'y' :return new Date((dtTmp.getFullYear() + Number), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());  
+		Date.prototype.DateAdd = function(strInterval, Number) {
+			var dtTmp = this;
+			switch (strInterval) {
+				case 's' :return new Date(Date.parse(dtTmp) + (1000 * Number));
+				case 'n' :return new Date(Date.parse(dtTmp) + (60000 * Number));
+				case 'h' :return new Date(Date.parse(dtTmp) + (3600000 * Number));
+				case 'd' :return new Date(Date.parse(dtTmp) + (86400000 * Number));
+				case 'w' :return new Date(Date.parse(dtTmp) + ((86400000 * 7) * Number));
+				case 'q' :return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number*3, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+				case 'm' :return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+				case 'y' :return new Date((dtTmp.getFullYear() + Number), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
 			}
 		}
 		var date = new Date();
-		var date1 = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
+		var date3 = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
+		var date1 = (date.getMonth()+1) + '-' + date.getDate();
 		var date2 = date.DateAdd('d', 1);
-		date2 = date2.getFullYear() + '-' + (date2.getMonth()+1) + '-' + date2.getDate()
-		$("#showTime").text(date1 + ' 到 ' + date2);
+		date2 = (date2.getMonth()+1) + '-' + date2.getDate()
+		$("#showTime").text(date1 + ' 到 ' + date2 + '   共 1 晚');
+		date1 = date.getFullYear() + '-' + date1;
+		date2 = date.getFullYear() + '-' + date2;
 		$('#date_range_pick').daterangepicker({
 		    locale: {
 		      format: 'YYYY-MM-DD'
 		    },
-		    minDate: date1,
+		    "dateLimit": {
+		        "days": 60
+		    },
+		    minDate: date3,
 		    opens: 'center',
 		    drops: 'down',
 		    autoApply: true
-		}, 
+		},
 			function(start, end, label) {
-				$("#showTime").text(start.format('YYYY-MM-DD') + ' 到 ' + end.format('YYYY-MM-DD'));
+				delta = parseInt(Math.abs(end - start) / 1000 / 60 / 60 /24);
+				if (delta == 0) {
+					end = end + 99199999 - 12799999;
+				}
+				$("#showTime").text(start.format('MM-DD') + ' 到 ' + end.format('MM-DD') + '   共 ' + delta + ' 晚');
+				// if (start + 726399999 - 640000000 == end) {
+				// 	end = end + 99199999 - 12799999;
+				// }
 				date1 = start.format('YYYY-MM-DD');
 				date2 = end.format('YYYY-MM-DD');
+				console.log(date1 + ' to ' + date2);
 		});
-		$('#date_range_pick').click(function(){ 
-			$('html, body').animate({scrollTop:400}, 300); 
-			return false; 
+		$('#date_range_pick').click(function(){
+			$('html, body').animate({scrollTop:400}, 300);
+			return false;
 		});
 		$("#order_btn").click(function(){
 			$('#loadingToast').show();
+			console.log(date1 + ' to ' + date2);
 			$.post(
 				'{{ url_for("search") }}',
 				{t1: date1, t2: date2},

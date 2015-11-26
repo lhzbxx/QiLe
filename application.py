@@ -23,7 +23,7 @@ from qiniu import Auth
 import xml.etree.ElementTree as ET
 import wx_sign
 import sys
-
+from send_sms import send_async_sms as send_sms
 
 
 #########
@@ -259,19 +259,19 @@ def pay_page(id):
 				"&notify_url=http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php&openid="+str(openid)+"&out_trade_no="+str(id[:32])+"&spbill_create_ip="+
 				str(request.remote_addr)+"&total_fee="+str(int(order['deal_price']*100))+"&trade_type=JSAPI") + """</sign>
 			</xml>"""
-	print ">>> pay_page xml: " + xml
+	# print ">>> pay_page xml: " + xml
 	headers = {'Content-Type': 'application/xml'}
 	r = requests.post('https://api.mch.weixin.qq.com/pay/unifiedorder', data=xml, headers=headers)
 	r.encoding = 'utf-8'
 	arr = xmlToArray(r.text)
 	prepay_id = arr['prepay_id']
-	print '>>>pay_page xml result: ' + r.text
+	# print '>>>pay_page xml result: ' + r.text
 	sign = sign_algorithm_one("appId=wxfee84b23a06c2b97&nonceStr=" + str(rand_str) + "&package=prepay_id=" + str(prepay_id) + "&signType=MD5&timeStamp=" + str(time_str))
 	a = wx_sign.Sign(get_jsapi_ticket(), request.url)
 	a.sign()
 	a = a.ret
 	sign = [time_str, rand_str, sign, prepay_id, a]
-	print '>>>pay_page sign->front: ' + str(sign)
+	# print '>>>pay_page sign->front: ' + str(sign)
 	return render_template("pay.html", signal = s, order = order, sign = sign)
 def xmlToArray(xml):
 	"""将xml转为array"""
@@ -812,6 +812,10 @@ def pay_exist():
 	# 总价=天数*单价-折扣
 	t1 = timedate2int(t1)
 	t2 = timedate2int(t2)
+	if t1 >= t2:
+		g.db.execute('update orders set deal_state = 4 where uuid = ?', [order_uuid])
+		g.db.commit()
+		return jsonify({"data": 104})
 	total_day = t2 - t1
 	price = room['room_price'] * (total_day)
 	if price > int(limit):
@@ -868,7 +872,9 @@ def pay():
 		return jsonify({"data": 103})
 	price = 0
 	# 总价=天数*单价-折扣
-	if not session.get('t'):
+	if not session.get('t') or session['t'][1] <= session['t'][0]:
+		g.db.execute('update orders set deal_state = 4 where uuid = ?', [order_uuid])
+		g.db.commit()
 		return jsonify({"data": 104})
 	total_day = session['t'][1] - session['t'][0]
 	price = room['room_price'] * (total_day)
@@ -927,7 +933,7 @@ def remove_order():
 	p = int(room['stock'])
 	for i in range(t1-1, t2-1):
 		p = (1<<i) | p
-	print ">>>pay_success: stock update: " + bin(p)
+	# print ">>>pay_success: stock update: " + bin(p)
 	t1 = request.form.get("t1")
 	g.db.execute('update orders set deal_state = 5 where uuid = ?', [t1])
 	g.db.commit()
@@ -984,7 +990,7 @@ def pay_success():
 	p = int(room['stock'])
 	for i in range(t1-1, t2-1):
 		p = ~(1<<i) & p
-	print ">>>pay_success: stock update: " + bin(p)
+	# print ">>>pay_success: stock update: " + bin(p)
 	try:
 		g.db.execute('update orders set deal_state = 1 where uuid = ?', [request.form.get("t1")])
 		g.db.commit()
@@ -1064,12 +1070,6 @@ def send_coupon(phone_number, id):
 def use_coupon(id):
 	g.db.execute('update coupons set coupon_state = 1 where uuid = ?', [id])
 	g.db.commit()
-# 发送短信
-def send_sms(phone_number, content):
-	params = urllib.urlencode({'smsMob': phone_number, 'Uid': 'dingfanla', 'Key': '19c35d39ee379898d25e', 'smsText': content})
-	url = 'http://utf8.sms.webchinese.cn/?' + params
-	req = urllib2.Request(url)
-	print ">>>send_sms: " + urllib2.urlopen(req).read()
 # 获取用户的code（微信端）
 def get_weixin_user_code(id):
 	# debug = '127.0.0.1'

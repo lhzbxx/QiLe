@@ -221,6 +221,10 @@
 							$("#alert_content").text("未找到该房源~");
 							$("#alert_dialog").show();
 							$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('index_page') }}';");
+						} else if (result['data'] == '104') {
+							$("#alert_content").text("日期错误！");
+							$("#alert_dialog").show();
+							$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('index_page') }}';");
 						} else if (result['data'] == '105') {
 							// alert(result['url']);
 							window.location.href = result['url'];
