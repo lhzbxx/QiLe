@@ -832,13 +832,9 @@ def pay_exist():
 		for q in p:
 			liver.append([q['name'], q['type'], q['identify']])
 	liver = repr(liver)
-	try:
-		if not user['open_id']:
-			return jsonify({'data': 105, 'url': get_weixin_user_code(u)})
-		# thread.start_new_thread( check_order_valid, (u, ) )
-	except Exception, e:
-		print e
-		raise e
+	user = query_db('select * from users where uuid = ?', [s.login], one=True)
+	if not user['open_id']:
+		return jsonify({'data': 105, 'url': get_weixin_user_code(u)})
 	# 插入订单
 	return jsonify({"data": 100, "id": order_uuid})
 # 支付的参数处理
