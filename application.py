@@ -810,16 +810,16 @@ def pay_exist():
 		return jsonify({"data": 103})
 	price = 0
 	# 总价=天数*单价-折扣
-	if not session.get('t'):
-		return jsonify({"data": 104})
-	total_day = session['t'][1] - session['t'][0]
+	t1 = timedate2int(t1)
+	t2 = timedate2int(t2)
+	total_day = t2 - t1
 	price = room['room_price'] * (total_day)
 	if price > int(limit):
 		price = price - discount
 		if price < 0:
 			price = 0
 	# 检查房间是否可用。
-	if is_valid_room(room, session['t'][0], session['t'][1]) == False:
+	if is_valid_room(room, t1, t2) == False:
 		# 房源已不可用。
 		# 此时将订单失效。
 		if order_uuid:
