@@ -917,6 +917,16 @@ def cancel_order():
 @app.route('/remove_order-back', methods=['POST'])
 def remove_order():
 	t1 = request.form.get("t1")
+	order = query_db('select * from orders where uuid = ?', [t1], one=True)
+	t1 = order['date1']
+	t2 = order['date2']
+	t1 = timedate2int(t1)
+	t2 = timedate2int(t2)
+	# 进行处理库存的回滚。
+	p = int(room['stock'])
+	for i in range(t1-1, t2-1):
+		p = (1<<i) | p
+	print ">>>pay_success: stock update: " + bin(p)
 	g.db.execute('delete from orders where uuid = ?', [t1])
 	g.db.commit()
 	return jsonify({"data": 100})
