@@ -922,6 +922,7 @@ def remove_order():
 	t2 = order['date2']
 	t1 = timedate2int(t1)
 	t2 = timedate2int(t2)
+	room = query_db('select stock from rooms where uuid = ?', [order['room_uuid']], one=True)
 	# 进行处理库存的回滚。
 	p = int(room['stock'])
 	for i in range(t1-1, t2-1):
