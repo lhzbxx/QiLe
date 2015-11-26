@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# 
-# 
+#
+#
 
 #########
 #
 # 模块导入&初始化
-# 
+#
 #########
 from flask import *
 import sqlite3
@@ -22,17 +22,17 @@ from datetime import date, timedelta, datetime
 from qiniu import Auth
 import xml.etree.ElementTree as ET
 import wx_sign
-import sys  
+import sys
 
 
 
 #########
 #
 # 初始化
-# 
+#
 #########
 #
-reload(sys)  
+reload(sys)
 sys.setdefaultencoding('utf8')
 
 app = Flask(__name__)
@@ -57,7 +57,7 @@ app.config.update(dict(
 #########
 #
 # 0. 测试
-# 
+#
 #########
 #
 @app.route('/test/api/hello')
@@ -89,7 +89,7 @@ def WW_upload():
 #########
 #
 # 前端页面
-# 
+#
 #########
 # 首页
 @app.route('/')
@@ -131,7 +131,7 @@ def coupon_list_page():
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
 	coupons = query_db('select * from coupons where phone_number = ?', [user['phone_number']])
 	for coupon in coupons:
-		coupon['limit_time'] = time.strftime("%Y-%m-%d", time.localtime(coupon['limit_time'])) 
+		coupon['limit_time'] = time.strftime("%Y-%m-%d", time.localtime(coupon['limit_time']))
 	return render_template("coupon_list.html", signal = s, coupons = coupons, current = int(time.time()))
 # 订单中心
 @app.route('/order_list')
@@ -316,7 +316,7 @@ def page_not_found(e):
 #########
 #
 # 管理页面
-# 
+#
 #########
 # 首页
 @app.route('/admin')
@@ -440,7 +440,7 @@ def admin_add_coupon_template_page():
 #########
 #
 # 后台函数
-# 
+#
 #########
 # 登录
 @app.route('/login-back', methods=['POST'])
@@ -569,7 +569,7 @@ def addRoom():
 			# 插入数据失败
 			return jsonify({"data": 101})
 	try:
-		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time, room_cost, room_img_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+		g.db.execute('insert into rooms (uuid, room_name, room_price, room_remark1, room_type, merchant_uuid, room_description, room_address, register_time, room_cost, room_img_url) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
 			[u, t1, t2, t3, t4, t5, t6, t7, t8, int(time.time()), img[0]])
 		g.db.commit()
 	except Exception, e:
@@ -629,12 +629,12 @@ def modifyRoom():
 		# 缺少图片
 		return jsonify({"data": 102})
 	try:
-		g.db.execute('update rooms set room_name = ?, room_price = ?, room_remark1 = ?, room_type = ?, merchant_uuid = ?, room_description = ?, room_address = ?, room_cost = ?, room_img_url = ? where uuid = ?', 
+		g.db.execute('update rooms set room_name = ?, room_price = ?, room_remark1 = ?, room_type = ?, merchant_uuid = ?, room_description = ?, room_address = ?, room_cost = ?, room_img_url = ? where uuid = ?',
 			[t1, t2, t3, t4, t5, t6, t7, t8, img[0], uu])
 		g.db.commit()
 	except Exception, e:
 		# 插入数据失败
-		print e 
+		print e
 		return jsonify({"data": 101})
 	# 修改成功。
 	return jsonify({"data": 100})
@@ -779,6 +779,68 @@ def search():
 	t = [t3, t4, t1, t2]
 	session['t'] = t
 	return jsonify({"data": 100})
+# 已有订单号的支付的参数处理
+@app.route('/pay_exist-back', methods=['POST'])
+def pay_exist():
+	s = signal()
+	if not s.login:
+		# 未登录
+		return jsonify({"data": 101})
+	room = request.form.get("room")
+	coupon = request.form.get("coupon")
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	true_name = request.form.get("true_name")
+	room_name = request.form.get("room_name")
+	order_uuid = request.form.get("order_uuid")
+	# 检查优惠券是否可用。
+	discount = 0
+	limit = 0
+	if coupon:
+		c = query_db('select * from coupons where uuid = ?', [coupon], one=True)
+		if c['coupon_state'] != 1 and c['limit_time'] < int(time.time()):
+			# 如果优惠券已经不可用，或者已经超过期限。
+			pass
+		else:
+			discount = c['coupon_discount']
+			limit = c['coupon_discount']
+	room = query_db('select * from rooms where uuid = ?', [room], one=True)
+	if room is None:
+		# 错误的房源。
+		return jsonify({"data": 103})
+	price = 0
+	# 总价=天数*单价-折扣
+	if not session.get('t'):
+		return jsonify({"data": 104})
+	total_day = session['t'][1] - session['t'][0]
+	price = room['room_price'] * (total_day)
+	if price > int(limit):
+		price = price - discount
+		if price < 0:
+			price = 0
+	# 检查房间是否可用。
+	if is_valid_room(room, session['t'][0], session['t'][1]) == False:
+		# 房源已不可用。
+		# 此时将订单失效。
+		if order_uuid:
+			g.db.execute('update orders set deal_state = 4 where uuid = ?', [order_uuid])
+			g.db.commit()
+		return jsonify({"data": 102})
+	p = query_db('select * from user_checkin where user_uuid = ?', [s.login])
+	liver = [len(p)]
+	if len(p) != 0:
+		for q in p:
+			liver.append([q['name'], q['type'], q['identify']])
+	liver = repr(liver)
+	try:
+		if not user['open_id']:
+			return jsonify({'data': 105, 'url': get_weixin_user_code(u)})
+		# thread.start_new_thread( check_order_valid, (u, ) )
+	except Exception, e:
+		print e
+		raise e
+	# 插入订单
+	return jsonify({"data": 100, "id": order_uuid})
 # 支付的参数处理
 @app.route('/pay-back', methods=['POST'])
 def pay():
@@ -957,7 +1019,7 @@ def admin_signal():
 # 参数分别是：名称，手机号，限额，折扣，截止时间，备注（例如地区）和颜色。
 def send_coupon_abandon(name, phone_number, limit, discount, date, remark, color=1):
 	uu = str(uuid.uuid4())
-	g.db.execute('insert into coupons (uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+	g.db.execute('insert into coupons (uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?)',
 		[uu, name, phone_number, limit, discount, int(time.time()), date, remark, color])
 	g.db.commit()
 # 送优惠券2
@@ -975,7 +1037,7 @@ def send_coupon(phone_number, id):
 		return False
 	print ">>>send_coupon: success!!!"
 	u = str(uuid.uuid4())
-	g.db.execute('insert into coupons (uuid, coupon_uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+	g.db.execute('insert into coupons (uuid, coupon_uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
 		[u, id, p['coupon_name'], phone_number, p['coupon_limit'], p['coupon_discount'], int(time.time()), p['limit_time']+int(time.time()), p['coupon_remark'], p['coupon_color']])
 	g.db.execute('update coupon_template set coupon_stock = ? where uuid = ?', [p['coupon_stock']-1, id])
 	g.db.commit()
@@ -1016,7 +1078,7 @@ def get_weixin_user_openid(code):
 #########
 #
 # 基础组件&函数
-# 
+#
 #########
 def connect_db():
 	return sqlite3.connect(app.config['DATABASE'])
@@ -1141,7 +1203,7 @@ def get_jsapi_ticket():
 	else:
 		return app.config['jsapi_ticket']
 # 	# print order_uuid
-# 	# schedule.enter(900, 0, check_order_valid_func, (order_uuid,))  
+# 	# schedule.enter(900, 0, check_order_valid_func, (order_uuid,))
 # 	# schedule.run()
 # 	print "OK"
 # 	orders = query_db('select * from orders where deal_state = ?', [0])
