@@ -196,6 +196,7 @@
 		{% if coupon %} coupon: '{{ coupon.uuid }}', {% endif %} t1: '{{ order.date1 }}', t2: '{{ order.date2 }}', true_name: '{{ order.true_name }}'},
 					function(result) {
 						$("#loadingToast").hide();
+						alert(result['data']);
 						if (result['data'] == '100') {
 							window.location.href = "/pay/" + result['id'];
 						} else if (result['data'] == '101') {
