@@ -922,12 +922,17 @@ def remove_order():
 	t2 = order['date2']
 	t1 = timedate2int(t1)
 	t2 = timedate2int(t2)
-	room = query_db('select stock from rooms where uuid = ?', [order['room_uuid']], one=True)
+	room = query_db('select * from rooms where uuid = ?', [order['room_uuid']], one=True)
 	# 进行处理库存的回滚。
 	p = int(room['stock'])
 	for i in range(t1-1, t2-1):
 		p = (1<<i) | p
 	print ">>>pay_success: stock update: " + bin(p)
+	g.db.execute('update orders set deal_state = 5 where uuid = ?', [t1])
+	g.db.execute('update rooms set stock = ? where uuid = ?', [str(p), room['uuid']])
+	user = query_db('select phone_number from users where uuid = ?', [order['user_uuid']], one=True)
+	if order['coupon_uuid']:
+		g.db.execute('update coupons set coupon_state = 1 where phone_number = ? and uuid = ?', [user['phone_number'], order['coupon_uuid']])
 	g.db.execute('delete from orders where uuid = ?', [t1])
 	g.db.commit()
 	return jsonify({"data": 100})
@@ -981,7 +986,7 @@ def pay_success():
 		g.db.execute('update rooms set stock = ? where uuid = ?', [str(p), room['uuid']])
 		g.db.commit()
 		if order['coupon_uuid']:
-			g.db.execute('update coupons set coupon_state = 0 where phone_number = ? and uuid = ?', [order['coupon_uuid'], user['phone_number']])
+			g.db.execute('update coupons set coupon_state = 0 where phone_number = ? and uuid = ?', [user['phone_number'], order['coupon_uuid']])
 			g.db.commit()
 		send_sms(user['phone_number'], '订单确认：' + liverstr(order['liver_info']) + '在' + str(order['date1']) + '至' + str(order['date2']) + '入住' + str(merchant['merchant_name']) + str(room['room_name']) + str(timedate2timedelta(order['date2'], order['date1'])) + '晚' + '总价：￥' + str(order['deal_price']) + '地址：' + str(merchant['merchant_address']) + '电话：' + str(merchant['merchant_phone_number1']) + '其乐客服：4000125176，关注微信公众号其乐，更多惊喜等待你！')
 	except Exception, e:
