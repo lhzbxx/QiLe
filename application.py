@@ -934,7 +934,11 @@ def remove_order():
 	if order['coupon_uuid']:
 		g.db.execute('update coupons set coupon_state = 1 where phone_number = ? and uuid = ?', [user['phone_number'], order['coupon_uuid']])
 	g.db.execute('delete from orders where uuid = ?', [t1])
-	g.db.commit()
+	try:
+		g.db.commit()
+	except Exception, e:
+		print e
+		raise e
 	return jsonify({"data": 100})
 # 房源的开关
 @app.route('/change_room_state-back', methods=['POST'])
