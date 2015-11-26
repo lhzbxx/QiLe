@@ -919,6 +919,34 @@ def cancel_order():
 	g.db.execute('update orders set deal_state = 5 where uuid = ?', [t1])
 	g.db.commit()
 	return jsonify({"data": 100})
+# 无效订单
+@app.route('/void_order-back', methods=['POST'])
+def void_order():
+	t1 = request.form.get("t1")
+	order = query_db('select * from orders where uuid = ?', [t1], one=True)
+	t1 = order['date1']
+	t2 = order['date2']
+	t1 = timedate2int(t1)
+	t2 = timedate2int(t2)
+	room = query_db('select * from rooms where uuid = ?', [order['room_uuid']], one=True)
+	# 进行处理库存的回滚。
+	p = int(room['stock'])
+	for i in range(t1-1, t2-1):
+		p = (1<<i) | p
+	# print ">>>pay_success: stock update: " + bin(p)
+	t1 = request.form.get("t1")
+	g.db.execute('update orders set deal_state = 5 where uuid = ?', [t1])
+	g.db.commit()
+	g.db.execute('update rooms set stock = ? where uuid = ?', [str(p), room['uuid']])
+	g.db.commit()
+	user = query_db('select phone_number from users where uuid = ?', [order['user_uuid']], one=True)
+	g.db.commit()
+	if order['coupon_uuid']:
+		g.db.execute('update coupons set coupon_state = 1 where phone_number = ? and uuid = ?', [user['phone_number'], order['coupon_uuid']])
+		g.db.commit()
+	g.db.execute('update orders set order_state = 4 where uuid = ?', [t1])
+	g.db.commit()
+	return jsonify({"data": 100})
 # 删除订单
 @app.route('/remove_order-back', methods=['POST'])
 def remove_order():
