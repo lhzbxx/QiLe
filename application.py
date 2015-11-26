@@ -944,7 +944,7 @@ def void_order():
 	if order['coupon_uuid']:
 		g.db.execute('update coupons set coupon_state = 1 where phone_number = ? and uuid = ?', [user['phone_number'], order['coupon_uuid']])
 		g.db.commit()
-	g.db.execute('update orders set order_state = 4 where uuid = ?', [t1])
+	g.db.execute('update orders set deal_state = 4 where uuid = ?', [t1])
 	g.db.commit()
 	return jsonify({"data": 100})
 # 删除订单
