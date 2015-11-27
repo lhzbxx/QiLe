@@ -1113,6 +1113,7 @@ def send_coupon_init_base(id, phone_number):
 	if u1:
 		return True
 	u = str(uuid.uuid4())
+	u1 = query_db('select * from coupon_template where uuid = ?', [id], one=True)
 	g.db.execute('insert into coupons (uuid, coupon_uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
 		[u, id, u1['coupon_name'], phone_number, u1['coupon_limit'], u1['coupon_discount'], int(time.time()), u1['limit_time']+int(time.time()), u1['coupon_remark'], u1['coupon_color']])
 	g.db.execute('update coupon_template set coupon_stock = ? where uuid = ?', [u1['coupon_stock']-1, id])
