@@ -363,7 +363,7 @@
 						var t2 = $("#coupon_limit_show").data('uuid');
 						$.post(
 							"{{ url_for('pay') }}",
-							{room: '{{ room.uuid }}', room_name: '{{ room.room_name }}', coupon: t2, t1: '{{ t[0] }}', t2: '{{ t[1] }}', true_name: '{{ user.true_name }}'},
+							{room: '{{ room.uuid }}', room_name: '{{ room.room_name }}', coupon: t2, t1: '{{ t[0] }}', t2: '{{ t[1] }}', true_name: t1},
 							function(result) {
 								$("#loadingToast").hide();
 								if (result['data'] == '100') {
