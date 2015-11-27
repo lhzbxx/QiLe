@@ -372,7 +372,7 @@
 									$("#alert_dialog").show();
 									$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('detail_page', id=room.uuid) }}';");
 								} else if (result['data'] == '102') {
-									$("#alert_content").text("抱歉，房源已不可用~");
+									$("#alert_content").text("对不起，此房间该时段已被预订噢！");
 									$("#alert_dialog").show();
 									$("#confirm_btn").attr("href", $("#confirm_btn").attr("href") + "window.location.href = '{{ url_for('index_page') }}';");
 								} else if (result['data'] == '103') {
