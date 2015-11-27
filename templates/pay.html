@@ -188,7 +188,7 @@
 					signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
 					paySign: '{{ sign[2] }}', // 支付签名
 					complete: function (res) {
-						alert(res.errMsg);
+						// alert(res.errMsg);
 						if (res.errMsg == 'chooseWXPay:ok') {
 							$.post(
 								"{{ url_for('pay_success') }}",

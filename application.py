@@ -193,6 +193,9 @@ def order_page(id):
 		p2 = session['t'][3].split('-')
 		t2 = date(int(p2[0]), int(p2[1]), int(p2[2])).strftime("%Y-%m-%d")
 		t = [t1, t2, session['t'][0], session['t'][1]]
+		if t2 < 200:
+			t2 += 365
+		t = [t1, t2, session['t'][0], session['t'][1]]
 	else:
 		# 临时的方案，这里还是需要改的，就是说如果直接进入了房源详情的页面。这里的时间先选择成今明两天。
 		today = date.today().strftime('%Y-%m-%d')
@@ -201,6 +204,9 @@ def order_page(id):
 		t2 = int(t1 + 1)
 		t = [today, tomorrow, t1, t2]
 		session['t'] = [t1, t2, today, tomorrow]
+		if t2 < 200:
+			t2 += 365
+		t = [today, tomorrow, t1, t2]
 	return render_template("order.html", signal = s, room = room, user = user, checkins = checkins, coupons = coupons, current = int(time.time()), t = t)
 # 支付页面
 @app.route('/pay/<id>')
