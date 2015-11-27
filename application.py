@@ -1028,6 +1028,8 @@ def pay_success():
 	merchant = query_db('select * from merchants where uuid = ?', [room['merchant_uuid']], one=True)
 	t1 = timedate2int(order['date1'])
 	t2 = timedate2int(order['date2'])
+	if t2 < 200:
+		t2 += 365
 	# 进行处理库存的减少。
 	p = int(room['stock'])
 	for i in range(t1-1, t2-1):

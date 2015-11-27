@@ -189,7 +189,7 @@
 					paySign: '{{ sign[2] }}', // 支付签名
 					complete: function (res) {
 						// alert(res.errMsg);
-						if (res.errMsg == 'chooseWXPay:ok') {
+						// if (res.errMsg == 'chooseWXPay:ok') {
 							$.post(
 								"{{ url_for('pay_success') }}",
 								{t1: '{{ order.uuid }}'},
@@ -201,7 +201,7 @@
 									}
 								}
 							);
-						}
+						// }
 					}
 				});
 			});
