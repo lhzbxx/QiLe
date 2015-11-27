@@ -193,6 +193,8 @@ def order_page(id):
 		p2 = session['t'][3].split('-')
 		t2 = date(int(p2[0]), int(p2[1]), int(p2[2])).strftime("%Y-%m-%d")
 		t = [t1, t2, session['t'][0], session['t'][1]]
+		if t1 < 200:
+			t1 += 365
 		if t2 < 200:
 			t2 += 365
 		t = [t1, t2, session['t'][0], session['t'][1]]
@@ -204,6 +206,8 @@ def order_page(id):
 		t2 = int(t1 + 1)
 		t = [today, tomorrow, t1, t2]
 		session['t'] = [t1, t2, today, tomorrow]
+		if t1 < 200:
+			t1 += 365
 		if t2 < 200:
 			t2 += 365
 		t = [today, tomorrow, t1, t2]
@@ -821,6 +825,8 @@ def pay_exist():
 	# 总价=天数*单价-折扣
 	t1 = timedate2int(t1)
 	t2 = timedate2int(t2)
+	if t1 < 200:
+		t1 += 365
 	if t2 < 200:
 		t2 += 365
 	if t1 >= t2:
@@ -885,6 +891,8 @@ def pay():
 	# 总价=天数*单价-折扣
 	if session['t'][1] < 200:
 		session['t'][1] += 365
+	if session['t'][2] < 200:
+		session['t'][2] += 365
 	print session['t'][0], session['t'][1]
 	if not session.get('t') or session['t'][1] <= session['t'][0]:
 		g.db.execute('update orders set deal_state = 4 where uuid = ?', [order_uuid])
@@ -1028,6 +1036,8 @@ def pay_success():
 	merchant = query_db('select * from merchants where uuid = ?', [room['merchant_uuid']], one=True)
 	t1 = timedate2int(order['date1'])
 	t2 = timedate2int(order['date2'])
+	if t1 < 200:
+		t1 += 365
 	if t2 < 200:
 		t2 += 365
 	# 进行处理库存的减少。
