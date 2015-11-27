@@ -475,7 +475,7 @@ def admin_login():
 	t1 = request.form.get("t1")
 	t2 = request.form.get("t2")
 	print t1, t2
-	if t1 == '447846296@qq.com' and t2 == 'qile1314':
+	if t1 == 'hr@qilefun.com' and t2 == 'QL123456':
 		session['admin_user'] = 'ahahah'
 		return jsonify({"data": 100})
 	else:
