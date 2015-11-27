@@ -359,6 +359,7 @@
 					"{{ url_for('add_true_name') }}",
 					{t1: t1},
 					function(result) {
+						alert("add_true_name status: ok!");
 						var t2 = $("#coupon_limit_show").data('uuid');
 						$.post(
 							"{{ url_for('pay') }}",
