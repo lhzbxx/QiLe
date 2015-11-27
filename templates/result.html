@@ -50,11 +50,11 @@
 <body>
 	<div class="page cell">
 		<div class="hd">
-			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';"><img style="width: 200px; height: 140px; margin-bottom: -50px;" src="{{ url_for('static', filename='images/logo.png') }}"></h1>
+			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';"><img style="width: 165px; margin-bottom: 0px; margin-top: 40px;" src="{{ url_for('static', filename='images/logo.png') }}"></h1>
 		</div>
 		<div class="bd">
 			<div class="weui_msg" style="padding-top: 25px;">
-				<div class="weui_icon_area"> 
+				<div class="weui_icon_area">
 					{% if sign == '1' %}
 					<i class="weui_icon_success weui_icon_msg"></i>
 					{% else %}

@@ -46,7 +46,7 @@
 <body>
 	<div class="page cell">
 		<div class="hd">
-			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';"><img style="width: 200px; height: 140px;" src="{{ url_for('static', filename='images/logo.png') }}"></h1>
+			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';"><img style="width: 165px; margin-top: 20px; margin-bottom: 20px;" src="{{ url_for('static', filename='images/logo.png') }}"></h1>
 		</div>
 		<div class="bd">
 			<div id="tab">
@@ -180,8 +180,8 @@
 			}
 			if (vcode_counter_switch == 0) {
 				$.post(
-					"{{ url_for('sendVerifyCode') }}", 
-					{t1: t1}, 
+					"{{ url_for('sendVerifyCode') }}",
+					{t1: t1},
 					function(result) {
 						$('#dialog2').show();
 					}

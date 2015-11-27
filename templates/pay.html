@@ -53,7 +53,7 @@
 <body>
 	<div class="page cell">
 		<div class="hd">
-			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';"><img style="width: 200px; height: 140px; margin-bottom: -50px;" src="{{ url_for('static', filename='images/logo.png') }}"></h1>
+			<h1 class="page_title" onclick="window.location.href='{{ url_for('index_page') }}';"><img style="width: 165px; margin-bottom: 0px; margin-top: 40px;" src="{{ url_for('static', filename='images/logo.png') }}"></h1>
 		</div>
 		<div class="bd">
 			<div id="loadingToast" class="weui_loading_toast" style="display: none;">
@@ -151,7 +151,7 @@
 			// 		"nonceStr"	: "{{ sign[1] }}",			//随机串
 			// 		"package" 	: "prepay_id={{ sign[3] }}",
 			// 		"signType"	: "MD5",					//微信签名方式
-			// 		"paySign" 	: "{{ sign[2] }}"			//微信签名 
+			// 		"paySign" 	: "{{ sign[2] }}"			//微信签名
 			// 	},
 			// 	function(res) {
 			// 		if(res.err_msg == "get_brand_wcpay_request:ok" ) {
@@ -159,14 +159,14 @@
 			// 		} else {
 			// 			alert(res.err_msg);
 			// 		}
-			// 		// 使用以上方式判断前端返回,微信团队郑重提示:res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。 
+			// 		// 使用以上方式判断前端返回,微信团队郑重提示:res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
 			// 	}
 			// );}
 			// if (typeof WeixinJSBridge == "undefined") {
 			// 	if( document.addEventListener ) {
 			// 		document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
 			// 	} else if (document.attachEvent) {
-			// 		document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+			// 		document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
 			// 		document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
 			// 	}
 			// } else {
@@ -191,8 +191,8 @@
 						alert(res.errMsg);
 						if (res.errMsg == 'chooseWXPay:ok') {
 							$.post(
-								"{{ url_for('pay_success') }}", 
-								{t1: '{{ order.uuid }}'}, 
+								"{{ url_for('pay_success') }}",
+								{t1: '{{ order.uuid }}'},
 								function(result) {
 									if (result['data'] == '100') {
 										window.location.href="{{ url_for('.result_page', sign=1, title='支付成功', content='支付完毕，可以返回订单中心查看详情！', remark=0) }}";
@@ -209,8 +209,8 @@
 		$("#cancel_btn").click(function() {
 			$('#loadingToast').show();
 			$.post(
-				"{{ url_for('cancel_order') }}", 
-				{t1: '{{ order.uuid }}'}, 
+				"{{ url_for('cancel_order') }}",
+				{t1: '{{ order.uuid }}'},
 				function(result) {
 					if (result['data'] == '100') {
 						window.location.href='{{ url_for("index_page") }}';
