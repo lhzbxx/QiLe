@@ -1109,7 +1109,7 @@ def send_coupon_init(phone_number):
 	if total > 0:
 		send_sms(phone_number, "亲，您的其乐账户中成功添加" + str(total) + "元红包噢，记得尽快使用哦！微信关注其乐，即享更多精彩活动！")
 def send_coupon_init_base(id, phone_number):
-	u1 = query_db('select * from coupons where phone_number = ? and coupon_uuid = ?', [phone_number, id])
+	u1 = query_db('select * from coupons where phone_number = ? and coupon_uuid = ?', [phone_number, id], one=True)
 	if u1:
 		return True
 	u = str(uuid.uuid4())
