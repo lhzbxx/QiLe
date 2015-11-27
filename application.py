@@ -129,7 +129,7 @@ def detail_page(id):
 def coupon_list_page():
 	s = signal()
 	user = query_db('select * from users where uuid = ?', [s.login], one=True)
-	coupons = query_db('select * from coupons where phone_number = ?', [user['phone_number']])
+	coupons = query_db('select * from coupons where phone_number = ? ORDER BY id DESC', [user['phone_number']])
 	for coupon in coupons:
 		coupon['limit_time'] = time.strftime("%Y-%m-%d", time.localtime(coupon['limit_time']))
 	return render_template("coupon_list.html", signal = s, coupons = coupons, current = int(time.time()))
@@ -139,7 +139,7 @@ def order_list_page():
 	s = signal()
 	if not s.login:
 		return redirect(url_for('index_page'))
-	orders = query_db('select * from orders where user_uuid = ?', [s.login])
+	orders = query_db('select * from orders where user_uuid = ? ORDER BY id DESC', [s.login])
 	for i in orders:
 		i['deal_time'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['deal_time']))
 		room = query_db('select * from rooms where uuid = ?', [i['room_uuid']], one=True)
@@ -183,7 +183,7 @@ def order_page(id):
 		return redirect(url_for('index_page'))
 	room = query_db('select * from rooms where uuid = ?', [id], one=True)
 	checkins = query_db('select * from user_checkin where user_uuid = ?', [s.login])
-	coupons = query_db('select * from coupons where phone_number = ?', [user['phone_number']])
+	coupons = query_db('select * from coupons where phone_number = ? ORDER BY id DESC', [user['phone_number']])
 	for coupon in coupons:
 		coupon['limit_time'] = time.strftime("%Y-%m-%d", time.localtime(coupon['limit_time']))
 	t = []
@@ -338,7 +338,7 @@ def admin_order_list_page():
 	s = admin_signal()
 	if not s.login:
 		return redirect(url_for('admin_login_page'))
-	orders = query_db('select * from orders where deal_state == 1')
+	orders = query_db('select * from orders where deal_state == 1 ORDER BY id DESC')
 	for i in orders:
 		i['deal_time'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['deal_time']))
 	return render_template("admin/2.1.html", orders = orders)
@@ -348,7 +348,7 @@ def admin_order_to_deal_list_page():
 	s = admin_signal()
 	if not s.login:
 		return redirect(url_for('admin_login_page'))
-	orders = query_db('select * from orders where deal_state != 1')
+	orders = query_db('select * from orders where deal_state != 1 ORDER BY id DESC')
 	for i in orders:
 		i['deal_time'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['deal_time']))
 	return render_template("admin/2.3.html", orders = orders)
@@ -358,7 +358,7 @@ def admin_merchant_list_page():
 	s = admin_signal()
 	if not s.login:
 		return redirect(url_for('admin_login_page'))
-	merchants = query_db('select * from merchants')
+	merchants = query_db('select * from merchants ORDER BY id DESC')
 	return render_template("admin/3.1.html", merchants = merchants)
 # 添加商家
 @app.route('/admin/add_merchant')
@@ -383,7 +383,7 @@ def admin_room_list_page():
 	s = admin_signal()
 	if not s.login:
 		return redirect(url_for('admin_login_page'))
-	rooms = query_db('select * from rooms')
+	rooms = query_db('select * from rooms ORDER BY id DESC')
 	return render_template("admin/3.3.html", rooms = rooms)
 # 添加房源
 @app.route('/admin/add_room')
@@ -423,7 +423,7 @@ def admin_coupon_template_list_page():
 	s = admin_signal()
 	if not s.login:
 		return redirect(url_for('admin_login_page'))
-	coupon_template = query_db('select * from coupon_template')
+	coupon_template = query_db('select * from coupon_template ORDER BY id DESC')
 	return render_template("admin/4.3.html", coupon_template = coupon_template)
 # 添加优惠券模板
 @app.route('/admin/add_coupon_template')
