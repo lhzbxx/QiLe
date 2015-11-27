@@ -11,8 +11,6 @@ create table users (
     history_order_num integer default 0
 );
 
-INSERT INTO users VALUES (0, 0, 123456, 123456, 123456, 0, null, 'oDUXXtyB7F6YQGb9fjcCQY61aSjg', 0);
-
 drop table if exists user_info;
 create table user_info (
     phone_number primary key,
@@ -50,8 +48,6 @@ create table merchants (
     check_time integer default 0,
     merchant_number integer default 0
 );
-
-INSERT INTO merchants VALUES (0, 0, 'test', 'test', 'test', 'test_description', 'test_remark', 123456, 123456, 'test_address', 'test_img_url', 0, 0, 0, 0);
 
 drop table if exists photoes;
 create table photoes (
@@ -99,8 +95,6 @@ create table coupons (
     foreign key(coupon_uuid) references coupon_template(uuid)
 );
 
-INSERT INTO coupons VALUES (0, 0, 0, 'test', 13651608916, 50, 100, 0, 1000000, 1, 'test', 1);
-
 drop table if exists coupon_template;
 create table coupon_template (
     id integer primary key autoincrement,
@@ -116,9 +110,9 @@ create table coupon_template (
 );
 
 INSERT INTO coupon_template VALUES (0, "init0", '新人券', 40, 100, 2592000, ' ', 9999999, 2, 0);
-INSERT INTO coupon_template VALUES (1, "init1", '红包券', 10, 100, 604800, ' ', 9999999, 1, 0);
-INSERT INTO coupon_template VALUES (2, "init2", '红包券', 10, 100, 604800, ' ', 9999999, 1, 0);
-INSERT INTO coupon_template VALUES (3, "init3", '红包券', 10, 100, 604800, ' ', 9999999, 1, 0);
+INSERT INTO coupon_template VALUES (1, "init1", '红包券', 20, 100, 2592000, ' ', 9999999, 1, 0);
+INSERT INTO coupon_template VALUES (2, "init2", '红包券', 10, 100, 2592000, ' ', 9999999, 1, 0);
+INSERT INTO coupon_template VALUES (3, "init3", '红包券', 10, 100, 2592000, ' ', 9999999, 1, 0);
 
 drop table if exists coupon_block;
 create table coupon_block (
@@ -146,7 +140,7 @@ create table rooms (
     room_cost integer not null,
     room_activity_state default 0,
     room_activity_price integer,
-    room_activity_cost integer, 
+    room_activity_cost integer,
     room_remark1 text,
     room_remark2 text,
     room_img_url text not null,
