@@ -189,7 +189,7 @@
 					paySign: '{{ sign[2] }}', // 支付签名
 					complete: function (res) {
 						// alert(res.errMsg);
-						// if (res.errMsg == 'chooseWXPay:ok') {
+						if (res.errMsg == 'chooseWXPay:ok') {
 							$.post(
 								"{{ url_for('pay_success') }}",
 								{t1: '{{ order.uuid }}'},
@@ -197,12 +197,11 @@
 									if (result['data'] == '100') {
 										window.location.href="{{ url_for('.result_page', sign=1, title='支付成功', content='支付完毕，可以返回订单中心查看详情！', remark=0) }}";
 									} else {
-										alert(result['data']);
 										alert("写入数据失败，请联系客服进行处理！");
 									}
 								}
 							);
-						// }
+						}
 					}
 				});
 			});
