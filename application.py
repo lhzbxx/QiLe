@@ -889,10 +889,10 @@ def pay():
 		return jsonify({"data": 103})
 	price = 0
 	# 总价=天数*单价-折扣
+	if session['t'][0] < 200:
+		session['t'][0] += 365
 	if session['t'][1] < 200:
 		session['t'][1] += 365
-	if session['t'][2] < 200:
-		session['t'][2] += 365
 	print session['t'][0], session['t'][1]
 	if not session.get('t') or session['t'][1] <= session['t'][0]:
 		g.db.execute('update orders set deal_state = 4 where uuid = ?', [order_uuid])
