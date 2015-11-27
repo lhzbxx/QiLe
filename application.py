@@ -1098,17 +1098,17 @@ def send_coupon(phone_number, id):
 	return True
 def send_coupon_init(phone_number):
 	total = 80
-	if send_coupon_init_base('init0'):
+	if send_coupon_init_base('init0', phone_number):
 		total -= 40
-	if send_coupon_init_base('init1'):
+	if send_coupon_init_base('init1', phone_number):
 		total -= 20
-	if send_coupon_init_base('init2'):
+	if send_coupon_init_base('init2', phone_number):
 		total -= 10
-	if send_coupon_init_base('init3'):
+	if send_coupon_init_base('init3', phone_number):
 		total -= 10
 	if total > 0:
 		send_sms(phone_number, "亲，您的其乐账户中成功添加" + str(total) + "元红包噢，记得尽快使用哦！微信关注其乐，即享更多精彩活动！")
-def send_coupon_init_base(id):
+def send_coupon_init_base(id, phone_number):
 	u1 = query_db('select * from coupons where phone_number = ? and coupon_uuid = ?', [phone_number, id])
 	if u1:
 		return True
