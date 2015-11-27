@@ -68,6 +68,14 @@
 			font-weight: bold;
 			margin-right: 5px;
 		}
+		#noneDiv {
+			text-align: center;
+		    /* vertical-align: 50px; */
+		    margin-top: 100px;
+		    font-size: 22px;
+		    margin-left: 30px;
+		    margin-right: 30px;
+		}
 	</style>
 {% endblock %}
 {% block content %}
@@ -127,6 +135,9 @@
 			</div>
 		</nav>
 		<div id="coupon_list">
+		{% if not coupons %}
+		<div id="noneDiv">亲，您没有可以使用的优惠券啦 〒_〒</div>
+		{% endif %}
 		{% for coupon in coupons %}
 			{% if coupon.coupon_limit <= room.room_price %}
 			{% if coupon.coupon_state == 0 or coupon.limit_time < current %}

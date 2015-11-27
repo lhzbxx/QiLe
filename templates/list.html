@@ -17,6 +17,9 @@
 			font-weight: normal;
 			color: #cacccd;
 		}
+		body {
+			background: #EEEEEE;
+		}
 		#filter {
 			background: white;
 			position: absolute;
@@ -70,10 +73,18 @@
 			content:'★';
 			color:gold;
 			position:absolute;
-		} 
+		}
 		.star {
 			unicode-bidi:bidi-overrride;
 			direction:rtl;
+		}
+		#noneDiv {
+			text-align: center;
+		    /* vertical-align: 50px; */
+		    margin-top: 100px;
+		    font-size: 22px;
+		    margin-left: 30px;
+		    margin-right: 30px;
 		}
 	</style>
 {% endblock %}
@@ -156,7 +167,7 @@
 				</div>
 				<div class="room_list_panel">
 					<span>无敌江景房</span>
-					<br>	
+					<br>
 					<div class="room_list_note">
 						<span>独立房间</span>
 						·
@@ -167,6 +178,9 @@
 					</div>
 				</div>
 			</div> #}
+			{% if not rooms %}
+			<div id="noneDiv">亲，此时段的所有房源都已被预订，请返回首页选择其他时段！</div>
+			{% endif %}
 			{% for room in rooms %}
 			<div class="room_list" data-id="{{ room.uuid }}" onclick="$('#loadingToast').show(); window.location.href='{{ url_for('detail_page', id=room.uuid) }}'; $('#loadingToast').hide();">
 				<div class="room_list_img">
@@ -177,7 +191,7 @@
 				</div>
 				<div class="room_list_panel">
 					<span>{{ room.room_name }}</span>
-					<br>	
+					<br>
 					<div class="room_list_note">
 						<span>
 						{% if room.room_type == 1 %}

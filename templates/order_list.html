@@ -72,9 +72,20 @@
 			margin-top: 5px;
 			margin-bottom: 10px;
 		}
+		#noneDiv {
+			text-align: center;
+		    /* vertical-align: 50px; */
+		    margin-top: 100px;
+		    font-size: 22px;
+		    margin-left: 30px;
+		    margin-right: 30px;
+		}
 	</style>
 {% endblock %}
 {% block content %}
+	{% if not orders %}
+	<div id="noneDiv">亲，您还没有下过单哦！</div>
+	{% endif %}
 	{% for order in orders %}
 	<div class="order">
 		<div class="order_detail">
@@ -168,6 +179,6 @@
 		$(".commentBtn").click(function() {
 			alert("暂未开放，敬请期待！");
 		});
-    }); 
+    });
 </script>
 {% endblock %}
