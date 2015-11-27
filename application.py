@@ -462,8 +462,13 @@ def login():
 # 后台登录
 @app.route('/admin_login-back', methods=['POST'])
 def admin_login():
-	session['admin_user'] = 'ahahah'
-	return jsonify({"data": 100})
+	t1 = request.form.get("t1")
+	t2 = request.form.get("t2")
+	if t1 == '447846296@qq.com' and t2 == 'qile1314'
+		session['admin_user'] = 'ahahah'
+		return jsonify({"data": 100})
+	else:
+		return jsonify({"data": 101})
 # 登出
 @app.route('/logout-back', methods=['POST'])
 def logout():
@@ -493,10 +498,7 @@ def register():
 	g.db.execute('insert into users (uuid, user_name, user_passwd, phone_number, register_time) values (?, ?, ?, ?, ?)', [u, t1, t2, t1, int(time.time())])
 	g.db.commit()
 	# 注册成功。
-	send_coupon(t1, 'init0')
-	send_coupon(t1, 'init1')
-	send_coupon(t1, 'init2')
-	send_coupon(t1, 'init3')
+	send_coupon_init(t1)
 	# 成功后送优惠券
 	session['user'] = u
 	return jsonify({"data": 100, "uuid": u})
@@ -1094,6 +1096,28 @@ def send_coupon(phone_number, id):
 	g.db.commit()
 	send_sms(phone_number, "亲，您的其乐账户中成功添加" + str(p['coupon_discount']) + "元红包噢，记得尽快使用哦！微信关注其乐，即享更多精彩活动！")
 	return True
+def send_coupon_init(phone_number):
+	total = 80
+	if send_coupon_init_base('init0'):
+		total -= 40
+	if send_coupon_init_base('init1'):
+		total -= 20
+	if send_coupon_init_base('init2'):
+		total -= 10
+	if send_coupon_init_base('init3'):
+		total -= 10
+	if total > 0:
+		send_sms(phone_number, "亲，您的其乐账户中成功添加" + str(total) + "元红包噢，记得尽快使用哦！微信关注其乐，即享更多精彩活动！")
+def send_coupon_init_base(id):
+	u1 = query_db('select * from coupons where phone_number = ? and coupon_uuid = ?', [phone_number, id])
+	if u1:
+		return True
+	u = str(uuid.uuid4())
+	g.db.execute('insert into coupons (uuid, coupon_uuid, coupon_name, phone_number, coupon_limit, coupon_discount, create_time, limit_time, coupon_remark, coupon_color) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+		[u, id, u1['coupon_name'], phone_number, u1['coupon_limit'], u1['coupon_discount'], int(time.time()), u1['limit_time']+int(time.time()), u1['coupon_remark'], u1['coupon_color']])
+	g.db.execute('update coupon_template set coupon_stock = ? where uuid = ?', [u1['coupon_stock']-1, id])
+	g.db.commit()
+	return False
 # 使用优惠券
 def use_coupon(id):
 	g.db.execute('update coupons set coupon_state = 1 where uuid = ?', [id])
