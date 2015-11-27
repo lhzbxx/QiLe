@@ -179,7 +179,7 @@
 				</div>
 			</div> #}
 			{% if not rooms %}
-			<div id="noneDiv">亲，此时段的所有房源都已被预订，请返回首页选择其他时段！</div>
+			<div id="noneDiv">亲，此时段的所有房间都已被预订，请返回首页选择其他时段！</div>
 			{% endif %}
 			{% for room in rooms %}
 			<div class="room_list" data-id="{{ room.uuid }}" onclick="$('#loadingToast').show(); window.location.href='{{ url_for('detail_page', id=room.uuid) }}'; $('#loadingToast').hide();">
