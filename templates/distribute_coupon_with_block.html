@@ -93,6 +93,9 @@
 					</div>
 				</div>
 				<div id="coupon_list">
+					{% if template.uuid == 'init0' %}
+					<img src="{{ url_for('static', filename='images/init0_coupon.jpg') }}" style="width: 100%;">
+					{% else %}
 					<div class="stamp stamp0{{ template.coupon_color }} active_coupon">
 						<div class="par">
 							<p class="title">{{ template.coupon_name }}</p>
@@ -110,6 +113,7 @@
 							{% endif %}
 						</div> <i></i>
 					</div>
+					{% endif %}
 				</div>
 				<br>
 				<div class="weui_cells weui_cells_form">
