@@ -93,7 +93,7 @@
 									<a href="{{ url_for('login_page', next=request.url) }}"><i class="glyphicon glyphicon-log-in"></i> 登录</a>
 								</li>
 								<li>
-									<a href="{{ url_for('login_page', next=request.url) }}"><i class="glyphicon glyphicon-user"></i> 注册</a>
+									<a href="{{ url_for('login_page', next=request.url, register=1) }}"><i class="glyphicon glyphicon-user"></i> 注册</a>
 								</li>
 							{% endif %}
 						</ul>
