@@ -55,13 +55,13 @@
 		</div>
 		<div class="bd">
 			<div id="login_switch">
-				<div id="tab_switch_1" class="login_tab active">用户登录</div>
-				<div id="tab_switch_2" class="login_tab">快速注册</div>
+				<div id="tab_switch_1" class="login_tab {% if not register %}active{% endif %}">用户登录</div>
+				<div id="tab_switch_2" class="login_tab {% if register %}active{% endif %}">快速注册</div>
 			</div>
 			<br>
 			<br>
 			<br>
-			<div id="tab1">
+			<div id="tab1" {% if register %}style="display: none;"{% endif %}>
 				<div id="loadingToast" class="weui_loading_toast" style="display: none;">
 					<div class="weui_mask_transparent"></div>
 					<div class="weui_toast">
@@ -106,7 +106,7 @@
 					<a href="javascript: window.location.href='{{ request.values['next'] }}';" class="weui_btn weui_btn_warn" id="cancel_btn">取消</a>
 				</div>
 			</div>
-			<div id="tab2" style="display: none;">
+			<div id="tab2" {% if not register %}style="display: none;"{% endif %}>
 				<div class="weui_cells weui_cells_form">
 					<div class="weui_cell">
 						<div class="weui_cell_hd">

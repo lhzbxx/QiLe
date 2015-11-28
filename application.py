@@ -512,7 +512,7 @@ def register():
 	send_coupon_init(t1)
 	# 成功后送优惠券
 	session['user'] = u
-	return jsonify({"data": 100, "uuid": u})
+	return jsonify({"data": 100, "uuid": u, "register": 1})
 # 修改密码
 @app.route('/resetpwd-back', methods=['POST'])
 def resetpwd():
