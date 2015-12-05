@@ -154,6 +154,13 @@
 			margin: 8px 10px 8px 10px;
 			padding: 10px;
 		}
+        #addressWrapper {
+            text-align: left;
+            font-size: 16px;
+            background-color: white;
+            margin: 8px 10px 8px 10px;
+            padding: 10px;
+        }
 	</style>
 {% endblock %}
 {% block content %}
@@ -206,7 +213,7 @@
 					    </div>
 					    <!-- If we need pagination -->
 					    <div class="swiper-pagination"></div>
-					    
+
 					    <!-- If we need navigation buttons -->
 					    <div class="swiper-button-prev"></div>
 					    <div class="swiper-button-next"></div>
@@ -219,9 +226,12 @@
 					<div id="titleWrapper">
 						{{ room.room_name }}
 					</div>
-					<div id="descriptionWrapper">
-						{{ room.room_description }}
-					</div>
+                    <div id="descriptionWrapper">
+                        详情：{{ room.room_description }}
+                    </div>
+                    <div id="addressWrapper">
+                        地址：{{ room.room_address }}
+                    </div>
 					<div class="weui_cells" style="margin: 0 10px;">
 						<div class="weui_cell">
 							<div class="weui_cell_bd weui_cell_primary">
@@ -343,7 +353,7 @@
 				</div>
 			</div>
 		</div>
-		<br>	
+		<br>
 		<br>
 		<div id="photo-modal" class="modal photo-modal" style="">
 			<!-- Slider main container -->
@@ -400,7 +410,7 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#loadingToast").hide();
-		//initialize swiper when document ready 
+		//initialize swiper when document ready
 		var mySwiper = new Swiper ('.swiper-container', {
 			// Optional parameters
 			pagination: '.swiper-pagination',
@@ -408,7 +418,7 @@
 			loop: true
 		})
         $("#photo-modal").hide();
-    }); 
+    });
     $(".room_list_img").click(function(){
     	// $('#photo-modal').show();
     });
