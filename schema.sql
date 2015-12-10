@@ -109,10 +109,13 @@ create table coupon_template (
     create_time integer not null
 );
 
-INSERT INTO coupon_template VALUES (0, "init0", '新人券', 40, 100, 2592000, ' ', 9999999, 2, 0);
-INSERT INTO coupon_template VALUES (1, "init1", '红包券', 20, 100, 2592000, ' ', 9999999, 1, 0);
+INSERT INTO coupon_template VALUES (0, "init0", '新人券', 20, 100, 2592000, ' ', 9999999, 2, 0);
+INSERT INTO coupon_template VALUES (1, "init1", '新人券', 20, 100, 2592000, ' ', 9999999, 2, 0);
 INSERT INTO coupon_template VALUES (2, "init2", '红包券', 10, 100, 2592000, ' ', 9999999, 1, 0);
 INSERT INTO coupon_template VALUES (3, "init3", '红包券', 10, 100, 2592000, ' ', 9999999, 1, 0);
+INSERT INTO coupon_template VALUES (4, "init4", '红包券', 10, 100, 2592000, ' ', 9999999, 1, 0);
+INSERT INTO coupon_template VALUES (5, "init5", '红包券', 5, 5, 2592000, ' ', 9999999, 1, 0);
+INSERT INTO coupon_template VALUES (6, "init6", '红包券', 5, 5, 2592000, ' ', 9999999, 1, 0);
 
 drop table if exists coupon_block;
 create table coupon_block (
