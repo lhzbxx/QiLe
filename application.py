@@ -108,11 +108,14 @@ def search_page():
 		rooms = query_db('select * from rooms where room_switch = 1')
 		for j in range(len(rooms)-1, -1, -1):
 			# 366位的库存信息
-			p = int(rooms[j]['stock'])
-			for i in range(session['t'][0]-1, session['t'][1]-1):
-				if 1<<i & p == 0:
-					del rooms[j]
-					break
+			if rooms[j]['room_price'] == 19.9:
+				pass
+			else:
+				p = int(rooms[j]['stock'])
+				for i in range(session['t'][0]-1, session['t'][1]-1):
+					if 1<<i & p == 0:
+						del rooms[j]
+						break
 		return render_template("list.html", signal = s, rooms = rooms)
 	else:
 		rooms = query_db('select * from rooms where room_switch = ?', [1])
@@ -1081,6 +1084,7 @@ def pay_success():
 	except Exception, e:
 		raise e
 		return jsonify({"data": 104})
+	send_sms('13564204618', '订单确认：' + liverstr(order['liver_info']) + '在' + str(order['date1']) + '至' + str(order['date2']) + '入住' + str(merchant['merchant_name']) + str(room['room_name']) + str(timedate2timedelta(order['date2'], order['date1'])) + '晚' + '总价：￥' + str(order['deal_price']) + '地址：' + str(room['room_address']) + '电话：' + str(merchant['merchant_phone_number1']) + '其乐客服：4000125176，关注微信公众号其乐，更多惊喜等待你！')
 	return jsonify({"data": 100})
 # boom shakalaka
 @app.route('/crash_all-back/<key>')
