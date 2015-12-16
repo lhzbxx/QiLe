@@ -922,6 +922,8 @@ def pay():
 		k = query_db('select * from orders where user_uuid = ? and room_name like ?', [s.login, u'%活动限同一用户%'])
 		if k:
 			return jsonify({'data': 106})
+		if coupon:
+			return jsonify({'data': 107})
 	u = str(uuid.uuid4())
 	p = query_db('select * from user_checkin where user_uuid = ?', [s.login])
 	liver = [len(p)]
