@@ -914,6 +914,13 @@ def pay():
 			g.db.execute('update orders set deal_state = 4 where uuid = ?', [order_uuid])
 			g.db.commit()
 		return jsonify({"data": 102})
+	# 检查特价房
+	if room['room_price'] == 19.9:
+		if total_day > 1:
+			return jsonify({'data': 106})
+		k = query_db('select * from orders where user_uuid = ? and room_name like ?', [s.login, '活动限同一用户'])
+		if k:
+			return jsonify({'data': 106})
 	u = str(uuid.uuid4())
 	p = query_db('select * from user_checkin where user_uuid = ?', [s.login])
 	liver = [len(p)]
