@@ -353,6 +353,7 @@ def admin_order_list_page():
 		i['deal_time'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['deal_time']))
 		k = query_db('select phone_number from users where uuid == ?', [i['user_uuid']], one=True)
 		i['user_uuid'] = k['phone_number']
+		i['liver_info'] = liverstr(i['liver_info'])
 	return render_template("admin/2.1.html", orders = orders)
 # 待订单列表
 @app.route('/admin/order_to_deal_list')
