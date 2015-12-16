@@ -187,10 +187,11 @@ def order_page(id):
 	room = query_db('select * from rooms where uuid = ?', [id], one=True)
 	checkins = query_db('select * from user_checkin where user_uuid = ?', [s.login])
 	if room['room_price'] == 19.9:
+		coupons = None
+	else:
 		coupons = query_db('select * from coupons where phone_number = ? ORDER BY id DESC', [user['phone_number']])
 		for coupon in coupons:
 			coupon['limit_time'] = time.strftime("%Y-%m-%d", time.localtime(coupon['limit_time']))
-	coupons = None
 	t = []
 	if session.get('t'):
 		p1 = session['t'][2].split('-')
