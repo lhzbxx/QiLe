@@ -918,7 +918,7 @@ def pay():
 	if room['room_price'] == 19.9:
 		if total_day > 1:
 			return jsonify({'data': 106})
-		k = query_db('select * from orders where user_uuid = ? and room_name like ?', [s.login, '活动限同一用户'])
+		k = query_db('select * from orders where user_uuid = ? and room_name like ?', [s.login, u'%活动限同一用户%'])
 		if k:
 			return jsonify({'data': 106})
 	u = str(uuid.uuid4())
